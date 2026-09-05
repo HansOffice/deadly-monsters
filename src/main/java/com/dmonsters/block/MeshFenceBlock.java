@@ -35,9 +35,8 @@ public final class MeshFenceBlock extends FenceBlock {
         if (!this.hasPolePath(context.getLevel(), context.getClickedPos())) {
             Player player = context.getPlayer();
             if (player != null && !context.getLevel().isClientSide()) {
-                player.displayClientMessage(
-                        Component.translatable("msg.dmonsters.mesh_fence.too_far_from_pole").withStyle(ChatFormatting.DARK_RED),
-                        true);
+                player.sendSystemMessage(
+                        Component.translatable("msg.dmonsters.mesh_fence.too_far_from_pole").withStyle(ChatFormatting.DARK_RED));
             }
             return null;
         }
