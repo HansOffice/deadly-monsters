@@ -1,6 +1,7 @@
 package com.dmonsters.registry;
 
 import com.dmonsters.DeadlyMonsters;
+import com.dmonsters.entity.ClimberEntity;
 import com.dmonsters.entity.FreezerEntity;
 import com.dmonsters.entity.PortPlaceholderMonster;
 import com.dmonsters.entity.ZombieChickenEntity;
@@ -41,7 +42,13 @@ public final class ModEntities {
                     .updateInterval(3)
                     .build(key("freezer")));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<PortPlaceholderMonster>> CLIMBER = placeholder("climber");
+    public static final DeferredHolder<EntityType<?>, EntityType<ClimberEntity>> CLIMBER =
+            ENTITY_TYPES.register("climber", () -> EntityType.Builder
+                    .of(ClimberEntity::new, MobCategory.MONSTER)
+                    .sized(0.9F, 1.95F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3)
+                    .build(key("climber")));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ZombieChickenEntity>> ZOMBIE_CHICKEN =
             ENTITY_TYPES.register("zombie_chicken", () -> EntityType.Builder
@@ -72,6 +79,12 @@ public final class ModEntities {
                 .add(Attributes.MAX_HEALTH, 45.0D)
                 .build());
 
+        event.put(CLIMBER.get(), Monster.createMonsterAttributes()
+                .add(Attributes.MOVEMENT_SPEED, 0.1D)
+                .add(Attributes.ATTACK_DAMAGE, 12.0D)
+                .add(Attributes.MAX_HEALTH, 24.0D)
+                .build());
+
         event.put(ZOMBIE_CHICKEN.get(), Chicken.createAttributes()
                 .add(Attributes.FOLLOW_RANGE, 35.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.26D)
@@ -82,7 +95,6 @@ public final class ModEntities {
 
         var placeholderAttributes = Monster.createMonsterAttributes().build();
         event.put(MUTANT_STEVE.get(), placeholderAttributes);
-        event.put(CLIMBER.get(), placeholderAttributes);
         event.put(UNBORN_BABY.get(), placeholderAttributes);
         event.put(FALLEN_LEADER.get(), placeholderAttributes);
         event.put(BLOODY_MAIDEN.get(), placeholderAttributes);
@@ -96,6 +108,15 @@ public final class ModEntities {
     public static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
         event.register(
                 FREEZER.get(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (entityType, level, spawnReason, pos, random) ->
+                        !level.getBiome(pos).is(Biomes.MUSHROOM_FIELDS)
+                                && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random),
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+
+        event.register(
+                CLIMBER.get(),
                 SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 (entityType, level, spawnReason, pos, random) ->
