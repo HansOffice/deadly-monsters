@@ -1,1 +1,1 @@
-{"type":"neoforge:add_spawns","biomes":"#dmonsters:water_biomes","spawners":{"type":"dmonsters:topielec","weight":8,"minCount":1,"maxCount":1}}
+{"type":"dmonsters:config_spawns","biomes":"#dmonsters:water_biomes","spawner":{"type":"dmonsters:topielec","minCount":1,"maxCount":1}}
