@@ -16,6 +16,7 @@ public final class ClientModEvents {
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(ClimberModel.LAYER_LOCATION, ClimberModel::createBodyLayer);
+        event.registerLayerDefinition(EntrailModel.LAYER_LOCATION, EntrailModel::createBodyLayer);
         event.registerLayerDefinition(FreezerModel.LAYER_LOCATION, FreezerModel::createBodyLayer);
         event.registerLayerDefinition(ZombieChickenModel.LAYER_LOCATION, ZombieChickenModel::createBodyLayer);
     }
@@ -23,16 +24,14 @@ public final class ClientModEvents {
     @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.CLIMBER.get(), ClimberRenderer::new);
+        event.registerEntityRenderer(ModEntities.ENTRAIL.get(), EntrailRenderer::new);
         event.registerEntityRenderer(ModEntities.FREEZER.get(), FreezerRenderer::new);
         event.registerEntityRenderer(ModEntities.ZOMBIE_CHICKEN.get(), ZombieChickenRenderer::new);
 
-        // Reserved registry IDs must remain client-safe while their real
-        // renderers/models are migrated. They intentionally render nothing.
         event.registerEntityRenderer(ModEntities.MUTANT_STEVE.get(), NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.UNBORN_BABY.get(), NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.FALLEN_LEADER.get(), NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.BLOODY_MAIDEN.get(), NoopRenderer::new);
-        event.registerEntityRenderer(ModEntities.ENTRAIL.get(), NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.PRESENT.get(), NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.STRANGER.get(), NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.HAUNTED_COW.get(), NoopRenderer::new);
