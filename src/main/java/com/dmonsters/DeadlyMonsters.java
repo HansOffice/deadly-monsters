@@ -1,6 +1,7 @@
 package com.dmonsters;
 
 import com.dmonsters.config.DeadlyMonstersConfig;
+import com.dmonsters.registry.ModBiomeModifiers;
 import com.dmonsters.registry.ModBlocks;
 import com.dmonsters.registry.ModCreativeTabs;
 import com.dmonsters.registry.ModEntities;
@@ -25,6 +26,7 @@ public final class DeadlyMonsters {
         ModItems.ITEMS.register(modEventBus);
         ModSounds.SOUND_EVENTS.register(modEventBus);
         ModCreativeTabs.TABS.register(modEventBus);
+        ModBiomeModifiers.BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
 
         modEventBus.addListener(ModEntities::registerAttributes);
         modEventBus.addListener(ModEntities::registerSpawnPlacements);
