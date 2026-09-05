@@ -2,8 +2,10 @@ package com.dmonsters.entity;
 
 import com.dmonsters.config.DeadlyMonstersConfig;
 import com.dmonsters.registry.ModSounds;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,6 +18,7 @@ import net.minecraft.world.phys.Vec3;
 public final class TopielecEntity extends Monster {
     private Vec3 movementVector = Vec3.ZERO;
     private Vec3 lastWaterPosition;
+    private int deepWaterRefresh;
 
     public TopielecEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level);
@@ -37,7 +40,7 @@ public final class TopielecEntity extends Monster {
         if (this.isInWater()) {
             this.lastWaterPosition = this.position();
             this.setAirSupply(300);
-            this.updateWaterMovement();
+            this.updateWaterMovement(level);
         } else {
             this.updateOutOfWater(level);
         }
@@ -61,19 +64,34 @@ public final class TopielecEntity extends Monster {
         }
     }
 
-    private void updateWaterMovement() {
+    private void updateWaterMovement(ServerLevel level) {
         LivingEntity target = this.getTarget();
         if (target instanceof Player player) {
-            Vec3 toward = player.position().subtract(this.position());
-            if (toward.lengthSqr() > 1.0E-4D) {
-                this.movementVector = toward.normalize().scale(0.5D);
+            if (this.distanceTo(player) < 2.0F && !player.isCreative() && !player.isPassenger()) {
+                // Original attack AI pins the victim to the Topielec and then tries to carry both
+                // toward the deepest nearby water column. The 1.12.2 timer accidentally scanned
+                // every tick; 26.2 refreshes the expensive search every 40 ticks instead.
+                player.teleportTo(this.getX(), this.getY(), this.getZ());
+                if (this.deepWaterRefresh-- <= 0 || this.movementVector.lengthSqr() < 1.0E-4D) {
+                    this.deepWaterRefresh = 40;
+                    Vec3 deepDirection = this.findDeepWaterDirection(level);
+                    if (deepDirection.lengthSqr() > 1.0E-4D) {
+                        this.movementVector = deepDirection.normalize().scale(0.5D);
+                    }
+                }
+            } else {
+                this.deepWaterRefresh = 0;
+                Vec3 toward = player.position().subtract(this.position());
+                if (toward.lengthSqr() > 1.0E-4D) {
+                    this.movementVector = toward.normalize().scale(0.5D);
+                }
+            }
+
+            if (this.movementVector.lengthSqr() > 1.0E-4D) {
                 this.setYRot((float) (Math.atan2(this.movementVector.z, this.movementVector.x) * 180.0D / Math.PI));
             }
-            if (this.distanceTo(player) < 2.0F && !player.isCreative() && !player.isPassenger()) {
-                player.teleportTo(this.getX(), this.getY(), this.getZ());
-                this.movementVector = new Vec3(this.movementVector.x, Math.min(this.movementVector.y, -0.15D), this.movementVector.z);
-            }
         } else if (this.getRandom().nextInt(50) == 0 || this.movementVector.lengthSqr() < 1.0E-4D) {
+            this.deepWaterRefresh = 0;
             float angle = this.getRandom().nextFloat() * ((float) Math.PI * 2.0F);
             this.movementVector = new Vec3(
                     Math.cos(angle) * 0.2D,
@@ -81,6 +99,38 @@ public final class TopielecEntity extends Monster {
                     Math.sin(angle) * 0.2D);
         }
         this.setDeltaMovement(this.movementVector);
+    }
+
+    /**
+     * Finds a direction toward a nearby column with the greatest contiguous water depth beneath
+     * the Topielec. Sampling density is bounded so large configured search distances do not repeat
+     * the original O(radius² × depth) scan every game tick.
+     */
+    private Vec3 findDeepWaterDirection(ServerLevel level) {
+        int radius = DeadlyMonstersConfig.VALUES.topielecSearchDistance.get();
+        int step = Math.max(1, radius / 16);
+        BlockPos origin = this.blockPosition();
+        BlockPos best = origin;
+        int bestDepth = 0;
+
+        for (int dx = -radius; dx <= radius; dx += step) {
+            for (int dz = -radius; dz <= radius; dz += step) {
+                int depth = 0;
+                for (int y = origin.getY(); y > level.getMinY(); y--) {
+                    BlockPos probe = new BlockPos(origin.getX() + dx, y, origin.getZ() + dz);
+                    if (!level.getFluidState(probe).is(FluidTags.WATER)) {
+                        break;
+                    }
+                    depth++;
+                }
+                if (depth > bestDepth) {
+                    bestDepth = depth;
+                    best = new BlockPos(origin.getX() + dx, origin.getY(), origin.getZ() + dz);
+                }
+            }
+        }
+
+        return new Vec3(best.getX() - origin.getX(), 0.0D, best.getZ() - origin.getZ());
     }
 
     private void updateOutOfWater(ServerLevel level) {
