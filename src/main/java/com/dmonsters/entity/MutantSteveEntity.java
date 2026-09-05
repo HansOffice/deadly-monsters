@@ -37,7 +37,11 @@ public final class MutantSteveEntity extends Monster {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new MutantSteveAttackGoal(this, 2.0D, false));
+        if (DeadlyMonstersConfig.VALUES.mutantSteveBreakBlocks.get()) {
+            this.goalSelector.addGoal(1, new MutantSteveAttackGoal(this, 2.0D, false));
+        } else {
+            this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 2.0D, false));
+        }
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -141,8 +145,7 @@ public final class MutantSteveEntity extends Monster {
             this.mutant.setArmsRaised(this.raiseArmTicks >= 5 && this.raiseArmTicks < 10);
             if (++this.breakTicks >= 20 && !this.mutant.isInWater()) {
                 this.breakTicks = 0;
-                if (DeadlyMonstersConfig.VALUES.mutantSteveBreakBlocks.get()
-                        && this.mutant.level() instanceof ServerLevel level
+                if (this.mutant.level() instanceof ServerLevel level
                         && level.getGameRules().get(GameRules.MOB_GRIEFING)) {
                     boolean destroyed = this.destroyAround(level, 0, 0.25F);
                     destroyed |= this.destroyAround(level, 1, 0.5F);
