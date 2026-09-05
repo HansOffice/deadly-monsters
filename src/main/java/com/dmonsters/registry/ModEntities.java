@@ -1,6 +1,7 @@
 package com.dmonsters.registry;
 
 import com.dmonsters.DeadlyMonsters;
+import com.dmonsters.entity.FreezerEntity;
 import com.dmonsters.entity.PortPlaceholderMonster;
 import com.dmonsters.entity.ZombieChickenEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,15 +25,22 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * NeoForge 26.2 entity registry.
  *
  * All original monster registry IDs are reserved now so later ports can replace
- * placeholder factories without changing save/resource identifiers. Zombie
- * Chicken is the first entry backed by its real gameplay implementation.
+ * placeholder factories without changing save/resource identifiers.
  */
 public final class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, DeadlyMonsters.MOD_ID);
 
     public static final DeferredHolder<EntityType<?>, EntityType<PortPlaceholderMonster>> MUTANT_STEVE = placeholder("mutant_steve");
-    public static final DeferredHolder<EntityType<?>, EntityType<PortPlaceholderMonster>> FREEZER = placeholder("freezer");
+
+    public static final DeferredHolder<EntityType<?>, EntityType<FreezerEntity>> FREEZER =
+            ENTITY_TYPES.register("freezer", () -> EntityType.Builder
+                    .of(FreezerEntity::new, MobCategory.MONSTER)
+                    .sized(0.9F, 1.95F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3)
+                    .build(key("freezer")));
+
     public static final DeferredHolder<EntityType<?>, EntityType<PortPlaceholderMonster>> CLIMBER = placeholder("climber");
 
     public static final DeferredHolder<EntityType<?>, EntityType<ZombieChickenEntity>> ZOMBIE_CHICKEN =
@@ -56,6 +64,14 @@ public final class ModEntities {
     }
 
     public static void registerAttributes(EntityAttributeCreationEvent event) {
+        event.put(FREEZER.get(), Monster.createMonsterAttributes()
+                .add(Attributes.FOLLOW_RANGE, 35.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.13D)
+                .add(Attributes.ATTACK_DAMAGE, 16.0D)
+                .add(Attributes.ARMOR, 2.0D)
+                .add(Attributes.MAX_HEALTH, 45.0D)
+                .build());
+
         event.put(ZOMBIE_CHICKEN.get(), Chicken.createAttributes()
                 .add(Attributes.FOLLOW_RANGE, 35.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.26D)
@@ -66,7 +82,6 @@ public final class ModEntities {
 
         var placeholderAttributes = Monster.createMonsterAttributes().build();
         event.put(MUTANT_STEVE.get(), placeholderAttributes);
-        event.put(FREEZER.get(), placeholderAttributes);
         event.put(CLIMBER.get(), placeholderAttributes);
         event.put(UNBORN_BABY.get(), placeholderAttributes);
         event.put(FALLEN_LEADER.get(), placeholderAttributes);
@@ -79,6 +94,15 @@ public final class ModEntities {
     }
 
     public static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+        event.register(
+                FREEZER.get(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (entityType, level, spawnReason, pos, random) ->
+                        !level.getBiome(pos).is(Biomes.MUSHROOM_FIELDS)
+                                && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random),
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+
         event.register(
                 ZOMBIE_CHICKEN.get(),
                 SpawnPlacementTypes.ON_GROUND,
