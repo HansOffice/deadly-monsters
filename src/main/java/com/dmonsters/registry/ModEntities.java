@@ -9,10 +9,14 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -72,6 +76,17 @@ public final class ModEntities {
         event.put(STRANGER.get(), placeholderAttributes);
         event.put(HAUNTED_COW.get(), placeholderAttributes);
         event.put(TOPIELEC.get(), placeholderAttributes);
+    }
+
+    public static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+        event.register(
+                ZOMBIE_CHICKEN.get(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (entityType, level, spawnReason, pos, random) ->
+                        !level.getBiome(pos).is(Biomes.MUSHROOM_FIELDS)
+                                && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random),
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 
     private static DeferredHolder<EntityType<?>, EntityType<PortPlaceholderMonster>> placeholder(String name) {
