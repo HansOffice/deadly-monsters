@@ -53,7 +53,7 @@ public final class PoopooPillItem extends Item {
         player.getFoodData().setSaturation(0.0F);
         serverLevel.setBlockAndUpdate(player.blockPosition(), ModBlocks.DUMP.get().defaultBlockState());
         serverLevel.sendParticles(
-                ParticleTypes.EFFECT,
+                ParticleTypes.POOF,
                 player.getX(), player.getY() + 0.5D, player.getZ(),
                 24, 0.4D, 0.5D, 0.4D, 0.03D);
         return stack;
