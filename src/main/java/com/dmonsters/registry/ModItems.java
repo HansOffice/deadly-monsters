@@ -40,7 +40,7 @@ public final class ModItems {
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_ENTRAIL = spawnEgg("mob_spawner_item_entrail", ModEntities.ENTRAIL);
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_FREEZER = spawnEgg("mob_spawner_item_freezer", ModEntities.FREEZER);
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_MUTANT_STEVE = simple("mob_spawner_item_mutant_steve");
-    public static final DeferredItem<Item> MOB_SPAWNER_ITEM_FALLEN_LEADER = simple("mob_spawner_item_fallen_leader");
+    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_FALLEN_LEADER = spawnEgg("mob_spawner_item_fallen_leader", ModEntities.FALLEN_LEADER);
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_BLOODY_MAIDEN = simple("mob_spawner_item_bloody_maiden");
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_ZOMBIE_CHICKEN = spawnEgg("mob_spawner_item_zombie_chicken", ModEntities.ZOMBIE_CHICKEN);
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_PRESENT = simple("mob_spawner_item_present");
