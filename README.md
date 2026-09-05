@@ -1,55 +1,70 @@
 # Deadly Monsters — NeoForge 26.2 Port
 
-This repository is a community port of [ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters) from Minecraft Forge 1.12.2 to Minecraft 26.2 on NeoForge.
+A native NeoForge port of [ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters) from Minecraft Forge 1.12.2 to Minecraft 26.2.
+
+The port keeps the original `dmonsters` registry IDs and gameplay identity while replacing the removed Forge 1.12.2 APIs with current Minecraft/NeoForge systems.
 
 ## Target
 
-- Minecraft: 26.2
-- NeoForge: 26.2.0.75
-- ModDevGradle: 2.0.146
-- Java: 25
+- Minecraft: **26.2**
+- NeoForge: **26.2.0.75**
+- ModDevGradle: **2.0.146**
+- Gradle: **9.2.1**
+- Java: **25**
 - Mod ID: `dmonsters`
 
-## Port status
+## Status
 
-The original project is a Forge 1.12.2 mod. This port is being rebuilt against modern NeoForge APIs rather than attempting to compile the old FML/Forge code unchanged.
+The source, gameplay content, client renderers, resources and data migration are complete. Runtime/gameplay validation is intentionally tracked separately in [`TESTING.md`](TESTING.md).
 
-Current stage:
+Ported content includes:
 
-- [x] NeoForge 26.2 project scaffold
-- [x] Preserve original MIT license and attribution
-- [x] Modern DeferredRegister-based block/item registry skeleton
-- [x] Restore original registry IDs as placeholders where practical
-- [x] Port Rebar stone/cobblestone strengthening behavior
-- [x] Restore strengthened block hardness/resistance
-- [x] Import original textures, sounds, logo and credits into modern resource paths
-- [ ] Finish modern block/item model migration
-- [ ] Port block behavior
-- [ ] Port remaining item behavior
-- [ ] Port entities and attributes
-- [ ] Port AI goals
-- [ ] Port networking
-- [ ] Port client models/renderers
-- [ ] Migrate recipes, loot tables and remaining data
-- [ ] Replace or remove legacy Mantle/TConstruct/CoroUtil/Hostile Worlds integrations
-- [ ] Game-test and balance pass
+- all 12 original monsters with native 26.2 entity types, attributes, AI and renderers;
+- all original monster spawn eggs;
+- the original blocks and their special behavior;
+- Rebar, four Harpoons, Lucky Egg, Dagon and the original monster-drop utility items;
+- Lucky Egg and Dagon projectiles;
+- original textures and sounds;
+- modern blockstates, models and item definitions;
+- all 17 original crafting recipes;
+- entity/block loot tables using current item IDs and loot syntax;
+- configurable monster health, strength, speed, natural-spawn weighting and disable switches;
+- special configuration for Mutant Steve, Unborn Baby, Haunted Cow and Topielec;
+- natural spawning through a config-aware NeoForge biome modifier.
 
-## Upstream
+See [`PORTING.md`](PORTING.md) for compatibility decisions and deliberate modernizations.
 
-Original project: https://github.com/ACGaming/deadly-monsters
+## Development runs
 
-The upstream project is licensed under the MIT License. The original copyright and license notice are retained in `LICENSE`.
-
-## Building
-
-Use JDK 25. CI builds with Gradle 9.2.1.
+A system Gradle 9.2.1 installation is currently used; this repository does not ship a Gradle wrapper.
 
 ```bash
+gradle runClient
+gradle runServer
+gradle runData
 gradle build
 ```
 
-A standard Gradle wrapper can be added later from the official NeoForge 26.2 MDK.
+Use JDK 25 for all development and build commands.
 
-## Compatibility note
+## Configuration
 
-This is not yet a feature-complete port. Registry scaffolding is intentionally separated from behavioral migration so each old 1.12.2 subsystem can be replaced with its current NeoForge equivalent and tested independently.
+NeoForge generates the Deadly Monsters common configuration on first run. The port preserves the original default monster multipliers and spawn rates.
+
+Natural-spawn `spawnRate` and `disabled` settings affect biome spawn lists and should be changed before starting/restarting the world or dedicated server.
+
+## Compatibility decisions
+
+This is a native port, not a compatibility shim. A few 1.12.2 implementation details cannot or should not be reproduced literally:
+
+- **Hostile Worlds Invasions integration** is not included because the 26.2 port has no dependency on that legacy integration.
+- The old numeric **`dayLengthTicks`** option is retired. Minecraft 26.2 uses data-driven world clocks/timelines; Sunlight Drop and Haunted Cow use the active Overworld clock markers instead.
+- The original Topielec deep-water search contained an effectively every-tick wide-area scan. The visible behavior is preserved with a bounded refresh cadence rather than copying the performance bug.
+- Legacy metadata items were mapped to their modern IDs (for example fish, clay balls, fireworks, dyes and stained glass).
+- Modern interaction permission checks are used where old direct block replacement would otherwise bypass current protection APIs.
+
+## Upstream and license
+
+Original project: [ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters)
+
+The upstream project is licensed under the MIT License. The original copyright and license notice are retained in [`LICENSE`](LICENSE).
