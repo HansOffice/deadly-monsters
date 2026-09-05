@@ -27,7 +27,6 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -68,7 +67,7 @@ public final class ModEntities {
         event.put(UNBORN_BABY.get(), monsterAttributes(40.0D, 0.25D, 12.0D, 2.0D, 40.0D));
         event.put(FALLEN_LEADER.get(), monsterAttributes(35.0D, 0.1D, 20.0D, 1.0D, 60.0D));
         event.put(BLOODY_MAIDEN.get(), monsterAttributes(35.0D, 0.2D, 4.0D, 2.0D, 20.0D));
-        event.put(ZOMBIE_CHICKEN.get(), Chicken.createAttributes().add(Attributes.FOLLOW_RANGE, 35.0D).add(Attributes.MOVEMENT_SPEED, 0.26D).add(Attributes.ATTACK_DAMAGE, 8.0D).add(Attributes.ARMOR, 2.0D).add(Attributes.MAX_HEALTH, 16.0D).build());
+        event.put(ZOMBIE_CHICKEN.get(), monsterAttributes(35.0D, 0.26D, 8.0D, 2.0D, 16.0D));
         event.put(PRESENT.get(), monsterAttributes(35.0D, 0.3D, 1.0D, 2.0D, 26.0D));
         event.put(STRANGER.get(), monsterAttributes(35.0D, 0.15D, 4.0D, 2.0D, 40.0D));
         event.put(HAUNTED_COW.get(), monsterAttributes(35.0D, 0.3D, 12.0D, 2.0D, 24.0D));
