@@ -99,10 +99,13 @@ public final class PresentEntity extends Monster {
 
         EntityType<?> creeperType = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("creeper"));
         if (creeperType != null) {
-            Entity spawned = creeperType.create(level, EntitySpawnReason.TRIGGERED);
-            if (spawned instanceof Creeper creeper) {
-                creeper.snapTo(lightPos.getX() + 0.5D, lightPos.getY(), lightPos.getZ() + 0.5D, 0.0F, 0.0F);
-                level.addFreshEntity(creeper);
+            // The 1.12.2 floor/ceiling loop reaches the center twice, spawning two Creepers at the torch.
+            for (int i = 0; i < 2; i++) {
+                Entity spawned = creeperType.create(level, EntitySpawnReason.TRIGGERED);
+                if (spawned instanceof Creeper creeper) {
+                    creeper.snapTo(lightPos.getX() + 0.5D, lightPos.getY(), lightPos.getZ() + 0.5D, 0.0F, 0.0F);
+                    level.addFreshEntity(creeper);
+                }
             }
         }
         player.teleportTo(origin.getX() + 0.5D, baseY + 1.0D, origin.getZ() + 0.5D);
