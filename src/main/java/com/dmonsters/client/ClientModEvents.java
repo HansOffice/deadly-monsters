@@ -2,7 +2,6 @@ package com.dmonsters.client;
 
 import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.registry.ModEntities;
-import net.minecraft.client.renderer.entity.ChickenRenderer;
 import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -16,9 +15,7 @@ public final class ClientModEvents {
 
     @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        // First real port. Vanilla chicken renderer is used as the stable 26.2
-        // bridge while the original custom 32x32 model is migrated next.
-        event.registerEntityRenderer(ModEntities.ZOMBIE_CHICKEN.get(), ChickenRenderer::new);
+        event.registerEntityRenderer(ModEntities.ZOMBIE_CHICKEN.get(), ZombieChickenRenderer::new);
 
         // Reserved registry IDs must remain client-safe while their real
         // renderers/models are migrated. They intentionally render nothing.
