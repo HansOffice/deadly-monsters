@@ -1,0 +1,27 @@
+license="${mod_license}"
+issueTrackerURL="https://github.com/HansOffice/deadly-monsters/issues"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+displayURL="https://github.com/HansOffice/deadly-monsters"
+authors="bigbang87 (original), HansOffice (26.2 port)"
+description='''
+A NeoForge 26.2 port of the original Deadly Monsters mod for Minecraft 1.12.2.
+The port is being migrated subsystem-by-subsystem while preserving original registry identifiers where practical.
+'''
+
+[[dependencies.${mod_id}]]
+modId="neoforge"
+type="required"
+versionRange="[${neo_version},)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="minecraft"
+type="required"
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="BOTH"
