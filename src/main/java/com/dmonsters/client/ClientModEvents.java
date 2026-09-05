@@ -14,6 +14,11 @@ public final class ClientModEvents {
     }
 
     @SubscribeEvent
+    public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(ZombieChickenModel.LAYER_LOCATION, ZombieChickenModel::createBodyLayer);
+    }
+
+    @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.ZOMBIE_CHICKEN.get(), ZombieChickenRenderer::new);
 
