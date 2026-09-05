@@ -8,14 +8,10 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/**
- * Item registry scaffold retaining the original 1.12.2 registry names.
- * Custom behavior is ported separately after the registry layer compiles.
- */
+/** Item registry scaffold retaining the original 1.12.2 registry names. */
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(DeadlyMonsters.MOD_ID);
 
-    // Block items
     public static final DeferredItem<BlockItem> STRENGTHENED_STONE = ITEMS.registerSimpleBlockItem("strengthened_stone", ModBlocks.STRENGTHENED_STONE);
     public static final DeferredItem<BlockItem> STRENGTHENED_COBBLESTONE = ITEMS.registerSimpleBlockItem("strengthened_cobblestone", ModBlocks.STRENGTHENED_COBBLESTONE);
     public static final DeferredItem<BlockItem> BARBED_WIRE = ITEMS.registerSimpleBlockItem("barbed_wire", ModBlocks.BARBED_WIRE);
@@ -27,7 +23,6 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> CHRISTMAS_TREE = ITEMS.registerSimpleBlockItem("christmas_tree", ModBlocks.CHRISTMAS_TREE);
     public static final DeferredItem<BlockItem> PRESENT_BOX = ITEMS.registerSimpleBlockItem("present_box", ModBlocks.PRESENT_BOX);
 
-    // Original standalone items
     public static final DeferredItem<RebarItem> REBAR = ITEMS.registerItem("rebar", RebarItem::new);
     public static final DeferredItem<Item> LUCKY_EGG = simple("lucky_egg");
     public static final DeferredItem<Item> UNBORN_BABY_EYE = simple("unborn_baby_eye");
@@ -41,19 +36,13 @@ public final class ModItems {
     public static final DeferredItem<Item> MOD_ITEM = simple("mod_item");
 
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_UNBORN_BABY = simple("mob_spawner_item_unborn_baby");
-    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_CLIMBER = ITEMS.registerItem(
-            "mob_spawner_item_climber",
-            properties -> new SpawnEggItem(properties.spawnEgg(ModEntities.CLIMBER.get())));
-    public static final DeferredItem<Item> MOB_SPAWNER_ITEM_ENTRAIL = simple("mob_spawner_item_entrail");
-    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_FREEZER = ITEMS.registerItem(
-            "mob_spawner_item_freezer",
-            properties -> new SpawnEggItem(properties.spawnEgg(ModEntities.FREEZER.get())));
+    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_CLIMBER = spawnEgg("mob_spawner_item_climber", ModEntities.CLIMBER);
+    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_ENTRAIL = spawnEgg("mob_spawner_item_entrail", ModEntities.ENTRAIL);
+    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_FREEZER = spawnEgg("mob_spawner_item_freezer", ModEntities.FREEZER);
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_MUTANT_STEVE = simple("mob_spawner_item_mutant_steve");
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_FALLEN_LEADER = simple("mob_spawner_item_fallen_leader");
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_BLOODY_MAIDEN = simple("mob_spawner_item_bloody_maiden");
-    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_ZOMBIE_CHICKEN = ITEMS.registerItem(
-            "mob_spawner_item_zombie_chicken",
-            properties -> new SpawnEggItem(properties.spawnEgg(ModEntities.ZOMBIE_CHICKEN.get())));
+    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_ZOMBIE_CHICKEN = spawnEgg("mob_spawner_item_zombie_chicken", ModEntities.ZOMBIE_CHICKEN);
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_PRESENT = simple("mob_spawner_item_present");
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_STRANGER = simple("mob_spawner_item_stranger");
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_HAUNTED_COW = simple("mob_spawner_item_haunted_cow");
@@ -69,5 +58,11 @@ public final class ModItems {
 
     private static DeferredItem<Item> simple(String name) {
         return ITEMS.registerSimpleItem(name, properties -> properties);
+    }
+
+    private static <T extends net.minecraft.world.entity.Mob> DeferredItem<SpawnEggItem> spawnEgg(
+            String name,
+            net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.entity.EntityType<?>, net.minecraft.world.entity.EntityType<T>> type) {
+        return ITEMS.registerItem(name, properties -> new SpawnEggItem(properties.spawnEgg(type.get())));
     }
 }
