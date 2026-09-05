@@ -1,6 +1,8 @@
 package com.dmonsters.entity;
 
 import com.dmonsters.registry.ModSounds;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
@@ -16,13 +18,15 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.entity.monster.cubemob.Slime;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 /** Native 26.2 port of the original Entrail monster. */
 public final class EntrailEntity extends Monster {
+    private static final Identifier SLIME_ID = Identifier.fromNamespaceAndPath("minecraft", "slime");
+
     public EntrailEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level);
     }
@@ -58,10 +62,13 @@ public final class EntrailEntity extends Monster {
     @Override
     public boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
         if (!source.is(DamageTypeTags.IS_FIRE)) {
-            Slime slime = EntityType.SLIME.create(level, EntitySpawnReason.TRIGGERED);
-            if (slime != null) {
-                slime.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-                level.addFreshEntity(slime);
+            EntityType<?> slimeType = BuiltInRegistries.ENTITY_TYPE.getValue(SLIME_ID);
+            if (slimeType != null) {
+                Entity entity = slimeType.create(level, EntitySpawnReason.TRIGGERED);
+                if (entity instanceof Slime slime) {
+                    slime.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+                    level.addFreshEntity(slime);
+                }
             }
         }
         return super.hurtServer(level, source, damage);
