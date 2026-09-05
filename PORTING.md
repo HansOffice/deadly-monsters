@@ -34,6 +34,9 @@ Completed systems:
 - [x] special Mutant Steve, Unborn Baby, Haunted Cow and Topielec options
 - [x] undead entity classification for the original undead monsters
 - [x] current Minecraft world-clock handling for time-changing mechanics
+- [x] `gradle build` verification on Java 25 / Gradle 9.2.1 / NeoForge 26.2.0.75
+
+Final compile/package verification succeeded in GitHub Actions run **#112** on implementation commit `3c335278324c2a215631a7956ee72c1ebec730d6`. Later commits only restore the workflow to manual-only mode and record completion status.
 
 ## Monsters
 
