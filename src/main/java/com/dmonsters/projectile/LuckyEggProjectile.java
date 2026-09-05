@@ -5,6 +5,7 @@ import java.util.List;
 import com.dmonsters.entity.ZombieChickenEntity;
 import com.dmonsters.registry.ModEntities;
 import com.dmonsters.registry.ModItems;
+import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -126,9 +127,10 @@ public final class LuckyEggProjectile extends ThrowableItemProjectile {
     @Override
     public void handleEntityEvent(byte id) {
         if (id == 3) {
+            ItemParticleOption eggParticle = new ItemParticleOption(ParticleTypes.ITEM, Items.EGG);
             for (int i = 0; i < 8; i++) {
                 this.level().addParticle(
-                        ParticleTypes.POOF,
+                        eggParticle,
                         this.getX(), this.getY(), this.getZ(),
                         (this.random.nextFloat() - 0.5D) * 0.08D,
                         (this.random.nextFloat() - 0.5D) * 0.08D,
