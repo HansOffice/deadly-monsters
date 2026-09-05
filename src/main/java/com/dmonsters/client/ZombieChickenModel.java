@@ -1,7 +1,7 @@
 package com.dmonsters.client;
 
 import com.dmonsters.DeadlyMonsters;
-import net.minecraft.client.model.animal.chicken.ChickenModel;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -9,14 +9,11 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.entity.state.ChickenRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
-/**
- * 26.2 model port of the original 1.12.2 ModelZombieChicken geometry.
- */
-public final class ZombieChickenModel extends ChickenModel {
+/** 26.2 model port of the original 1.12.2 ModelZombieChicken geometry. */
+public final class ZombieChickenModel extends EntityModel<ZombieChickenRenderState> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "zombie_chicken"), "main");
 
@@ -92,7 +89,7 @@ public final class ZombieChickenModel extends ChickenModel {
     }
 
     @Override
-    public void setupAnim(ChickenRenderState state) {
+    public void setupAnim(ZombieChickenRenderState state) {
         super.setupAnim(state);
 
         this.head.xRot = state.xRot * (float) (Math.PI / 180.0D);
