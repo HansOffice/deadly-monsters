@@ -3,6 +3,7 @@ package com.dmonsters.registry;
 import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.entity.ClimberEntity;
 import com.dmonsters.entity.EntrailEntity;
+import com.dmonsters.entity.FallenLeaderEntity;
 import com.dmonsters.entity.FreezerEntity;
 import com.dmonsters.entity.PortPlaceholderMonster;
 import com.dmonsters.entity.UnbornBabyEntity;
@@ -34,24 +35,22 @@ public final class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<FreezerEntity>> FREEZER =
             ENTITY_TYPES.register("freezer", () -> EntityType.Builder.of(FreezerEntity::new, MobCategory.MONSTER)
                     .sized(0.9F, 1.95F).clientTrackingRange(8).updateInterval(3).build(key("freezer")));
-
     public static final DeferredHolder<EntityType<?>, EntityType<ClimberEntity>> CLIMBER =
             ENTITY_TYPES.register("climber", () -> EntityType.Builder.of(ClimberEntity::new, MobCategory.MONSTER)
                     .sized(0.9F, 1.95F).clientTrackingRange(8).updateInterval(3).build(key("climber")));
-
     public static final DeferredHolder<EntityType<?>, EntityType<EntrailEntity>> ENTRAIL =
             ENTITY_TYPES.register("entrail", () -> EntityType.Builder.of(EntrailEntity::new, MobCategory.MONSTER)
                     .sized(0.9F, 1.95F).clientTrackingRange(8).updateInterval(3).build(key("entrail")));
-
     public static final DeferredHolder<EntityType<?>, EntityType<UnbornBabyEntity>> UNBORN_BABY =
             ENTITY_TYPES.register("unborn_baby", () -> EntityType.Builder.of(UnbornBabyEntity::new, MobCategory.MONSTER)
                     .sized(0.9F, 1.95F).clientTrackingRange(8).updateInterval(3).build(key("unborn_baby")));
-
+    public static final DeferredHolder<EntityType<?>, EntityType<FallenLeaderEntity>> FALLEN_LEADER =
+            ENTITY_TYPES.register("fallen_leader", () -> EntityType.Builder.of(FallenLeaderEntity::new, MobCategory.MONSTER)
+                    .sized(0.9F, 1.95F).clientTrackingRange(8).updateInterval(3).build(key("fallen_leader")));
     public static final DeferredHolder<EntityType<?>, EntityType<ZombieChickenEntity>> ZOMBIE_CHICKEN =
             ENTITY_TYPES.register("zombie_chicken", () -> EntityType.Builder.of(ZombieChickenEntity::new, MobCategory.MONSTER)
                     .sized(0.5F, 0.5F).clientTrackingRange(8).updateInterval(3).build(key("zombie_chicken")));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<PortPlaceholderMonster>> FALLEN_LEADER = placeholder("fallen_leader");
     public static final DeferredHolder<EntityType<?>, EntityType<PortPlaceholderMonster>> BLOODY_MAIDEN = placeholder("bloody_maiden");
     public static final DeferredHolder<EntityType<?>, EntityType<PortPlaceholderMonster>> PRESENT = placeholder("present");
     public static final DeferredHolder<EntityType<?>, EntityType<PortPlaceholderMonster>> STRANGER = placeholder("stranger");
@@ -66,21 +65,21 @@ public final class ModEntities {
                 .add(Attributes.FOLLOW_RANGE, 35.0D).add(Attributes.MOVEMENT_SPEED, 0.13D)
                 .add(Attributes.ATTACK_DAMAGE, 16.0D).add(Attributes.ARMOR, 2.0D)
                 .add(Attributes.MAX_HEALTH, 45.0D).build());
-
         event.put(CLIMBER.get(), Monster.createMonsterAttributes()
                 .add(Attributes.MOVEMENT_SPEED, 0.1D).add(Attributes.ATTACK_DAMAGE, 12.0D)
                 .add(Attributes.MAX_HEALTH, 24.0D).build());
-
         event.put(ENTRAIL.get(), Monster.createMonsterAttributes()
                 .add(Attributes.FOLLOW_RANGE, 35.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
                 .add(Attributes.ATTACK_DAMAGE, 10.0D).add(Attributes.ARMOR, 2.0D)
                 .add(Attributes.MAX_HEALTH, 30.0D).build());
-
         event.put(UNBORN_BABY.get(), Monster.createMonsterAttributes()
                 .add(Attributes.FOLLOW_RANGE, 40.0D).add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.ATTACK_DAMAGE, 12.0D).add(Attributes.ARMOR, 2.0D)
                 .add(Attributes.MAX_HEALTH, 40.0D).build());
-
+        event.put(FALLEN_LEADER.get(), Monster.createMonsterAttributes()
+                .add(Attributes.FOLLOW_RANGE, 35.0D).add(Attributes.MOVEMENT_SPEED, 0.1D)
+                .add(Attributes.ATTACK_DAMAGE, 20.0D).add(Attributes.ARMOR, 1.0D)
+                .add(Attributes.MAX_HEALTH, 60.0D).build());
         event.put(ZOMBIE_CHICKEN.get(), Chicken.createAttributes()
                 .add(Attributes.FOLLOW_RANGE, 35.0D).add(Attributes.MOVEMENT_SPEED, 0.26D)
                 .add(Attributes.ATTACK_DAMAGE, 8.0D).add(Attributes.ARMOR, 2.0D)
@@ -88,7 +87,6 @@ public final class ModEntities {
 
         var placeholderAttributes = Monster.createMonsterAttributes().build();
         event.put(MUTANT_STEVE.get(), placeholderAttributes);
-        event.put(FALLEN_LEADER.get(), placeholderAttributes);
         event.put(BLOODY_MAIDEN.get(), placeholderAttributes);
         event.put(PRESENT.get(), placeholderAttributes);
         event.put(STRANGER.get(), placeholderAttributes);
@@ -101,6 +99,7 @@ public final class ModEntities {
         registerCommonMonsterPlacement(event, CLIMBER.get());
         registerCommonMonsterPlacement(event, ENTRAIL.get());
         registerCommonMonsterPlacement(event, UNBORN_BABY.get());
+        registerCommonMonsterPlacement(event, FALLEN_LEADER.get());
         registerCommonMonsterPlacement(event, ZOMBIE_CHICKEN.get());
     }
 
