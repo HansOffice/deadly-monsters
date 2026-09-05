@@ -4,6 +4,7 @@ import com.dmonsters.registry.ModBlocks;
 import com.dmonsters.registry.ModCreativeTabs;
 import com.dmonsters.registry.ModEntities;
 import com.dmonsters.registry.ModItems;
+import com.dmonsters.registry.ModSounds;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -19,6 +20,7 @@ public final class DeadlyMonsters {
         ModBlocks.BLOCKS.register(modEventBus);
         ModEntities.ENTITY_TYPES.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
+        ModSounds.SOUND_EVENTS.register(modEventBus);
         ModCreativeTabs.TABS.register(modEventBus);
 
         modEventBus.addListener(ModEntities::registerAttributes);
