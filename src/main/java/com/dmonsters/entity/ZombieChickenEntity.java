@@ -75,4 +75,9 @@ public final class ZombieChickenEntity extends Chicken {
 
         super.aiStep();
     }
+
+    @Override
+    public int getMaxSpawnClusterSize() {
+        return 1;
+    }
 }
