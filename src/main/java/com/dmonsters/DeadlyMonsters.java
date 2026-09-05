@@ -22,6 +22,7 @@ public final class DeadlyMonsters {
         ModCreativeTabs.TABS.register(modEventBus);
 
         modEventBus.addListener(ModEntities::registerAttributes);
+        modEventBus.addListener(ModEntities::registerSpawnPlacements);
 
         LOGGER.info("Loading Deadly Monsters NeoForge port for Minecraft 26.2");
     }
