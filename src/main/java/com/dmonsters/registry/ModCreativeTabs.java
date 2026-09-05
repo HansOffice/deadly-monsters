@@ -24,9 +24,7 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.ENTRAIL_FLESH.get());
                         output.accept(ModItems.POOPOO_PILL.get());
                         output.accept(ModItems.DAGON.get());
-                        output.accept(ModItems.FLYING_DAGON.get());
                         output.accept(ModItems.SUNLIGHT_DROP.get());
-                        output.accept(ModItems.MOD_ITEM.get());
 
                         output.accept(ModItems.STRENGTHENED_STONE.get());
                         output.accept(ModItems.STRENGTHENED_COBBLESTONE.get());

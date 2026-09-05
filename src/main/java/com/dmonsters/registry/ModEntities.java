@@ -13,11 +13,14 @@ import com.dmonsters.entity.StrangerEntity;
 import com.dmonsters.entity.TopielecEntity;
 import com.dmonsters.entity.UnbornBabyEntity;
 import com.dmonsters.entity.ZombieChickenEntity;
+import com.dmonsters.projectile.DagonProjectile;
+import com.dmonsters.projectile.LuckyEggProjectile;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
@@ -32,7 +35,7 @@ import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** NeoForge 26.2 entity registry retaining all original IDs. */
+/** NeoForge 26.2 entity registry retaining all original monster and projectile IDs. */
 public final class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, DeadlyMonsters.MOD_ID);
 
@@ -48,6 +51,11 @@ public final class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<StrangerEntity>> STRANGER = register("stranger", StrangerEntity::new, 1.0F, 1.5F);
     public static final DeferredHolder<EntityType<?>, EntityType<HauntedCowEntity>> HAUNTED_COW = register("haunted_cow", HauntedCowEntity::new, 0.9F, 1.4F);
     public static final DeferredHolder<EntityType<?>, EntityType<TopielecEntity>> TOPIELEC = register("topielec", TopielecEntity::new, 1.0F, 1.0F);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<LuckyEggProjectile>> LUCKY_EGG_PROJECTILE =
+            registerProjectile("lucky_egg", LuckyEggProjectile::new);
+    public static final DeferredHolder<EntityType<?>, EntityType<DagonProjectile>> DAGON_PROJECTILE =
+            registerProjectile("dagon", DagonProjectile::new);
 
     private ModEntities() {}
 
@@ -108,6 +116,11 @@ public final class ModEntities {
     private static <T extends Mob> DeferredHolder<EntityType<?>, EntityType<T>> register(String name, EntityType.EntityFactory<T> factory, float width, float height) {
         return ENTITY_TYPES.register(name, () -> EntityType.Builder.of(factory, MobCategory.MONSTER)
                 .sized(width, height).clientTrackingRange(8).updateInterval(3).build(key(name)));
+    }
+
+    private static <T extends Entity> DeferredHolder<EntityType<?>, EntityType<T>> registerProjectile(String name, EntityType.EntityFactory<T> factory) {
+        return ENTITY_TYPES.register(name, () -> EntityType.Builder.of(factory, MobCategory.MISC)
+                .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build(key(name)));
     }
 
     private static ResourceKey<EntityType<?>> key(String name) {

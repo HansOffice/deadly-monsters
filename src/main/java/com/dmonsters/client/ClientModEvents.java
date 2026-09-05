@@ -2,6 +2,7 @@ package com.dmonsters.client;
 
 import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.registry.ModEntities;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -41,5 +42,7 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModEntities.TOPIELEC.get(), TopielecRenderer::new);
         event.registerEntityRenderer(ModEntities.UNBORN_BABY.get(), UnbornBabyRenderer::new);
         event.registerEntityRenderer(ModEntities.ZOMBIE_CHICKEN.get(), ZombieChickenRenderer::new);
+        event.registerEntityRenderer(ModEntities.LUCKY_EGG_PROJECTILE.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(ModEntities.DAGON_PROJECTILE.get(), ThrownItemRenderer::new);
     }
 }

@@ -1,14 +1,23 @@
 package com.dmonsters.registry;
 
 import com.dmonsters.DeadlyMonsters;
+import com.dmonsters.item.BloodyMaidenHeartItem;
+import com.dmonsters.item.DagonItem;
+import com.dmonsters.item.EntrailFleshItem;
+import com.dmonsters.item.FallenLeaderSpineItem;
+import com.dmonsters.item.HarpoonItem;
+import com.dmonsters.item.LuckyEggItem;
+import com.dmonsters.item.PoopooPillItem;
 import com.dmonsters.item.RebarItem;
+import com.dmonsters.item.SunlightDropItem;
+import com.dmonsters.item.UnbornBabyEyeItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** Item registry scaffold retaining the original 1.12.2 registry names. */
+/** Item registry retaining the original 1.12.2 registry names. */
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(DeadlyMonsters.MOD_ID);
 
@@ -24,15 +33,17 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> PRESENT_BOX = ITEMS.registerSimpleBlockItem("present_box", ModBlocks.PRESENT_BOX);
 
     public static final DeferredItem<RebarItem> REBAR = ITEMS.registerItem("rebar", RebarItem::new);
-    public static final DeferredItem<Item> LUCKY_EGG = simple("lucky_egg");
-    public static final DeferredItem<Item> UNBORN_BABY_EYE = simple("unborn_baby_eye");
-    public static final DeferredItem<Item> BLOODY_MAIDEN_HEART = simple("bloody_maiden_heart");
-    public static final DeferredItem<Item> FALLEN_LEADER_SPINE = simple("fallen_leader_spine");
-    public static final DeferredItem<Item> ENTRAIL_FLESH = simple("entrail_flesh");
-    public static final DeferredItem<Item> POOPOO_PILL = simple("poopoo_pill");
-    public static final DeferredItem<Item> DAGON = simple("dagon");
+    public static final DeferredItem<LuckyEggItem> LUCKY_EGG = ITEMS.registerItem("lucky_egg", LuckyEggItem::new);
+    public static final DeferredItem<UnbornBabyEyeItem> UNBORN_BABY_EYE = ITEMS.registerItem("unborn_baby_eye", UnbornBabyEyeItem::new);
+    public static final DeferredItem<BloodyMaidenHeartItem> BLOODY_MAIDEN_HEART = ITEMS.registerItem(
+            "bloody_maiden_heart", properties -> new BloodyMaidenHeartItem(properties.durability(11)));
+    public static final DeferredItem<FallenLeaderSpineItem> FALLEN_LEADER_SPINE = ITEMS.registerItem(
+            "fallen_leader_spine", properties -> new FallenLeaderSpineItem(properties.stacksTo(1)));
+    public static final DeferredItem<EntrailFleshItem> ENTRAIL_FLESH = ITEMS.registerItem("entrail_flesh", EntrailFleshItem::new);
+    public static final DeferredItem<PoopooPillItem> POOPOO_PILL = ITEMS.registerItem("poopoo_pill", PoopooPillItem::new);
+    public static final DeferredItem<DagonItem> DAGON = ITEMS.registerItem("dagon", DagonItem::new);
     public static final DeferredItem<Item> FLYING_DAGON = simple("flying_dagon");
-    public static final DeferredItem<Item> SUNLIGHT_DROP = simple("sunlight_drop");
+    public static final DeferredItem<SunlightDropItem> SUNLIGHT_DROP = ITEMS.registerItem("sunlight_drop", SunlightDropItem::new);
     public static final DeferredItem<Item> MOD_ITEM = simple("mod_item");
 
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_UNBORN_BABY = spawnEgg("mob_spawner_item_unborn_baby", ModEntities.UNBORN_BABY);
@@ -48,10 +59,14 @@ public final class ModItems {
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_HAUNTED_COW = spawnEgg("mob_spawner_item_haunted_cow", ModEntities.HAUNTED_COW);
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_TOPIELEC = spawnEgg("mob_spawner_item_topielec", ModEntities.TOPIELEC);
 
-    public static final DeferredItem<Item> HARPOON_STONE = simple("harpoon_stone");
-    public static final DeferredItem<Item> HARPOON_IRON = simple("harpoon_iron");
-    public static final DeferredItem<Item> HARPOON_DIAMOND = simple("harpoon_diamond");
-    public static final DeferredItem<Item> HARPOON_OBSIDIAN = simple("harpoon_obsidian");
+    public static final DeferredItem<HarpoonItem> HARPOON_STONE = ITEMS.registerItem(
+            "harpoon_stone", properties -> new HarpoonItem(properties.durability(10), 3.0F));
+    public static final DeferredItem<HarpoonItem> HARPOON_IRON = ITEMS.registerItem(
+            "harpoon_iron", properties -> new HarpoonItem(properties.durability(40), 6.0F));
+    public static final DeferredItem<HarpoonItem> HARPOON_DIAMOND = ITEMS.registerItem(
+            "harpoon_diamond", properties -> new HarpoonItem(properties.durability(160), 10.0F));
+    public static final DeferredItem<HarpoonItem> HARPOON_OBSIDIAN = ITEMS.registerItem(
+            "harpoon_obsidian", properties -> new HarpoonItem(properties.durability(80), 6.0F));
 
     private ModItems() {}
 
