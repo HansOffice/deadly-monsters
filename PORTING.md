@@ -1,123 +1,118 @@
-# Deadly Monsters 1.12.2 -> NeoForge 26.2 Port Plan
+# Deadly Monsters 1.12.2 -> NeoForge 26.2 Port
 
-## Baseline
+## Port baseline
 
-The upstream project targets Forge 1.12.2 and uses legacy FML lifecycle events, sided proxies, RegistryEvent registration, legacy entity rendering, and several 1.12-era optional/integration dependencies.
+The upstream mod targets Forge 1.12.2. This branch is a native rewrite for Minecraft 26.2 / NeoForge rather than a source-compatibility layer. Original `dmonsters` registry IDs are preserved wherever the content still exists.
 
-The 26.2 branch is intentionally a native NeoForge rewrite around stable registry IDs rather than a source-level compatibility shim.
+Target toolchain:
 
-## Phase 1 — Project and registries
+- Minecraft 26.2
+- NeoForge 26.2.0.75
+- ModDevGradle 2.0.146
+- Gradle 9.2.1
+- Java 25
 
-- [x] Java 25 / Minecraft 26.2 / NeoForge 26.2 project
-- [x] `dmonsters` mod metadata
-- [x] Block registry IDs
-- [x] Item registry IDs
-- [x] Creative tab
-- [x] Import original binary textures, sounds, logo and credits into modern resource paths
-- [x] Modern block/item models for Strengthened Stone, Strengthened Cobblestone and Rebar
-- [x] Entity type registry IDs for all 12 original monsters
-- [x] Sound event registrations from the original 1.12.2 `ModSounds`
-- [ ] Data components/config equivalents where needed
+## Completion status
 
-The entity registry currently reserves all original IDs. Zombie Chicken, Freezer and Climber now have real 26.2 implementations; the other nine entries use non-spawning, no-render migration placeholders until their individual ports replace them without changing registry names.
+The code/resource migration is complete. Actual gameplay and deployment validation is owned by the project maintainer and is listed in `TESTING.md`.
 
-## Phase 2 — Simple gameplay content
+Completed systems:
 
-- [x] Strengthened Stone registry/properties
-- [x] Strengthened Cobblestone registry/properties
-- [x] Rebar stone/cobblestone strengthening interaction
-- [ ] Strengthened block break/drop and sneak-revert behavior
-- [ ] Barbed Wire
-- [ ] Mesh Fence / Pole
-- [ ] Dump
-- [ ] Soul Eye
-- [ ] Present / Christmas blocks
-- [ ] Harpoons and projectiles
-- [ ] Remaining consumables/drops
+- [x] block, item, entity, sound, creative-tab and custom biome-modifier registration
+- [x] all original textures, sounds, logo and credits
+- [x] modern blockstates, block models, item models and 26.2 item definitions
+- [x] all original gameplay blocks and interactions
+- [x] all original functional items and projectile behavior
+- [x] all 12 original monsters as real 26.2 entities
+- [x] all entity models, render states and renderers
+- [x] spawn eggs for all original monsters
+- [x] natural spawn placement and biome modifiers
+- [x] original default spawn rates and group sizes
+- [x] entity and block loot tables
+- [x] all 17 original recipes
+- [x] common configuration and original default multipliers
+- [x] special Mutant Steve, Unborn Baby, Haunted Cow and Topielec options
+- [x] undead entity classification for the original undead monsters
+- [x] current Minecraft world-clock handling for time-changing mechanics
 
-## Phase 3 — Monsters
+## Monsters
 
-Original entity IDs to migrate:
+All 12 original monster IDs are implemented:
 
-- unborn_baby
-- climber
-- entrail
-- freezer
-- mutant_steve
-- fallen_leader
-- bloody_maiden
-- zombie_chicken
-- present
-- stranger
-- haunted_cow
-- topielec
+- `mutant_steve` — hostile melee monster; optional environment-breaking attack; daylight burning.
+- `freezer` — applies Slowness, freezes water/places snow, switches idle/aggressive appearance.
+- `climber` — wall climbing, web/poison immunity and hard-difficulty random permanent buffs.
+- `entrail` — slow-fall movement and slime spawning when damaged by non-fire damage.
+- `unborn_baby` — Slowness on hit and optional Blindness behavior.
+- `fallen_leader` — heals itself after successful melee hits.
+- `bloody_maiden` — first-hit trigger state followed by the original lethal follow-up behavior.
+- `zombie_chicken` — hostile monster using the original chicken-like model; attacks players/chickens and converts normal chickens without inheriting vanilla egg-laying/breeding behavior.
+- `present` — exposed-surface spawning and the original cage attack, including the original loop's two Creepers.
+- `stranger` — player avoidance/flee behavior with original attack/impact audio behavior.
+- `haunted_cow` — hostile cow-like monster and wrong-weapon daytime clock-changing mechanic.
+- `topielec` — underwater monster that drags nearby players toward deeper water and returns to water when stranded.
 
-For each entity: EntityType -> attributes -> goals -> spawn rules -> drops -> sounds -> renderer/model -> client registration -> spawn item compatibility.
+Natural spawning uses a custom config-aware NeoForge biome modifier so each monster's common-config `spawnRate` is applied when biome spawn lists are built.
 
-### Zombie Chicken
+## Blocks
 
-- [x] `dmonsters:zombie_chicken` EntityType
-- [x] 16 health / 8 attack / 2 armor / 0.26 movement / 35 follow range
-- [x] Hostile player and chicken targeting
-- [x] Chicken-to-Zombie-Chicken conversion on successful melee attack
-- [x] Direct-daylight burning behavior
-- [x] Functional `mob_spawner_item_zombie_chicken` SpawnEggItem
-- [x] Client renderer registration
-- [x] Original Zombie Chicken texture
-- [x] Original custom 32x32 model geometry ported to the modern model-layer API
-- [x] Original Lucky Egg loot table
-- [x] Natural Overworld spawning with default weight 12 / group 1-8 behavior
-- [x] Original per-cluster spawn cap of 1
-- [x] Preserve original lack of a registered Zombie Chicken-specific SoundEvent binding
-- [ ] Configurable spawn/health/strength/speed multipliers after config-system migration
+Ported block behavior includes:
 
-### Freezer
+- strengthened stone/cobblestone: original hardness/resistance, Rebar recovery and sneak-revert behavior;
+- barbed wire: support requirement, damage and strong horizontal slowing;
+- mesh fence/pole: current fence connectivity while retaining the original eight-block pole-anchor rule;
+- Dump: age/model state and crop/sapling/bonemealable growth utility;
+- Soul Eye: sleeping/awaking/awake cycle, nearby mob consumption and special Villager/iron drops;
+- Christmas Tree: periodic Present Box generation;
+- Present Box: original four reward/hazard tiers;
+- Present Block: hidden temporary cage block with color state, timed disappearance and no drops.
 
-- [x] `dmonsters:freezer` EntityType replacing the migration placeholder
-- [x] 45 health / 16 attack / 2 armor / 0.13 movement / 35 follow range
-- [x] Player-targeting melee AI and 600-tick Slowness on successful attacks
-- [x] Original attack / ambient / hurt / death SoundEvents
-- [x] Direct-daylight burning behavior
-- [x] 40-tick environment-freezing cycle: water to ice and survivable snow placement
-- [x] Aggressive-state freeze radius expansion
-- [x] Client snow particle effect
-- [x] Original 64x64 custom model geometry ported to the modern model-layer API
-- [x] Original idle / angry texture switching via client render state
-- [x] Functional `mob_spawner_item_freezer` SpawnEggItem and item model
-- [x] Natural Overworld spawning with default weight 8 / group size 1
-- [x] Original per-cluster spawn cap of 1
-- [x] Freezer loot table migrated to the modern loot format
-- [ ] Configurable spawn/health/strength/speed multipliers after config-system migration
+## Items and projectiles
 
-### Climber
+Ported behavior includes Rebar, four Harpoons, Lucky Egg, Dagon, Unborn Baby Eye, Bloody Maiden Heart, Fallen Leader Spine, Entrail Flesh, PooPoo Pill and Sunlight Drop.
 
-- [x] `dmonsters:climber` EntityType replacing the migration placeholder
-- [x] 24 health / 12 attack / 0.1 movement
-- [x] Wall-climber navigation and synchronized horizontal-collision climbing state
-- [x] Leap / melee AI, retaliation, player targeting and iron-golem targeting
-- [x] Poison immunity and cobweb movement immunity
-- [x] Hard-difficulty random permanent Speed / Strength / Regeneration / Invisibility effect behavior
-- [x] Direct-daylight burning behavior
-- [x] Original attack / ambient / hurt / death SoundEvents and spider step sound
-- [x] Original 64x64 model geometry and attack/walk animation ported to the modern model-layer API
-- [x] Original Climber texture and dedicated renderer
-- [x] Functional `mob_spawner_item_climber` SpawnEggItem and item model
-- [x] Natural Overworld spawning with default weight 8 / group 1-5 behavior
-- [x] Original per-cluster spawn cap of 5
-- [x] Climber loot table migrated to modern items/loot functions (`minecraft:dye` metadata 0 -> `minecraft:ink_sac`)
-- [x] Avoid importing unrelated modern Spider behavior such as skeleton jockeys and armadillo avoidance
-- [ ] Configurable spawn/health/strength/speed multipliers after config-system migration
+Important behavior-preservation details:
 
-## Phase 4 — Systems
+- Harpoon fishing drops Cod because the 1.12.2 implementation discarded the selected fish metadata before spawning the item; this matches the old observable result rather than its apparent intent.
+- Lucky Egg preserves the original chained random calls/outcomes and one-chicken result, plus egg-crack item particles.
+- block-changing utility items use current interaction permission checks.
 
-- [ ] Networking replacement for old packet classes
-- [ ] Configuration migration
-- [ ] Spawn configuration
-- [ ] Recipes and loot tables
-- [ ] Remaining models/blockstates and data migration
-- [ ] Dedicated server verification
-- [ ] Client verification
+## Configuration
 
-## Legacy dependencies
+Preserved configuration concepts:
 
-The original build references Mantle, Tinkers' Construct, CoroUtil and Hostile Worlds Invasions. They are not blindly copied into the 26.2 build. Each integration will be evaluated independently and either replaced with a current API, made optional, or removed where it is not part of core Deadly Monsters behavior.
+- global health/strength/speed multipliers;
+- per-monster health/strength/speed multipliers;
+- per-monster natural-spawn rate and disabled switch;
+- Mutant Steve `breakBlocks`;
+- Unborn Baby `blindness`;
+- Topielec `searchDistance` and `harpoonOnly`;
+- Haunted Cow `validWeapons` and `disableTimeChange`.
+
+Spawn-rate changes are consumed while biome spawn lists are constructed; restart the world/server after changing spawn rate or disabled settings.
+
+## Intentional modernizations / retired integrations
+
+### World clock
+
+Forge 1.12.2 used a configurable integer `dayLengthTicks` and direct world-time mutation. Minecraft 26.2 uses data-driven world clocks/timelines. The numeric `dayLengthTicks` config is therefore retired; Sunlight Drop and Haunted Cow target the active Overworld clock's day/night markers instead of assuming a custom integer day length.
+
+### Hostile Worlds Invasions
+
+The old optional Hostile Worlds Invasions check (`disableTimeChangeInvasions`) is not carried forward because this port has no 26.2 dependency or integration contract for that legacy mod.
+
+### Tinkers' Construct / Mantle / CoroUtil
+
+The old build-time/runtime integrations are not required by the core port. Haunted Cow still supports configurable item registry IDs and standard sword/bow behavior without hard-linking obsolete APIs.
+
+### Topielec scan cadence
+
+The 1.12.2 deep-water search timer resets in a way that makes the expensive search run effectively every tick. The 26.2 port preserves the visible drag-to-deeper-water behavior but refreshes the search on a bounded cadence instead of reproducing that performance bug.
+
+### Legacy metadata
+
+Removed metadata-based items/blocks are represented by their current dedicated IDs, including fish variants, clay balls, firework rockets, dyes and stained glass.
+
+## Validation boundary
+
+Repository-side completion means source/resources are migrated and the project builds/packages against the target toolchain. Interactive checks such as AI feel, model alignment, particles, natural-spawn distribution, client/server play and balance are intentionally left to the maintainer's runtime pass in `TESTING.md`.
