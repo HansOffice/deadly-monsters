@@ -1,6 +1,7 @@
 package com.dmonsters.registry;
 
 import com.dmonsters.DeadlyMonsters;
+import com.dmonsters.item.RebarItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -26,7 +27,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> PRESENT_BOX = ITEMS.registerSimpleBlockItem("present_box", ModBlocks.PRESENT_BOX);
 
     // Original standalone items
-    public static final DeferredItem<Item> REBAR = simple("rebar");
+    public static final DeferredItem<RebarItem> REBAR = ITEMS.registerItem("rebar", RebarItem::new);
     public static final DeferredItem<Item> LUCKY_EGG = simple("lucky_egg");
     public static final DeferredItem<Item> UNBORN_BABY_EYE = simple("unborn_baby_eye");
     public static final DeferredItem<Item> BLOODY_MAIDEN_HEART = simple("bloody_maiden_heart");
