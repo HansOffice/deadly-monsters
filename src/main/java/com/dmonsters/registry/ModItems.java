@@ -4,6 +4,7 @@ import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.item.RebarItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -46,7 +47,9 @@ public final class ModItems {
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_MUTANT_STEVE = simple("mob_spawner_item_mutant_steve");
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_FALLEN_LEADER = simple("mob_spawner_item_fallen_leader");
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_BLOODY_MAIDEN = simple("mob_spawner_item_bloody_maiden");
-    public static final DeferredItem<Item> MOB_SPAWNER_ITEM_ZOMBIE_CHICKEN = simple("mob_spawner_item_zombie_chicken");
+    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_ZOMBIE_CHICKEN = ITEMS.registerItem(
+            "mob_spawner_item_zombie_chicken",
+            properties -> new SpawnEggItem(properties.spawnEgg(ModEntities.ZOMBIE_CHICKEN.get())));
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_PRESENT = simple("mob_spawner_item_present");
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_STRANGER = simple("mob_spawner_item_stranger");
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_HAUNTED_COW = simple("mob_spawner_item_haunted_cow");
