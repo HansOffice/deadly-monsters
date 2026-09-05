@@ -37,7 +37,7 @@ public final class ZombieChickenEntity extends Chicken {
 
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<Chicken>(this, Chicken.class, true,
-                target -> !(target instanceof ZombieChickenEntity)));
+                (target, level) -> !(target instanceof ZombieChickenEntity)));
     }
 
     @Override
