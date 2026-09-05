@@ -32,11 +32,15 @@ public final class MeshFenceBlock extends FenceBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        if (!this.hasPolePath(context.getLevel(), context.getClickedPos())) {
+        BlockGetter level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        if (!this.hasPolePath(level, pos)) {
             Player player = context.getPlayer();
             if (player != null && !context.getLevel().isClientSide()) {
-                player.sendSystemMessage(
-                        Component.translatable("msg.dmonsters.mesh_fence.too_far_from_pole").withStyle(ChatFormatting.DARK_RED));
+                String messageKey = this.hasAdjacentFenceOrPole(level, pos)
+                        ? "msg.dmonsters.mesh_fence.too_far_from_pole"
+                        : "msg.dmonsters.mesh_fence.error";
+                player.sendSystemMessage(Component.translatable(messageKey).withStyle(ChatFormatting.DARK_RED));
             }
             return null;
         }
@@ -65,6 +69,16 @@ public final class MeshFenceBlock extends FenceBlock {
         if (!this.hasPolePath(level, pos)) {
             level.destroyBlock(pos, true);
         }
+    }
+
+    private boolean hasAdjacentFenceOrPole(BlockGetter level, BlockPos pos) {
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockState state = level.getBlockState(pos.relative(direction));
+            if (state.is(ModBlocks.MESH_FENCE.get()) || state.is(ModBlocks.MESH_FENCE_POLE.get())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean hasPolePath(BlockGetter level, BlockPos pos) {
