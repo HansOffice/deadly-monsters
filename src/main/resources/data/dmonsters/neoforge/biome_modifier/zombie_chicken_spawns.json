@@ -5,6 +5,6 @@
     "type": "dmonsters:zombie_chicken",
     "maxCount": 8,
     "minCount": 1,
-    "weight": 1
+    "weight": 12
   }
 }
