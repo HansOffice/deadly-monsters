@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SaplingBlock;
@@ -17,7 +18,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.level.BlockGetter;
 
 /** Native 26.2 port of the original Dump block and sapling-growth interaction. */
 public final class DumpBlock extends Block {
@@ -83,7 +83,7 @@ public final class DumpBlock extends Block {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         level.addParticle(
-                ParticleTypes.EFFECT,
+                ParticleTypes.POOF,
                 pos.getX() + 0.25D + random.nextDouble() * 0.5D,
                 pos.getY() + random.nextDouble() * 0.4D,
                 pos.getZ() + 0.25D + random.nextDouble() * 0.5D,
