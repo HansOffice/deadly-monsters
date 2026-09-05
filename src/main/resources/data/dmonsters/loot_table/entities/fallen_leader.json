@@ -4,43 +4,22 @@
     {
       "bonus_rolls": 0.0,
       "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        },
+        {"condition": "minecraft:killed_by_player"},
         {
           "condition": "minecraft:random_chance_with_enchanted_bonus",
           "enchantment": "minecraft:looting",
           "unenchanted_chance": 0.75,
-          "enchanted_chance": {
-            "type": "minecraft:linear",
-            "base": 1.75,
-            "per_level_above_first": 1.0
-          }
+          "enchanted_chance": {"type": "minecraft:linear", "base": 1.0, "per_level_above_first": 0.0}
         }
       ],
       "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "dmonsters:fallen_leader_spine",
-          "weight": 2
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:iron_bars",
-          "weight": 5
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:obsidian",
-          "weight": 10
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:rail",
-          "weight": 10
-        }
+        {"type": "minecraft:item", "name": "dmonsters:fallen_leader_spine", "weight": 2},
+        {"type": "minecraft:item", "name": "minecraft:iron_bars", "weight": 5},
+        {"type": "minecraft:item", "name": "minecraft:obsidian", "weight": 10},
+        {"type": "minecraft:item", "name": "minecraft:rail", "weight": 10}
       ],
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "dmonsters:entities/fallen_leader"
 }
