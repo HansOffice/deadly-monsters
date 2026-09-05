@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [" I ", "IRI", " B "],
+  "key": {"I": "minecraft:iron_ingot", "R": "minecraft:redstone", "B": "minecraft:bone"},
+  "result": {"id": "dmonsters:dagon", "count": 1}
+}

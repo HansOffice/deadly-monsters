@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["W", "C", "P"],
+  "key": {"W": "minecraft:wheat", "C": "minecraft:green_dye", "P": "minecraft:paper"},
+  "result": {"id": "dmonsters:poopoo_pill", "count": 1}
+}

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": ["IRI", "IRI"],
+  "key": {"I": "minecraft:iron_ingot", "R": "dmonsters:rebar"},
+  "result": {"id": "dmonsters:mesh_fence", "count": 8}
+}

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [" D ", "DSD", " P "],
+  "key": {"D": "minecraft:diamond", "S": "minecraft:spruce_sapling", "P": "minecraft:flower_pot"},
+  "result": {"id": "dmonsters:christmas_tree", "count": 1}
+}

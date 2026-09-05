@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["F", "I", "F"],
+  "key": {"F": "minecraft:flint", "I": "minecraft:iron_bars"},
+  "result": {"id": "dmonsters:barbed_wire", "count": 4}
+}

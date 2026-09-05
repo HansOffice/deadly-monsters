@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": ["dmonsters:sunlight_drop"],
+  "result": {"id": "minecraft:glowstone", "count": 2}
+}
