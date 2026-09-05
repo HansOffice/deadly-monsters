@@ -1,10 +1,1 @@
-{
-  "type": "neoforge:add_spawns",
-  "biomes": "#minecraft:is_overworld",
-  "spawners": {
-    "type": "dmonsters:freezer",
-    "maxCount": 1,
-    "minCount": 1,
-    "weight": 8
-  }
-}
+{"type":"dmonsters:config_spawns","biomes":"#minecraft:is_overworld","spawner":{"type":"dmonsters:freezer","minCount":1,"maxCount":1}}
