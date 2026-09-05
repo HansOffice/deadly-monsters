@@ -9,12 +9,11 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 /** Modern model-layer port of the original Stranger model. */
-public final class StrangerModel extends EntityModel<LivingEntityRenderState> {
+public final class StrangerModel extends EntityModel<StrangerRenderState> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "stranger"), "main");
 
@@ -58,7 +57,7 @@ public final class StrangerModel extends EntityModel<LivingEntityRenderState> {
     }
 
     @Override
-    public void setupAnim(LivingEntityRenderState state) {
+    public void setupAnim(StrangerRenderState state) {
         super.setupAnim(state);
         float attack2 = Mth.sin(state.attackTime * (float) Math.PI);
         float attack = Mth.sin((1.0F - (1.0F - state.attackTime) * (1.0F - state.attackTime)) * (float) Math.PI);

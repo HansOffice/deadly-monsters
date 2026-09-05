@@ -13,6 +13,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -67,7 +68,12 @@ public final class MutantSteveEntity extends Monster {
         }
         if (target instanceof LivingEntity living) {
             this.playSound(ModSounds.MUTANT_ATTACK.get(), 1.0F, 1.0F);
-            living.knockback(2.0D, target.getX() - this.getX(), target.getZ() - this.getZ());
+            living.knockback(
+                    2.0D,
+                    target.getX() - this.getX(),
+                    target.getZ() - this.getZ(),
+                    level.damageSources().mobAttack(this),
+                    (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
         }
         return true;
     }

@@ -3,6 +3,8 @@ package com.dmonsters.entity;
 import com.dmonsters.registry.ModBlocks;
 import com.dmonsters.registry.ModSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -91,10 +93,14 @@ public final class PresentEntity extends Monster {
         if (level.getBlockState(lightPos).isAir()) {
             level.setBlockAndUpdate(lightPos, Blocks.TORCH.defaultBlockState());
         }
-        Creeper creeper = EntityType.CREEPER.create(level, EntitySpawnReason.TRIGGERED);
-        if (creeper != null) {
-            creeper.snapTo(lightPos.getX() + 0.5D, lightPos.getY(), lightPos.getZ() + 0.5D, 0.0F, 0.0F);
-            level.addFreshEntity(creeper);
+
+        EntityType<?> creeperType = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("creeper"));
+        if (creeperType != null) {
+            Entity spawned = creeperType.create(level, EntitySpawnReason.TRIGGERED);
+            if (spawned instanceof Creeper creeper) {
+                creeper.snapTo(lightPos.getX() + 0.5D, lightPos.getY(), lightPos.getZ() + 0.5D, 0.0F, 0.0F);
+                level.addFreshEntity(creeper);
+            }
         }
         player.teleportTo(origin.getX() + 0.5D, baseY + 1.0D, origin.getZ() + 0.5D);
     }
