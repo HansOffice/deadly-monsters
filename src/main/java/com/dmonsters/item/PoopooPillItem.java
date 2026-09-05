@@ -1,10 +1,12 @@
 package com.dmonsters.item;
 
 import com.dmonsters.registry.ModBlocks;
+import com.dmonsters.registry.ModSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -52,6 +54,8 @@ public final class PoopooPillItem extends Item {
         player.getFoodData().setFoodLevel(2);
         player.getFoodData().setSaturation(0.0F);
         serverLevel.setBlockAndUpdate(player.blockPosition(), ModBlocks.DUMP.get().defaultBlockState());
+        serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+                ModSounds.DUMP_MAKE.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         serverLevel.sendParticles(
                 ParticleTypes.POOF,
                 player.getX(), player.getY() + 0.5D, player.getZ(),

@@ -1,5 +1,6 @@
 package com.dmonsters.entity;
 
+import com.dmonsters.config.DeadlyMonstersConfig;
 import com.dmonsters.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -140,7 +141,8 @@ public final class MutantSteveEntity extends Monster {
             this.mutant.setArmsRaised(this.raiseArmTicks >= 5 && this.raiseArmTicks < 10);
             if (++this.breakTicks >= 20 && !this.mutant.isInWater()) {
                 this.breakTicks = 0;
-                if (this.mutant.level() instanceof ServerLevel level
+                if (DeadlyMonstersConfig.VALUES.mutantSteveBreakBlocks.get()
+                        && this.mutant.level() instanceof ServerLevel level
                         && level.getGameRules().get(GameRules.MOB_GRIEFING)) {
                     boolean destroyed = this.destroyAround(level, 0, 0.25F);
                     destroyed |= this.destroyAround(level, 1, 0.5F);

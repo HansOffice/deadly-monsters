@@ -1,9 +1,12 @@
 package com.dmonsters.item;
 
+import com.dmonsters.registry.ModSounds;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.clock.ClockTimeMarkers;
@@ -38,6 +41,12 @@ public final class SunlightDropItem extends Item {
             Holder<WorldClock> overworldClock = clocks.getOrThrow(WorldClocks.OVERWORLD);
             overworld.clockManager().moveToTimeMarker(overworldClock, ClockTimeMarkers.DAY);
         }
+
+        playerLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+                ModSounds.SUNLIGHTDROP_USE.get(), SoundSource.AMBIENT, 1.0F, 1.0F);
+        playerLevel.sendParticles(ParticleTypes.ENCHANT,
+                player.getX(), player.getY() + 1.5D, player.getZ(),
+                32, 1.0D, 1.0D, 1.0D, 0.02D);
 
         ItemStack stack = player.getItemInHand(hand);
         stack.shrink(1);

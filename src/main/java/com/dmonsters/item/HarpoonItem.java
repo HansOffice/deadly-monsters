@@ -1,8 +1,12 @@
 package com.dmonsters.item;
 
 import java.util.List;
+import java.util.function.Consumer;
 
+import com.dmonsters.config.DeadlyMonstersConfig;
 import com.dmonsters.entity.TopielecEntity;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -11,6 +15,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 
 /** Reusable fishing/Topielec weapon matching the four original harpoon tiers. */
@@ -49,5 +55,18 @@ public final class HarpoonItem extends Item {
             target.hurtServer(level, target.damageSources().generic(), damage);
         }
         stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
+    }
+
+    @Override
+    public void appendHoverText(
+            ItemStack stack,
+            Item.TooltipContext context,
+            TooltipDisplay display,
+            Consumer<Component> tooltip,
+            TooltipFlag flag) {
+        tooltip.accept(Component.translatable("item.dmonsters.add_information.harpoon_1").withStyle(ChatFormatting.GRAY));
+        if (DeadlyMonstersConfig.VALUES.topielecHarpoonOnly.get()) {
+            tooltip.accept(Component.translatable("item.dmonsters.add_information.harpoon_2").withStyle(ChatFormatting.GRAY));
+        }
     }
 }

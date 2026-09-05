@@ -2,9 +2,11 @@ package com.dmonsters.block;
 
 import java.util.List;
 
+import com.dmonsters.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.Mob;
@@ -58,6 +60,7 @@ public final class SoulEyeBlock extends Block {
         AABB area = new AABB(
                 pos.getX() - 4.0D, pos.getY(), pos.getZ() - 4.0D,
                 pos.getX() + 4.0D, pos.getY() + 4.0D, pos.getZ() + 4.0D);
+        boolean consumed = false;
         for (Mob mob : level.getEntitiesOfClass(Mob.class, area)) {
             if (random.nextFloat() <= 0.5F) {
                 mob.spawnAtLocation(level, SOUL_DROPS.get(random.nextInt(SOUL_DROPS.size())));
@@ -67,6 +70,14 @@ public final class SoulEyeBlock extends Block {
                     mob.getX(), mob.getY(0.5D), mob.getZ(),
                     12, 0.25D, 0.35D, 0.25D, 0.015D);
             mob.discard();
+            consumed = true;
+        }
+        if (consumed) {
+            level.playSound(null, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                    ModSounds.BLOCK_SOULEYE_KILL.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.sendParticles(ParticleTypes.FLAME,
+                    pos.getX() + 0.5D, pos.getY() + 0.75D, pos.getZ() + 0.5D,
+                    15, 0.45D, 0.5D, 0.45D, 0.025D);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.dmonsters.entity;
 
+import com.dmonsters.config.DeadlyMonstersConfig;
 import com.dmonsters.registry.ModSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -13,7 +14,6 @@ import net.minecraft.world.phys.Vec3;
 
 /** Native 26.2 port of the original Topielec water monster. */
 public final class TopielecEntity extends Monster {
-    private static final double SEARCH_DISTANCE = 16.0D;
     private Vec3 movementVector = Vec3.ZERO;
     private Vec3 lastWaterPosition;
 
@@ -44,15 +44,16 @@ public final class TopielecEntity extends Monster {
     }
 
     private void refreshPlayerTarget(ServerLevel level) {
+        double searchDistance = DeadlyMonstersConfig.VALUES.topielecSearchDistance.get();
         LivingEntity target = this.getTarget();
         if (target instanceof Player player
                 && player.isAlive()
                 && !player.isSpectator()
                 && !player.isCreative()
-                && player.distanceToSqr(this) <= SEARCH_DISTANCE * SEARCH_DISTANCE) {
+                && player.distanceToSqr(this) <= searchDistance * searchDistance) {
             return;
         }
-        Player nearest = level.getNearestPlayer(this, SEARCH_DISTANCE);
+        Player nearest = level.getNearestPlayer(this, searchDistance);
         if (nearest != null && !nearest.isSpectator() && !nearest.isCreative()) {
             this.setTarget(nearest);
         } else {

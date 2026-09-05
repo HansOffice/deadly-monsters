@@ -1,7 +1,9 @@
 package com.dmonsters.item;
 
+import com.dmonsters.registry.ModSounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
@@ -28,6 +30,8 @@ public final class BloodyMaidenHeartItem extends Item {
                 context.getPlayer().isShiftKeyDown()
                         ? Blocks.WATER.defaultBlockState()
                         : Blocks.LAVA.defaultBlockState());
+        level.playSound(null, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                ModSounds.MAIDEN_ATTACK.get(), SoundSource.BLOCKS, 0.25F, 1.0F);
         level.sendParticles(ParticleTypes.POOF, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
                 12, 0.35D, 0.35D, 0.35D, 0.02D);
         context.getItemInHand().hurtAndBreak(1, context.getPlayer(), context.getHand().asEquipmentSlot());

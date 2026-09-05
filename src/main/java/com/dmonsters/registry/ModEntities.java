@@ -1,6 +1,7 @@
 package com.dmonsters.registry;
 
 import com.dmonsters.DeadlyMonsters;
+import com.dmonsters.config.DeadlyMonstersConfig;
 import com.dmonsters.entity.BloodyMaidenEntity;
 import com.dmonsters.entity.ClimberEntity;
 import com.dmonsters.entity.EntrailEntity;
@@ -91,16 +92,19 @@ public final class ModEntities {
         registerCommonMonsterPlacement(event, STRANGER.get());
 
         event.register(HAUNTED_COW.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (type, level, reason, pos, random) -> !level.getBiome(pos).is(Biomes.MUSHROOM_FIELDS)
+                (type, level, reason, pos, random) -> DeadlyMonstersConfig.naturalSpawnsEnabled(type)
+                        && !level.getBiome(pos).is(Biomes.MUSHROOM_FIELDS)
                         && Monster.checkAnyLightMonsterSpawnRules(type, level, reason, pos, random),
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
 
         event.register(PRESENT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (type, level, reason, pos, random) -> Monster.checkSurfaceMonstersSpawnRules(type, level, reason, pos, random),
+                (type, level, reason, pos, random) -> DeadlyMonstersConfig.naturalSpawnsEnabled(type)
+                        && Monster.checkSurfaceMonstersSpawnRules(type, level, reason, pos, random),
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
 
         event.register(TOPIELEC.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (type, level, reason, pos, random) -> pos.getY() > 45 && pos.getY() < level.getSeaLevel()
+                (type, level, reason, pos, random) -> DeadlyMonstersConfig.naturalSpawnsEnabled(type)
+                        && pos.getY() > 45 && pos.getY() < level.getSeaLevel()
                         && level.getFluidState(pos).is(FluidTags.WATER)
                         && Monster.checkAnyLightMonsterSpawnRules(type, level, reason, pos, random),
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
@@ -108,7 +112,8 @@ public final class ModEntities {
 
     private static <T extends Mob> void registerCommonMonsterPlacement(RegisterSpawnPlacementsEvent event, EntityType<T> type) {
         event.register(type, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (entityType, level, spawnReason, pos, random) -> !level.getBiome(pos).is(Biomes.MUSHROOM_FIELDS)
+                (entityType, level, spawnReason, pos, random) -> DeadlyMonstersConfig.naturalSpawnsEnabled(entityType)
+                        && !level.getBiome(pos).is(Biomes.MUSHROOM_FIELDS)
                         && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random),
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }

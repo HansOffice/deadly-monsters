@@ -1,5 +1,6 @@
 package com.dmonsters.entity;
 
+import com.dmonsters.config.DeadlyMonstersConfig;
 import com.dmonsters.registry.ModSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -22,6 +23,8 @@ import net.minecraft.world.level.Level;
 
 /** Native 26.2 port of the original Unborn Baby monster. */
 public final class UnbornBabyEntity extends Monster {
+    private int blindRefreshTick;
+
     public UnbornBabyEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level);
     }
@@ -45,6 +48,18 @@ public final class UnbornBabyEntity extends Monster {
                 && this.getLightLevelDependentMagicValue() > 0.5F
                 && this.getRandom().nextFloat() < 0.05F) {
             this.igniteForSeconds(8.0F);
+        }
+
+        if (!this.level().isClientSide()
+                && DeadlyMonstersConfig.VALUES.babyBlindness.get()
+                && this.isAggressive()
+                && this.getTarget() != null) {
+            if (++this.blindRefreshTick >= 20) {
+                this.blindRefreshTick = 0;
+                this.getTarget().addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100));
+            }
+        } else {
+            this.blindRefreshTick = 0;
         }
         super.aiStep();
     }
