@@ -1,6 +1,5 @@
 package com.dmonsters.item;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import com.dmonsters.config.DeadlyMonstersConfig;
@@ -21,7 +20,6 @@ import net.minecraft.world.item.context.UseOnContext;
 
 /** Reusable fishing/Topielec weapon matching the four original harpoon tiers. */
 public final class HarpoonItem extends Item {
-    private static final List<Item> FISH = List.of(Items.COD, Items.SALMON, Items.TROPICAL_FISH, Items.PUFFERFISH);
     private final float topielecDamage;
 
     public HarpoonItem(Properties properties, float topielecDamage) {
@@ -35,6 +33,9 @@ public final class HarpoonItem extends Item {
         if (player == null) {
             return InteractionResult.FAIL;
         }
+        if (!context.getLevel().mayInteract(player, context.getClickedPos())) {
+            return InteractionResult.FAIL;
+        }
         if (!(context.getLevel() instanceof ServerLevel level)) {
             return InteractionResult.SUCCESS;
         }
@@ -42,7 +43,9 @@ public final class HarpoonItem extends Item {
         if (player.isInWater()) {
             context.getItemInHand().hurtAndBreak(1, player, context.getHand().asEquipmentSlot());
             if (level.getRandom().nextFloat() < 0.25F) {
-                player.spawnAtLocation(level, FISH.get(level.getRandom().nextInt(FISH.size())));
+                // The 1.12.2 code built four metadata variants of Items.FISH and immediately
+                // reduced them back to Item objects, so all four entries actually dropped raw fish.
+                player.spawnAtLocation(level, Items.COD);
             }
         }
         return InteractionResult.SUCCESS;
