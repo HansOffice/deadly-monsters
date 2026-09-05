@@ -98,6 +98,7 @@ public final class ModEntities {
 
         event.register(PRESENT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 (type, level, reason, pos, random) -> DeadlyMonstersConfig.naturalSpawnsEnabled(type)
+                        && level.canSeeSky(pos)
                         && Monster.checkSurfaceMonstersSpawnRules(type, level, reason, pos, random),
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
 
