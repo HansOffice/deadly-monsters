@@ -97,7 +97,9 @@ public final class DeadlyMonstersConfig {
             return;
         }
 
-        if (event.getTarget() instanceof TopielecEntity && VALUES.topielecHarpoonOnly.get()) {
+        if (event.getTarget() instanceof TopielecEntity
+                && !VALUES.topielec.disabled.get()
+                && VALUES.topielecHarpoonOnly.get()) {
             if (!(event.getEntity().getMainHandItem().getItem() instanceof HarpoonItem)) {
                 event.setCanceled(true);
                 return;
