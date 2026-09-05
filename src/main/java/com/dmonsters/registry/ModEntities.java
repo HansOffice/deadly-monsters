@@ -13,6 +13,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -103,7 +104,7 @@ public final class ModEntities {
         registerCommonMonsterPlacement(event, ZOMBIE_CHICKEN.get());
     }
 
-    private static <T extends Monster> void registerCommonMonsterPlacement(RegisterSpawnPlacementsEvent event, EntityType<T> type) {
+    private static <T extends Mob> void registerCommonMonsterPlacement(RegisterSpawnPlacementsEvent event, EntityType<T> type) {
         event.register(type, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 (entityType, level, spawnReason, pos, random) -> !level.getBiome(pos).is(Biomes.MUSHROOM_FIELDS)
                         && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random),
