@@ -1,23 +1,27 @@
 package com.dmonsters.registry;
 
 import com.dmonsters.DeadlyMonsters;
+import com.dmonsters.block.StrengthenedBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/**
- * Block registry scaffold for the 1.12.2 -> 26.2 port.
- *
- * The original registry IDs are kept stable here. Complex behavior and shapes
- * are intentionally migrated in follow-up classes instead of being emulated
- * with legacy Forge APIs.
- */
+/** Block registry retaining the original 1.12.2 registry IDs. */
 public final class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(DeadlyMonsters.MOD_ID);
 
-    // Original blocks used hardness 10 and explosion resistance 25.
-    public static final DeferredBlock<Block> STRENGTHENED_STONE = strengthened("strengthened_stone");
-    public static final DeferredBlock<Block> STRENGTHENED_COBBLESTONE = strengthened("strengthened_cobblestone");
+    public static final DeferredBlock<StrengthenedBlock> STRENGTHENED_STONE = BLOCKS.registerBlock(
+            "strengthened_stone",
+            properties -> new StrengthenedBlock(
+                    properties.strength(10.0F, 25.0F),
+                    Blocks.STONE.defaultBlockState()));
+
+    public static final DeferredBlock<StrengthenedBlock> STRENGTHENED_COBBLESTONE = BLOCKS.registerBlock(
+            "strengthened_cobblestone",
+            properties -> new StrengthenedBlock(
+                    properties.strength(10.0F, 25.0F),
+                    Blocks.COBBLESTONE.defaultBlockState()));
 
     public static final DeferredBlock<Block> BARBED_WIRE = simple("barbed_wire");
     public static final DeferredBlock<Block> MESH_FENCE = simple("mesh_fence");
@@ -29,10 +33,6 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> PRESENT_BOX = simple("present_box");
 
     private ModBlocks() {
-    }
-
-    private static DeferredBlock<Block> strengthened(String name) {
-        return BLOCKS.registerSimpleBlock(name, properties -> properties.strength(10.0F, 25.0F));
     }
 
     private static DeferredBlock<Block> simple(String name) {

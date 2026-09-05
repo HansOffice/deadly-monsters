@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "dmonsters:rebar"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "dmonsters:blocks/strengthened_stone"
+}
