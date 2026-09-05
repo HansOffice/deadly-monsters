@@ -13,15 +13,18 @@ The 26.2 branch is intentionally a native NeoForge rewrite around stable registr
 - [x] Block registry IDs
 - [x] Item registry IDs
 - [x] Creative tab
+- [x] Import original binary textures, sounds, logo and credits into modern resource paths
+- [x] Modern block/item models for Strengthened Stone, Strengthened Cobblestone and Rebar
 - [ ] Entity types
-- [ ] Sound events
+- [ ] Sound event registrations
 - [ ] Data components/config equivalents where needed
 
 ## Phase 2 — Simple gameplay content
 
-- [ ] Strengthened Stone
-- [ ] Strengthened Cobblestone
-- [ ] Rebar behavior
+- [x] Strengthened Stone registry/properties
+- [x] Strengthened Cobblestone registry/properties
+- [x] Rebar stone/cobblestone strengthening interaction
+- [ ] Strengthened block break/drop and sneak-revert behavior
 - [ ] Barbed Wire
 - [ ] Mesh Fence / Pole
 - [ ] Dump
@@ -55,7 +58,7 @@ For each entity: EntityType -> attributes -> goals -> spawn rules -> drops -> so
 - [ ] Configuration migration
 - [ ] Spawn configuration
 - [ ] Recipes and loot tables
-- [ ] Models/blockstates/textures/sounds
+- [ ] Remaining models/blockstates and data migration
 - [ ] Dedicated server verification
 - [ ] Client verification
 
