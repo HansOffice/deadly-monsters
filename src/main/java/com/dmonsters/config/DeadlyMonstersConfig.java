@@ -50,6 +50,12 @@ public final class DeadlyMonstersConfig {
         return settings == null || !settings.disabled.get();
     }
 
+    /** Spawn weighting used when the config-aware biome modifiers are applied during world/server startup. */
+    public static int spawnRate(EntityType<?> type) {
+        MonsterSettings settings = settingsFor(type);
+        return settings == null ? 0 : settings.spawnRate.get();
+    }
+
     public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
         if (event.getLevel().isClientSide() || !(event.getEntity() instanceof LivingEntity living)) {
             return;
@@ -188,18 +194,18 @@ public final class DeadlyMonstersConfig {
             globalSpeedMultiplier = builder.comment("Global monster movement speed multiplier.").defineInRange("globalSpeedMultiplier", 1.0D, 0.01D, 10.0D);
             builder.pop();
 
-            mutantSteve = new MonsterSettings(builder, "mutant_steve");
-            freezer = new MonsterSettings(builder, "freezer");
-            climber = new MonsterSettings(builder, "climber");
-            entrail = new MonsterSettings(builder, "entrail");
-            unbornBaby = new MonsterSettings(builder, "unborn_baby");
-            fallenLeader = new MonsterSettings(builder, "fallen_leader");
-            bloodyMaiden = new MonsterSettings(builder, "bloody_maiden");
-            zombieChicken = new MonsterSettings(builder, "zombie_chicken");
-            present = new MonsterSettings(builder, "present");
-            stranger = new MonsterSettings(builder, "stranger");
-            hauntedCow = new MonsterSettings(builder, "haunted_cow");
-            topielec = new MonsterSettings(builder, "topielec");
+            mutantSteve = new MonsterSettings(builder, "mutant_steve", 8);
+            freezer = new MonsterSettings(builder, "freezer", 8);
+            climber = new MonsterSettings(builder, "climber", 8);
+            entrail = new MonsterSettings(builder, "entrail", 12);
+            unbornBaby = new MonsterSettings(builder, "unborn_baby", 12);
+            fallenLeader = new MonsterSettings(builder, "fallen_leader", 12);
+            bloodyMaiden = new MonsterSettings(builder, "bloody_maiden", 12);
+            zombieChicken = new MonsterSettings(builder, "zombie_chicken", 12);
+            present = new MonsterSettings(builder, "present", 12);
+            stranger = new MonsterSettings(builder, "stranger", 12);
+            hauntedCow = new MonsterSettings(builder, "haunted_cow", 8);
+            topielec = new MonsterSettings(builder, "topielec", 8);
 
             builder.push("mutant_steve");
             mutantSteveBreakBlocks = builder.define("breakBlocks", true);
@@ -228,13 +234,16 @@ public final class DeadlyMonstersConfig {
         public final ModConfigSpec.DoubleValue healthMultiplier;
         public final ModConfigSpec.DoubleValue strengthMultiplier;
         public final ModConfigSpec.DoubleValue speedMultiplier;
+        public final ModConfigSpec.IntValue spawnRate;
         public final ModConfigSpec.BooleanValue disabled;
 
-        private MonsterSettings(ModConfigSpec.Builder builder, String name) {
+        private MonsterSettings(ModConfigSpec.Builder builder, String name, int defaultSpawnRate) {
             builder.push(name);
             healthMultiplier = builder.defineInRange("healthMultiplier", 1.0D, 0.01D, 100.0D);
             strengthMultiplier = builder.defineInRange("strengthMultiplier", 1.0D, 0.01D, 100.0D);
             speedMultiplier = builder.defineInRange("speedMultiplier", 1.0D, 0.01D, 10.0D);
+            spawnRate = builder.comment("Natural spawn weighting. Restart the world/server after changing this value.")
+                    .defineInRange("spawnRate", defaultSpawnRate, 0, 1000);
             disabled = builder.comment("Disable natural spawning for this monster.").define("disabled", false);
             builder.pop();
         }
