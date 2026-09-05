@@ -15,8 +15,10 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(DeadlyMonsters.MOD_ID);
 
-    public static final DeferredBlock<Block> STRENGTHENED_STONE = simple("strengthened_stone");
-    public static final DeferredBlock<Block> STRENGTHENED_COBBLESTONE = simple("strengthened_cobblestone");
+    // Original blocks used hardness 10 and explosion resistance 25.
+    public static final DeferredBlock<Block> STRENGTHENED_STONE = strengthened("strengthened_stone");
+    public static final DeferredBlock<Block> STRENGTHENED_COBBLESTONE = strengthened("strengthened_cobblestone");
+
     public static final DeferredBlock<Block> BARBED_WIRE = simple("barbed_wire");
     public static final DeferredBlock<Block> MESH_FENCE = simple("mesh_fence");
     public static final DeferredBlock<Block> MESH_FENCE_POLE = simple("mesh_fence_pole");
@@ -27,6 +29,10 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> PRESENT_BOX = simple("present_box");
 
     private ModBlocks() {
+    }
+
+    private static DeferredBlock<Block> strengthened(String name) {
+        return BLOCKS.registerSimpleBlock(name, properties -> properties.strength(10.0F, 25.0F));
     }
 
     private static DeferredBlock<Block> simple(String name) {
