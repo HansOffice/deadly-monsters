@@ -19,11 +19,14 @@ public final class UnbornBabyEyeItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        if (context.getPlayer() != null && !level.mayInteract(context.getPlayer(), pos)) {
+            return InteractionResult.FAIL;
+        }
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
 
-        BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);
         if (state.isAir()) {
             return InteractionResult.FAIL;
