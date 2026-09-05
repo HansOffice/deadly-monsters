@@ -1,1 +1,1 @@
-{"type":"neoforge:add_spawns","biomes":"#dmonsters:snow_biomes","spawners":{"type":"dmonsters:present","weight":12,"minCount":1,"maxCount":8}}
+{"type":"dmonsters:config_spawns","biomes":"#dmonsters:snow_biomes","spawner":{"type":"dmonsters:present","minCount":1,"maxCount":8}}
