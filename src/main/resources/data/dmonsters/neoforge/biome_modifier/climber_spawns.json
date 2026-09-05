@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#minecraft:is_overworld",
+  "spawners": {
+    "type": "dmonsters:climber",
+    "maxCount": 5,
+    "minCount": 1,
+    "weight": 8
+  }
+}
