@@ -20,13 +20,17 @@ Current stage:
 - [x] Preserve original MIT license and attribution
 - [x] Modern DeferredRegister-based block/item registry skeleton
 - [x] Restore original registry IDs as placeholders where practical
+- [x] Port Rebar stone/cobblestone strengthening behavior
+- [x] Restore strengthened block hardness/resistance
+- [x] Import original textures, sounds, logo and credits into modern resource paths
+- [ ] Finish modern block/item model migration
 - [ ] Port block behavior
-- [ ] Port item behavior
+- [ ] Port remaining item behavior
 - [ ] Port entities and attributes
 - [ ] Port AI goals
 - [ ] Port networking
 - [ ] Port client models/renderers
-- [ ] Migrate recipes, loot tables, language data and assets
+- [ ] Migrate recipes, loot tables and remaining data
 - [ ] Replace or remove legacy Mantle/TConstruct/CoroUtil/Hostile Worlds integrations
 - [ ] Game-test and balance pass
 
@@ -38,17 +42,13 @@ The upstream project is licensed under the MIT License. The original copyright a
 
 ## Building
 
-Use JDK 25. Once the Gradle wrapper is present, build with:
+Use JDK 25. CI builds with Gradle 9.2.1.
 
 ```bash
-./gradlew build
+gradle build
 ```
 
-Windows:
-
-```powershell
-.\gradlew.bat build
-```
+A standard Gradle wrapper can be added later from the official NeoForge 26.2 MDK.
 
 ## Compatibility note
 
