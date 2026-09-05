@@ -1,0 +1,52 @@
+name: Import upstream assets
+
+on:
+  push:
+    paths:
+      - '.github/workflows/import-upstream-assets.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout port repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch original Deadly Monsters assets
+        run: git clone --depth 1 https://github.com/ACGaming/deadly-monsters.git /tmp/deadly-monsters-upstream
+
+      - name: Copy binary assets into modern resource paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          UP=/tmp/deadly-monsters-upstream/src/main/resources/assets/dmonsters
+          DST=src/main/resources/assets/dmonsters
+
+          mkdir -p "$DST/textures/block" "$DST/textures/item" "$DST/textures/entity" "$DST/sounds"
+          cp -a "$UP/textures/blocks/." "$DST/textures/block/"
+          cp -a "$UP/textures/items/." "$DST/textures/item/"
+          cp -a "$UP/textures/entity/." "$DST/textures/entity/"
+          cp -a "$UP/sounds/." "$DST/sounds/"
+          cp "$UP/logo.png" "$DST/logo.png"
+          cp "$UP/credits.txt" "$DST/credits.txt"
+          cp "$UP/sounds.json" "$DST/sounds.json"
+
+      - name: Commit imported assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- src/main/resources/assets/dmonsters; then
+            echo 'Assets are already up to date.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/main/resources/assets/dmonsters
+          git commit -m 'Import original Deadly Monsters binary assets'
+          git push origin HEAD:main
