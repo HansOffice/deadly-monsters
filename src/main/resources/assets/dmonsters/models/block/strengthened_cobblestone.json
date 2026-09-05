@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "side": "dmonsters:block/strengthened_cobblestone_side",
+    "end": "dmonsters:block/strengthened_cobblestone_topdown"
+  }
+}
