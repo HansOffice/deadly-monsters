@@ -36,7 +36,7 @@ public final class ZombieChickenEntity extends Chicken {
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Chicken.class, true,
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<Chicken>(this, Chicken.class, true,
                 target -> !(target instanceof ZombieChickenEntity)));
     }
 
@@ -46,7 +46,7 @@ public final class ZombieChickenEntity extends Chicken {
             return false;
         }
 
-        if (target instanceof Chicken chicken && !(target instanceof ZombieChickenEntity) && chicken.isAlive()) {
+        if (target instanceof Chicken chicken && !(target instanceof ZombieChickenEntity)) {
             double x = chicken.getX();
             double y = chicken.getY();
             double z = chicken.getZ();
@@ -66,7 +66,7 @@ public final class ZombieChickenEntity extends Chicken {
     @Override
     public void aiStep() {
         if (!this.level().isClientSide()
-                && this.level().isDay()
+                && this.level().isBrightOutside()
                 && this.level().canSeeSky(this.blockPosition())
                 && this.getLightLevelDependentMagicValue() > 0.5F
                 && this.getRandom().nextFloat() < 0.05F) {
