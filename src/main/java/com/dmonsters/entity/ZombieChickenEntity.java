@@ -7,23 +7,18 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.chicken.Chicken;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-/**
- * First fully ported Deadly Monsters mob.
- *
- * Core 1.12.2 behavior retained here:
- * - hostile melee AI targeting players and normal chickens
- * - converts chickens it successfully attacks into Zombie Chickens
- * - burns in direct daylight
- */
-public final class ZombieChickenEntity extends Chicken {
-    public ZombieChickenEntity(EntityType<? extends Chicken> type, Level level) {
+/** Native 26.2 port of the original hostile Zombie Chicken. */
+public final class ZombieChickenEntity extends Monster {
+    public ZombieChickenEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level);
     }
 
@@ -31,13 +26,13 @@ public final class ZombieChickenEntity extends Chicken {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(5, new MoveTowardsRestrictionGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<Chicken>(this, Chicken.class, true,
-                (target, level) -> !(target instanceof ZombieChickenEntity)));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Chicken.class, true));
     }
 
     @Override
@@ -46,7 +41,7 @@ public final class ZombieChickenEntity extends Chicken {
             return false;
         }
 
-        if (target instanceof Chicken chicken && !(target instanceof ZombieChickenEntity)) {
+        if (target instanceof Chicken chicken) {
             double x = chicken.getX();
             double y = chicken.getY();
             double z = chicken.getZ();
