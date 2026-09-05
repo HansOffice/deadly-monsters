@@ -41,7 +41,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- src/main/resources/assets/dmonsters; then
+          if [[ -z "$(git status --porcelain -- src/main/resources/assets/dmonsters)" ]]; then
             echo 'Assets are already up to date.'
             exit 0
           fi
