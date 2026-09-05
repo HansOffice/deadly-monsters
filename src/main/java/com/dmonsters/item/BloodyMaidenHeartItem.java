@@ -17,14 +17,17 @@ public final class BloodyMaidenHeartItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (!(context.getLevel() instanceof ServerLevel level)) {
-            return InteractionResult.SUCCESS;
-        }
         if (context.getPlayer() == null) {
             return InteractionResult.FAIL;
         }
-
         var pos = context.getClickedPos();
+        if (!context.getLevel().mayInteract(context.getPlayer(), pos)) {
+            return InteractionResult.FAIL;
+        }
+        if (!(context.getLevel() instanceof ServerLevel level)) {
+            return InteractionResult.SUCCESS;
+        }
+
         level.setBlockAndUpdate(
                 pos,
                 context.getPlayer().isShiftKeyDown()
