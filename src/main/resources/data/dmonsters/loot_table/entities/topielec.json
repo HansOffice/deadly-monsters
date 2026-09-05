@@ -1,0 +1,8 @@
+{
+  "type":"minecraft:entity",
+  "pools":[
+    {"rolls":1.0,"entries":[{"type":"minecraft:item","name":"minecraft:cod","functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":1.0,"max":3.0},"add":false}]}]},
+    {"rolls":1.0,"conditions":[{"condition":"minecraft:killed_by_player"},{"condition":"minecraft:random_chance_with_enchanted_bonus","enchantment":"minecraft:looting","unenchanted_chance":0.5,"enchanted_chance":{"type":"minecraft:linear","base":1.0,"per_level_above_first":0.0}}],"entries":[{"type":"minecraft:item","name":"minecraft:salmon","weight":10,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":1.0,"max":3.0},"add":false}]},{"type":"minecraft:item","name":"minecraft:fishing_rod","weight":3,"functions":[{"function":"minecraft:enchant_with_levels","levels":{"type":"minecraft:uniform","min":20.0,"max":39.0},"options":"#minecraft:on_random_loot"}]}]}
+  ],
+  "random_sequence":"dmonsters:entities/topielec"
+}

@@ -2,7 +2,6 @@ package com.dmonsters.client;
 
 import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.registry.ModEntities;
-import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -20,7 +19,10 @@ public final class ClientModEvents {
         event.registerLayerDefinition(FallenLeaderModel.LAYER_LOCATION, FallenLeaderModel::createBodyLayer);
         event.registerLayerDefinition(FreezerModel.LAYER_LOCATION, FreezerModel::createBodyLayer);
         event.registerLayerDefinition(HauntedCowModel.LAYER_LOCATION, HauntedCowModel::createBodyLayer);
+        event.registerLayerDefinition(MutantSteveModel.LAYER_LOCATION, MutantSteveModel::createBodyLayer);
+        event.registerLayerDefinition(PresentModel.LAYER_LOCATION, PresentModel::createBodyLayer);
         event.registerLayerDefinition(StrangerModel.LAYER_LOCATION, StrangerModel::createBodyLayer);
+        event.registerLayerDefinition(TopielecModel.LAYER_LOCATION, TopielecModel::createBodyLayer);
         event.registerLayerDefinition(UnbornBabyModel.LAYER_LOCATION, UnbornBabyModel::createBodyLayer);
         event.registerLayerDefinition(ZombieChickenModel.LAYER_LOCATION, ZombieChickenModel::createBodyLayer);
     }
@@ -33,12 +35,11 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModEntities.FALLEN_LEADER.get(), FallenLeaderRenderer::new);
         event.registerEntityRenderer(ModEntities.FREEZER.get(), FreezerRenderer::new);
         event.registerEntityRenderer(ModEntities.HAUNTED_COW.get(), HauntedCowRenderer::new);
+        event.registerEntityRenderer(ModEntities.MUTANT_STEVE.get(), MutantSteveRenderer::new);
+        event.registerEntityRenderer(ModEntities.PRESENT.get(), PresentRenderer::new);
         event.registerEntityRenderer(ModEntities.STRANGER.get(), StrangerRenderer::new);
+        event.registerEntityRenderer(ModEntities.TOPIELEC.get(), TopielecRenderer::new);
         event.registerEntityRenderer(ModEntities.UNBORN_BABY.get(), UnbornBabyRenderer::new);
         event.registerEntityRenderer(ModEntities.ZOMBIE_CHICKEN.get(), ZombieChickenRenderer::new);
-
-        event.registerEntityRenderer(ModEntities.MUTANT_STEVE.get(), NoopRenderer::new);
-        event.registerEntityRenderer(ModEntities.PRESENT.get(), NoopRenderer::new);
-        event.registerEntityRenderer(ModEntities.TOPIELEC.get(), NoopRenderer::new);
     }
 }

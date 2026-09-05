@@ -39,14 +39,14 @@ public final class ModItems {
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_CLIMBER = spawnEgg("mob_spawner_item_climber", ModEntities.CLIMBER);
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_ENTRAIL = spawnEgg("mob_spawner_item_entrail", ModEntities.ENTRAIL);
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_FREEZER = spawnEgg("mob_spawner_item_freezer", ModEntities.FREEZER);
-    public static final DeferredItem<Item> MOB_SPAWNER_ITEM_MUTANT_STEVE = simple("mob_spawner_item_mutant_steve");
+    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_MUTANT_STEVE = spawnEgg("mob_spawner_item_mutant_steve", ModEntities.MUTANT_STEVE);
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_FALLEN_LEADER = spawnEgg("mob_spawner_item_fallen_leader", ModEntities.FALLEN_LEADER);
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_BLOODY_MAIDEN = spawnEgg("mob_spawner_item_bloody_maiden", ModEntities.BLOODY_MAIDEN);
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_ZOMBIE_CHICKEN = spawnEgg("mob_spawner_item_zombie_chicken", ModEntities.ZOMBIE_CHICKEN);
-    public static final DeferredItem<Item> MOB_SPAWNER_ITEM_PRESENT = simple("mob_spawner_item_present");
+    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_PRESENT = spawnEgg("mob_spawner_item_present", ModEntities.PRESENT);
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_STRANGER = spawnEgg("mob_spawner_item_stranger", ModEntities.STRANGER);
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_HAUNTED_COW = spawnEgg("mob_spawner_item_haunted_cow", ModEntities.HAUNTED_COW);
-    public static final DeferredItem<Item> MOB_SPAWNER_ITEM_TOPIELEC = simple("mob_spawner_item_topielec");
+    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_TOPIELEC = spawnEgg("mob_spawner_item_topielec", ModEntities.TOPIELEC);
 
     public static final DeferredItem<Item> HARPOON_STONE = simple("harpoon_stone");
     public static final DeferredItem<Item> HARPOON_IRON = simple("harpoon_iron");

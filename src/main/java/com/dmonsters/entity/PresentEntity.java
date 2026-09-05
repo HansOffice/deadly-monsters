@@ -1,0 +1,116 @@
+package com.dmonsters.entity;
+
+import com.dmonsters.registry.ModBlocks;
+import com.dmonsters.registry.ModSounds;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+
+/** Native 26.2 port of the original Present monster and its cage attack. */
+public final class PresentEntity extends Monster {
+    private int cageCooldown;
+
+    public PresentEntity(EntityType<? extends Monster> type, Level level) {
+        super(type, level);
+    }
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(1, new FloatGoal(this));
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
+        this.goalSelector.addGoal(5, new MoveTowardsRestrictionGoal(this, 1.0D));
+        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, Player.class, false));
+    }
+
+    @Override
+    public void aiStep() {
+        if (this.cageCooldown > 0) {
+            this.cageCooldown--;
+        }
+        super.aiStep();
+    }
+
+    @Override
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
+        if (!super.doHurtTarget(level, target)) {
+            return false;
+        }
+        this.playSound(ModSounds.PRESENT_ATTACK.get(), 1.0F, 1.0F);
+        if (target instanceof ServerPlayer player && this.cageCooldown == 0) {
+            this.makeCage(level, player);
+            this.cageCooldown = 400;
+        }
+        return true;
+    }
+
+    private void makeCage(ServerLevel level, ServerPlayer player) {
+        BlockPos origin = this.blockPosition();
+        int radius = 3;
+        int baseY = origin.getY() + 3;
+        int cageHeight = 7;
+        BlockState present = ModBlocks.PRESENT_BLOCK.get().defaultBlockState();
+
+        for (int y = 0; y < cageHeight; y++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    boolean wall = Math.abs(dx) == radius || Math.abs(dz) == radius;
+                    boolean floorOrCeiling = y == 0 || y == cageHeight - 1;
+                    if (!wall && !floorOrCeiling) {
+                        continue;
+                    }
+                    BlockPos pos = new BlockPos(origin.getX() + dx, baseY + y, origin.getZ() + dz);
+                    if (level.getBlockState(pos).isAir()) {
+                        level.setBlockAndUpdate(pos, present);
+                    }
+                }
+            }
+        }
+
+        BlockPos lightPos = new BlockPos(origin.getX(), baseY + 1, origin.getZ());
+        if (level.getBlockState(lightPos).isAir()) {
+            level.setBlockAndUpdate(lightPos, Blocks.TORCH.defaultBlockState());
+        }
+        Creeper creeper = EntityType.CREEPER.create(level, EntitySpawnReason.TRIGGERED);
+        if (creeper != null) {
+            creeper.snapTo(lightPos.getX() + 0.5D, lightPos.getY(), lightPos.getZ() + 0.5D, 0.0F, 0.0F);
+            level.addFreshEntity(creeper);
+        }
+        player.teleportTo(origin.getX() + 0.5D, baseY + 1.0D, origin.getZ() + 0.5D);
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return ModSounds.PRESENT_AMBIENT.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return ModSounds.PRESENT_HURT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return ModSounds.PRESENT_DEATH.get();
+    }
+}
