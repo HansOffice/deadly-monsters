@@ -41,7 +41,9 @@ public final class ModItems {
     public static final DeferredItem<Item> MOD_ITEM = simple("mod_item");
 
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_UNBORN_BABY = simple("mob_spawner_item_unborn_baby");
-    public static final DeferredItem<Item> MOB_SPAWNER_ITEM_CLIMBER = simple("mob_spawner_item_climber");
+    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_CLIMBER = ITEMS.registerItem(
+            "mob_spawner_item_climber",
+            properties -> new SpawnEggItem(properties.spawnEgg(ModEntities.CLIMBER.get())));
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_ENTRAIL = simple("mob_spawner_item_entrail");
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_FREEZER = ITEMS.registerItem(
             "mob_spawner_item_freezer",
