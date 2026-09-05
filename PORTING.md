@@ -19,7 +19,7 @@ The 26.2 branch is intentionally a native NeoForge rewrite around stable registr
 - [x] Sound event registrations from the original 1.12.2 `ModSounds`
 - [ ] Data components/config equivalents where needed
 
-The entity registry currently reserves all original IDs. Zombie Chicken and Freezer now have real 26.2 implementations; the other ten entries use non-spawning, no-render migration placeholders until their individual ports replace them without changing registry names.
+The entity registry currently reserves all original IDs. Zombie Chicken, Freezer and Climber now have real 26.2 implementations; the other nine entries use non-spawning, no-render migration placeholders until their individual ports replace them without changing registry names.
 
 ## Phase 2 — Simple gameplay content
 
@@ -91,7 +91,22 @@ For each entity: EntityType -> attributes -> goals -> spawn rules -> drops -> so
 
 ### Climber
 
-Source behavior audit completed. The next migration target includes wall climbing, leap/melee AI, poison immunity, hard-difficulty random permanent effects, spider step audio, original model/renderer, loot and default spawn weight 8.
+- [x] `dmonsters:climber` EntityType replacing the migration placeholder
+- [x] 24 health / 12 attack / 0.1 movement
+- [x] Wall-climber navigation and synchronized horizontal-collision climbing state
+- [x] Leap / melee AI, retaliation, player targeting and iron-golem targeting
+- [x] Poison immunity and cobweb movement immunity
+- [x] Hard-difficulty random permanent Speed / Strength / Regeneration / Invisibility effect behavior
+- [x] Direct-daylight burning behavior
+- [x] Original attack / ambient / hurt / death SoundEvents and spider step sound
+- [x] Original 64x64 model geometry and attack/walk animation ported to the modern model-layer API
+- [x] Original Climber texture and dedicated renderer
+- [x] Functional `mob_spawner_item_climber` SpawnEggItem and item model
+- [x] Natural Overworld spawning with default weight 8 / group 1-5 behavior
+- [x] Original per-cluster spawn cap of 5
+- [x] Climber loot table migrated to modern items/loot functions (`minecraft:dye` metadata 0 -> `minecraft:ink_sac`)
+- [x] Avoid importing unrelated modern Spider behavior such as skeleton jockeys and armadillo avoidance
+- [ ] Configurable spawn/health/strength/speed multipliers after config-system migration
 
 ## Phase 4 — Systems
 
