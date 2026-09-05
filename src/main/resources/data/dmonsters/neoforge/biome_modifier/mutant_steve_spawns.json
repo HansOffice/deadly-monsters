@@ -1,1 +1,1 @@
-{"type":"neoforge:add_spawns","biomes":"#minecraft:is_overworld","spawners":{"type":"dmonsters:mutant_steve","weight":8,"minCount":1,"maxCount":1}}
+{"type":"dmonsters:config_spawns","biomes":"#minecraft:is_overworld","spawner":{"type":"dmonsters:mutant_steve","minCount":1,"maxCount":1}}
