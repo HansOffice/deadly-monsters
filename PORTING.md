@@ -19,7 +19,7 @@ The 26.2 branch is intentionally a native NeoForge rewrite around stable registr
 - [x] Sound event registrations from the original 1.12.2 `ModSounds`
 - [ ] Data components/config equivalents where needed
 
-The entity registry currently reserves all original IDs. Zombie Chicken has a real 26.2 implementation; the other eleven entries use non-spawning, no-render migration placeholders until their individual ports replace them without changing registry names.
+The entity registry currently reserves all original IDs. Zombie Chicken and Freezer now have real 26.2 implementations; the other ten entries use non-spawning, no-render migration placeholders until their individual ports replace them without changing registry names.
 
 ## Phase 2 — Simple gameplay content
 
@@ -66,14 +66,32 @@ For each entity: EntityType -> attributes -> goals -> spawn rules -> drops -> so
 - [x] Original Zombie Chicken texture
 - [x] Original custom 32x32 model geometry ported to the modern model-layer API
 - [x] Original Lucky Egg loot table
-- [x] Natural Overworld spawning with original weight 1 / group 1-8 behavior
+- [x] Natural Overworld spawning with default weight 12 / group 1-8 behavior
 - [x] Original per-cluster spawn cap of 1
 - [x] Preserve original lack of a registered Zombie Chicken-specific SoundEvent binding
 - [ ] Configurable spawn/health/strength/speed multipliers after config-system migration
 
 ### Freezer
 
-Source behavior/model audit completed; implementation is the next monster migration target.
+- [x] `dmonsters:freezer` EntityType replacing the migration placeholder
+- [x] 45 health / 16 attack / 2 armor / 0.13 movement / 35 follow range
+- [x] Player-targeting melee AI and 600-tick Slowness on successful attacks
+- [x] Original attack / ambient / hurt / death SoundEvents
+- [x] Direct-daylight burning behavior
+- [x] 40-tick environment-freezing cycle: water to ice and survivable snow placement
+- [x] Aggressive-state freeze radius expansion
+- [x] Client snow particle effect
+- [x] Original 64x64 custom model geometry ported to the modern model-layer API
+- [x] Original idle / angry texture switching via client render state
+- [x] Functional `mob_spawner_item_freezer` SpawnEggItem and item model
+- [x] Natural Overworld spawning with default weight 8 / group size 1
+- [x] Original per-cluster spawn cap of 1
+- [x] Freezer loot table migrated to the modern loot format
+- [ ] Configurable spawn/health/strength/speed multipliers after config-system migration
+
+### Climber
+
+Source behavior audit completed. The next migration target includes wall climbing, leap/melee AI, poison immunity, hard-difficulty random permanent effects, spider step audio, original model/renderer, loot and default spawn weight 8.
 
 ## Phase 4 — Systems
 
