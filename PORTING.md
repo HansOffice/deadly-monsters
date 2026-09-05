@@ -16,7 +16,7 @@ The 26.2 branch is intentionally a native NeoForge rewrite around stable registr
 - [x] Import original binary textures, sounds, logo and credits into modern resource paths
 - [x] Modern block/item models for Strengthened Stone, Strengthened Cobblestone and Rebar
 - [x] Entity type registry IDs for all 12 original monsters
-- [ ] Sound event registrations
+- [x] Sound event registrations from the original 1.12.2 `ModSounds`
 - [ ] Data components/config equivalents where needed
 
 The entity registry currently reserves all original IDs. Zombie Chicken has a real 26.2 implementation; the other eleven entries use non-spawning, no-render migration placeholders until their individual ports replace them without changing registry names.
@@ -63,11 +63,17 @@ For each entity: EntityType -> attributes -> goals -> spawn rules -> drops -> so
 - [x] Direct-daylight burning behavior
 - [x] Functional `mob_spawner_item_zombie_chicken` SpawnEggItem
 - [x] Client renderer registration
-- [x] Original Zombie Chicken texture wired to the current 26.2 Chicken renderer bridge
-- [ ] Port original custom 32x32 model geometry to the modern model-layer API
-- [ ] Original loot table
-- [ ] Original/custom sounds where applicable
-- [ ] Natural biome spawning and configurable spawn rate
+- [x] Original Zombie Chicken texture
+- [x] Original custom 32x32 model geometry ported to the modern model-layer API
+- [x] Original Lucky Egg loot table
+- [x] Natural Overworld spawning with original weight 1 / group 1-8 behavior
+- [x] Original per-cluster spawn cap of 1
+- [x] Preserve original lack of a registered Zombie Chicken-specific SoundEvent binding
+- [ ] Configurable spawn/health/strength/speed multipliers after config-system migration
+
+### Freezer
+
+Source behavior/model audit completed; implementation is the next monster migration target.
 
 ## Phase 4 — Systems
 
