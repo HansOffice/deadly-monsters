@@ -35,7 +35,6 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.MESH_FENCE_POLE.get());
                         output.accept(ModItems.DUMP.get());
                         output.accept(ModItems.SOUL_EYE.get());
-                        output.accept(ModItems.PRESENT_BLOCK.get());
                         output.accept(ModItems.CHRISTMAS_TREE.get());
                         output.accept(ModItems.PRESENT_BOX.get());
 
@@ -59,6 +58,5 @@ public final class ModCreativeTabs {
                     })
                     .build());
 
-    private ModCreativeTabs() {
-    }
+    private ModCreativeTabs() {}
 }

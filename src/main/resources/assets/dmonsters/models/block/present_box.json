@@ -1,0 +1,1 @@
+{"textures":{"0":"dmonsters:block/present_box","particle":"#0"},"parent":"block/block","elements":[{"from":[2,0,2],"to":[14,12,14],"faces":{"north":{"texture":"#0"},"east":{"texture":"#0"},"south":{"texture":"#0"},"west":{"texture":"#0"},"up":{"texture":"#0"},"down":{"texture":"#0"}}}]}

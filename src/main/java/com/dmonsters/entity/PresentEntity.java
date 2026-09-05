@@ -1,5 +1,6 @@
 package com.dmonsters.entity;
 
+import com.dmonsters.block.PresentBlock;
 import com.dmonsters.registry.ModBlocks;
 import com.dmonsters.registry.ModSounds;
 import net.minecraft.core.BlockPos;
@@ -71,7 +72,9 @@ public final class PresentEntity extends Monster {
         int radius = 3;
         int baseY = origin.getY() + 3;
         int cageHeight = 7;
-        BlockState present = ModBlocks.PRESENT_BLOCK.get().defaultBlockState();
+        BlockState green = ModBlocks.PRESENT_BLOCK.get().defaultBlockState()
+                .setValue(PresentBlock.COLOR, PresentBlock.Color.GREEN);
+        BlockState yellow = green.setValue(PresentBlock.COLOR, PresentBlock.Color.YELLOW);
 
         for (int y = 0; y < cageHeight; y++) {
             for (int dx = -radius; dx <= radius; dx++) {
@@ -83,7 +86,7 @@ public final class PresentEntity extends Monster {
                     }
                     BlockPos pos = new BlockPos(origin.getX() + dx, baseY + y, origin.getZ() + dz);
                     if (level.getBlockState(pos).isAir()) {
-                        level.setBlockAndUpdate(pos, present);
+                        level.setBlockAndUpdate(pos, dx == 0 || dz == 0 ? yellow : green);
                     }
                 }
             }

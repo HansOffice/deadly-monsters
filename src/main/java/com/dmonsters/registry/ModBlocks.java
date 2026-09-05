@@ -2,10 +2,14 @@ package com.dmonsters.registry;
 
 import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.block.BarbedWireBlock;
+import com.dmonsters.block.ChristmasTreeBlock;
+import com.dmonsters.block.DumpBlock;
 import com.dmonsters.block.MeshFenceBlock;
 import com.dmonsters.block.MeshFencePoleBlock;
+import com.dmonsters.block.PresentBlock;
+import com.dmonsters.block.PresentBoxBlock;
+import com.dmonsters.block.SoulEyeBlock;
 import com.dmonsters.block.StrengthenedBlock;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -34,16 +38,25 @@ public final class ModBlocks {
             "mesh_fence_pole",
             properties -> new MeshFencePoleBlock(properties.strength(5.0F, 5.0F).noOcclusion()));
 
-    public static final DeferredBlock<Block> DUMP = simple("dump");
-    public static final DeferredBlock<Block> SOUL_EYE = simple("soul_eye");
-    public static final DeferredBlock<Block> PRESENT_BLOCK = simple("present_block");
-    public static final DeferredBlock<Block> CHRISTMAS_TREE = simple("christmas_tree");
-    public static final DeferredBlock<Block> PRESENT_BOX = simple("present_box");
+    public static final DeferredBlock<DumpBlock> DUMP = BLOCKS.registerBlock(
+            "dump",
+            properties -> new DumpBlock(properties.strength(1.0F, 1.0F).noOcclusion()));
 
-    private ModBlocks() {
-    }
+    public static final DeferredBlock<SoulEyeBlock> SOUL_EYE = BLOCKS.registerBlock(
+            "soul_eye",
+            properties -> new SoulEyeBlock(properties.strength(3.0F, 3.0F).randomTicks().noOcclusion()));
 
-    private static DeferredBlock<Block> simple(String name) {
-        return BLOCKS.registerSimpleBlock(name, properties -> properties);
-    }
+    public static final DeferredBlock<PresentBlock> PRESENT_BLOCK = BLOCKS.registerBlock(
+            "present_block",
+            properties -> new PresentBlock(properties.strength(3.0F, 50.0F).randomTicks()));
+
+    public static final DeferredBlock<ChristmasTreeBlock> CHRISTMAS_TREE = BLOCKS.registerBlock(
+            "christmas_tree",
+            properties -> new ChristmasTreeBlock(properties.strength(2.0F, 50.0F).randomTicks().noOcclusion()));
+
+    public static final DeferredBlock<PresentBoxBlock> PRESENT_BOX = BLOCKS.registerBlock(
+            "present_box",
+            properties -> new PresentBoxBlock(properties.strength(1.0F, 50.0F).noOcclusion()));
+
+    private ModBlocks() {}
 }
