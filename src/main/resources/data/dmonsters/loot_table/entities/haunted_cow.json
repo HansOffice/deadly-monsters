@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {"rolls": 1.0, "entries": [{"type": "minecraft:item", "name": "minecraft:cow_spawn_egg"}]},
+    {"rolls": 1.0, "conditions": [
+      {"condition": "minecraft:killed_by_player"},
+      {"condition": "minecraft:random_chance_with_enchanted_bonus", "enchantment": "minecraft:looting", "unenchanted_chance": 0.15, "enchanted_chance": {"type": "minecraft:linear", "base": 1.0, "per_level_above_first": 0.0}}
+    ], "entries": [{"type": "minecraft:item", "name": "dmonsters:sunlight_drop"}]}
+  ],
+  "random_sequence": "dmonsters:entities/haunted_cow"
+}

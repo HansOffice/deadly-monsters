@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {"rolls": 1.0, "entries": [{"type": "minecraft:item", "name": "minecraft:redstone", "functions": [{"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 1.0, "max": 2.0}, "add": false}]}]},
+    {"rolls": 1.0, "conditions": [{"condition": "minecraft:killed_by_player"}], "entries": [
+      {"type": "minecraft:item", "name": "minecraft:bone", "weight": 6},
+      {"type": "minecraft:item", "name": "minecraft:baked_potato", "weight": 8},
+      {"type": "minecraft:item", "name": "minecraft:leather_helmet", "weight": 10},
+      {"type": "minecraft:item", "name": "minecraft:leather_leggings", "weight": 10},
+      {"type": "minecraft:item", "name": "minecraft:leather_chestplate", "weight": 10},
+      {"type": "minecraft:item", "name": "minecraft:leather_boots", "weight": 10}
+    ]}
+  ],
+  "random_sequence": "dmonsters:entities/stranger"
+}

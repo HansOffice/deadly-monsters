@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {"layer0": "dmonsters:item/mob_spawner_item_haunted_cow"}
+}

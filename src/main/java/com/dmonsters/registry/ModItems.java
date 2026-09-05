@@ -41,11 +41,11 @@ public final class ModItems {
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_FREEZER = spawnEgg("mob_spawner_item_freezer", ModEntities.FREEZER);
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_MUTANT_STEVE = simple("mob_spawner_item_mutant_steve");
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_FALLEN_LEADER = spawnEgg("mob_spawner_item_fallen_leader", ModEntities.FALLEN_LEADER);
-    public static final DeferredItem<Item> MOB_SPAWNER_ITEM_BLOODY_MAIDEN = simple("mob_spawner_item_bloody_maiden");
+    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_BLOODY_MAIDEN = spawnEgg("mob_spawner_item_bloody_maiden", ModEntities.BLOODY_MAIDEN);
     public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_ZOMBIE_CHICKEN = spawnEgg("mob_spawner_item_zombie_chicken", ModEntities.ZOMBIE_CHICKEN);
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_PRESENT = simple("mob_spawner_item_present");
-    public static final DeferredItem<Item> MOB_SPAWNER_ITEM_STRANGER = simple("mob_spawner_item_stranger");
-    public static final DeferredItem<Item> MOB_SPAWNER_ITEM_HAUNTED_COW = simple("mob_spawner_item_haunted_cow");
+    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_STRANGER = spawnEgg("mob_spawner_item_stranger", ModEntities.STRANGER);
+    public static final DeferredItem<SpawnEggItem> MOB_SPAWNER_ITEM_HAUNTED_COW = spawnEgg("mob_spawner_item_haunted_cow", ModEntities.HAUNTED_COW);
     public static final DeferredItem<Item> MOB_SPAWNER_ITEM_TOPIELEC = simple("mob_spawner_item_topielec");
 
     public static final DeferredItem<Item> HARPOON_STONE = simple("harpoon_stone");
@@ -53,8 +53,7 @@ public final class ModItems {
     public static final DeferredItem<Item> HARPOON_DIAMOND = simple("harpoon_diamond");
     public static final DeferredItem<Item> HARPOON_OBSIDIAN = simple("harpoon_obsidian");
 
-    private ModItems() {
-    }
+    private ModItems() {}
 
     private static DeferredItem<Item> simple(String name) {
         return ITEMS.registerSimpleItem(name, properties -> properties);
