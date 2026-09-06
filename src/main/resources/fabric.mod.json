@@ -3,10 +3,10 @@
   "id": "dmonsters",
   "version": "${version}",
   "name": "Deadly Monsters",
-  "description": "Deadly Monsters 原版 Minecraft 1.12.2 模组的 Fabric 26.2 移植版\n保留原版注册标识和玩法身份，并使用当前 Minecraft 与 Fabric API 机制完成迁移",
+  "description": "Deadly Monsters 原版 Minecraft 1.12.2 模组的 Fabric 1.21.1 移植版\n保留原版注册标识、资源与玩法内容",
   "authors": [
     "bigbang87（原作者）",
-    "HansOffice（26.2 Fabric 移植）"
+    "HansOffice（1.21.1 Fabric 移植）"
   ],
   "contact": {
     "homepage": "https://github.com/HansOffice/deadly-monsters",
@@ -26,8 +26,8 @@
   },
   "depends": {
     "fabricloader": ">=0.19.5",
-    "minecraft": "~26.2",
-    "java": ">=25",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
     "fabric-api": "*"
   }
 }
