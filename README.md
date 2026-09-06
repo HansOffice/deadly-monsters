@@ -1,88 +1,164 @@
-# Deadly Monsters — NeoForge 26.2 移植版
+# Deadly Monsters — Minecraft 26.2 移植版
 
-这是 [ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters) 从 Minecraft Forge 1.12.2 原生移植到 Minecraft 26.2 / NeoForge 的版本
+[![Minecraft](https://img.shields.io/badge/Minecraft-26.2-2EA44F?style=flat-square&logo=minecraft&logoColor=white)](https://minecraft.net/)
+[![NeoForge](https://img.shields.io/badge/NeoForge-26.2.0.75-E37222?style=flat-square)](https://neoforged.net/)
+[![Fabric](https://img.shields.io/badge/Fabric-0.19.5-CBB99E?style=flat-square)](https://fabricmc.net/)
+[![Java](https://img.shields.io/badge/Java-25-ED8B00?style=flat-square&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
+[![Release](https://img.shields.io/github/v/release/HansOffice/deadly-monsters?style=flat-square&color=238636)](https://github.com/HansOffice/deadly-monsters/releases)
+[![License](https://img.shields.io/badge/License-MIT-0969DA?style=flat-square)](LICENSE)
 
-移植尽量保留原版 `dmonsters` 注册 ID、玩法身份、资源和行为，同时用当前 Minecraft / NeoForge 机制替代已经移除的旧 Forge API
+经典恐怖生物与防御工事模组 **Deadly Monsters** 面向 Minecraft 26.2 的现代原生重构移植版。
 
-## 目标环境
+原模组作者为 **bigbang87**，1.12.2 版本维护者为 **ACGaming**。本移植版完整保留了原版 12 种独特致命生物、防御工事建筑体系与特殊功能物品，同时全面迁移至现代 Minecraft 26.2 数据驱动规范、BlockState / 模型体系、实体渲染状态与时钟机制，并优化了高频搜索逻辑，杜绝旧版兼容垫片。
 
-- Minecraft **26.2**
-- NeoForge **26.2.0.75**
-- ModDevGradle **2.0.146**
-- Gradle **9.2.1**
-- Java **25**
-- Mod ID `dmonsters`
+---
 
-## 当前状态
+## 目录
 
-源码、玩法内容、客户端渲染、资源和数据迁移已经完成
+- [安装与运行](#安装与运行)
+- [怪物图鉴](#怪物图鉴)
+- [防御工事与特色物品](#防御工事与特色物品)
+- [配置说明](#配置说明)
+- [辅助模组兼容性](#辅助模组兼容性)
+- [工程与技术文档](#工程与技术文档)
+- [开发与构建](#开发与构建)
+- [鸣谢与开源许可](#鸣谢与开源许可)
 
-运行时和实际游玩验证单独记录在 [`测试清单.md`](测试清单.md)
+---
 
-已完成内容包括
+## 安装与运行
 
-- 12 种原版怪物及对应实体类型、属性、AI 和渲染
-- 12 种原版怪物刷怪蛋
-- 原版方块和特殊行为
-- Rebar、四种 Harpoon、Lucky Egg、Dagon 与原版怪物掉落功能物品
-- Lucky Egg 与 Dagon 投射物
-- 原版贴图与声音
-- 当前格式的 blockstate、方块模型、物品模型与 item definition
-- 17 个原版合成配方
-- 当前格式的实体与方块战利品表
-- 怪物生命、攻击、速度、自然生成权重和禁用开关配置
-- Mutant Steve、Unborn Baby、Haunted Cow、Topielec 专用配置
-- 通过 NeoForge biome modifier 实现的自然生成
+本模组提供针对主流加载器的独立构建版本。请前往 [GitHub Releases](https://github.com/HansOffice/deadly-monsters/releases) 下载对应文件，**两个版本切勿同时安装**：
 
-更详细的移植决策见 [`移植说明.md`](移植说明.md)
+| 加载器 | 支持版本 | 文件名 | 前置要求 |
+|---|---|---|---|
+| **NeoForge** | 26.2.0.75+ | `dmonsters-neoforge-1.0-26.2.jar` | Java 25 运行时环境 |
+| **Fabric** | 0.19.5+ | `dmonsters-fabric-1.0-26.2.jar` | Fabric API 0.159.0+26.2、Java 25 |
 
-## 配方查看与信息显示兼容性
+---
 
-本模组没有自定义配方类型、配方容器或特殊工作台，现有合成全部走 Minecraft 原生配方系统
+## 怪物图鉴
 
-因此 JEI、REI 会直接读取这些原生配方，不需要额外桥接层
+本移植版完整复刻了原版 12 种各具危险特征的敌对生物，所有实体均已配置现代生物群系分布（Biome Modifier）与独立属性倍率：
 
-Jade 会通过标准方块、实体注册信息读取本模组内容，也不需要专用 provider 才能显示基础信息
+| 实体 ID | 中文名称 | 主要生成环境 | 核心机制与致命危险 |
+|---|---|---|---|
+| `mutant_steve` | 变异史蒂夫 | 主世界陆地 | 动作敏捷的高速近战怪物；攻击可破坏周围方块（可配置）；白天暴露在日光下会自燃 |
+| `freezer` | 冰霜死者 | 雪原与极寒群系 | 近战附加持续缓慢效果；会冻结脚下水面并降雪；攻击状态切换为发光怒目纹理 |
+| `climber` | 攀爬者 | 主世界阴暗处 | 具备垂直墙面攀爬能力；完全免疫蜘蛛网阻滞与中毒状态；困难难度可获得随机永久增益 |
+| `entrail` | 肠怪 | 主世界陆地 | 具备重力漂浮特性；下落缓慢；受到非火焰伤害时会分裂并生成史莱姆 |
+| `unborn_baby` | 未出世的婴儿 | 主世界夜间 | 身型小巧移速较快；攻击附加迟缓效果；锁定时周期性使玩家致盲（可配置） |
+| `fallen_leader` | 堕落领袖 | 主世界陆地 | 强力近战亡灵；成功攻击后会按伤害回血；掉落可提供超强击退效果的堕落领袖脊椎 |
+| `bloody_maiden` | 血腥少女 | 阴暗洞穴深处 | 初始处于沉睡伪装；受到攻击或锁定目标后触发暴怒形态并恢复致命攻击 |
+| `zombie_chicken` | 丧尸鸡 | 主世界陆地 | 敌对鸡类生物；会主动猎杀玩家和普通鸡；近战成功后可将普通鸡转化为丧尸鸡 |
+| `present` | 伪装礼盒 | 雪原露天环境 | 伪装为礼物盒外形；被攻击后将玩家传送入临时笼墙，并在中心刷新两只点燃的爬行者 |
+| `stranger` | 陌生人 | 主世界夜间 | 神秘人形实体；刻意回避玩家视线并在暗处潜伏；特定靠近时播放冲击音效 |
+| `haunted_cow` | 附魔牛 | 主世界夜间 | 诡异发光牛形怪物；免疫普通武器；被非允许武器攻击时会强制将世界时间颠倒为夜晚 |
+| `topielec` | 水鬼 | 水域与河流湖泊 | 水下快速追踪玩家；近身时强行将玩家拖向更深水域；离水后尝试寻找水源（默认只受鱼叉伤害） |
 
-EMI 截至 2026-09-06 尚未提供 Minecraft 26.2 版本，因此当前无法进行 26.2 实机联合验证，本模组不对 EMI 添加硬依赖或临时兼容层，继续保持标准数据结构，等待 EMI 提供 26.2 构建后即可直接复验
+---
 
-完整兼容性说明见 [`兼容性.md`](兼容性.md)
+## 防御工事与特色物品
 
-## 开发运行
+为了抵御凶猛的致命怪物，模组提供了完整的防御工事与特殊战利品体系：
 
-本仓库当前使用系统 Gradle 9.2.1，不包含 Gradle Wrapper
+### 1. 防御工事建筑
+
+| 方块 | 获取方式 | 特性与用途 |
+|---|---|---|
+| **强化石 / 强化圆石**<br>`strengthened_stone`<br>`strengthened_cobblestone` | 使用钢筋对普通石块 / 圆石右键强化 | 极高抗爆性能与坚硬度；潜行右键可无损回收钢筋并还原方块 |
+| **铁丝网**<br>`barbed_wire` | 铁锭 + 铁粒合成 | 必须放置在有效方块表面；生物接触后受到持续接触伤害并被大幅减缓水平位移 |
+| **铁丝网栅栏与立柱**<br>`mesh_fence`<br>`mesh_fence_pole` | 铁丝网 + 铁锭合成 | 专用铁丝网围栏连接机制；保留原版 8 格立柱跨度锚定限制，无立柱支撑时结构失效 |
+| **灵魂之眼**<br>`soul_eye` | 末影之眼与黑曜石等合成 | 具备休眠、苏醒与吞噬三阶段循环；可吞噬周围靠近的生物并概率吐出绿宝石与铁锭 |
+| **圣诞树与礼品盒**<br>`christmas_tree`<br>`present_box` | 云杉树苗与特定物品合成 | 圣诞树周期性在相邻位置生长礼品盒；破坏礼盒可随机开出丰厚资源或遭遇即时危险 |
+
+### 2. 特色功能物品与武器
+
+| 物品 | 类别 | 效果与使用方式 |
+|---|---|---|
+| **钢筋 (Rebar)** | 材料 | 强化建筑核心原料，用于加固普通石材以及合成铁丝网 |
+| **四阶鱼叉 (Harpoon)** | 武器 / 工具 | 石、铁、钻石、黑曜石四种档位；水中使用成功捕获时掉落鳕鱼，也是克制水鬼的关键武器 |
+| **幸运蛋 (Lucky Egg)** | 投掷物 | 投掷击中方块触发随机效果：奖励装备、短引信 TNT、生成普通雏鸡或生成危险丧尸鸡 |
+| **达贡 (Dagon)** | 投掷物 | 附带特殊随机运动弹道的神秘投掷物 |
+| **血腥少女之心** | 功能战利品 | 普通右键在目标方块生成岩浆源，潜行右键生成水源；受世界交互权限保护 |
+| **堕落领袖脊椎** | 近战武器 | 命中目标时附带极强冲量物理击退效果 |
+| **未出世婴儿之眼** | 功能战利品 | 用于安全提取目标方块结构 |
+| **日光滴露 (Sunlight Drop)** | 消耗品 | 仅夜间可用；使用后将主世界当前时钟直接推进至清晨白天 |
+
+---
+
+## 配置说明
+
+首次启动模组后，服务端或单人客户端会在 `config/` 目录下生成公共配置文件：
+
+* 配置文件路径：`config/dmonsters-common.toml`
+* 关键配置段落：
+  * **全局属性倍率**：可集中按比例调整全模组怪物的最大生命、攻击伤害与移动速度。
+  * **单怪独立倍率与开关**：每种怪物均拥有独立的 `healthMultiplier`、`attackMultiplier`、`speedMultiplier`、`spawnRate`（生成权重）以及 `disabled`（彻底禁用）。
+  * **特殊机制开关**：
+    * `mutant_steve.breakBlocks`：是否允许变异史蒂夫在特殊攻击时破坏方块（默认开启）。
+    * `haunted_cow.disableTimeChange`：是否关闭附魔牛受到无效武器攻击时强制转夜的机制。
+    * `topielec.harpoonOnly`：是否限制水鬼仅能被鱼叉造成玩家直接伤害（默认开启）。
+    * `unborn_baby.blindness`：是否启用未出世婴儿的周期失明光环。
+
+> [!NOTE]
+> 修改 `spawnRate` 或 `disabled` 会在世界加载时影响生物群系的生成列表注入，修改后建议重新进入世界或重启专用服务器。
+
+---
+
+## 辅助模组兼容性
+
+本模组所有方块、物品、实体均遵循 Minecraft 标准 Registry 架构，合成配方采用纯原版 JSON 数据驱动体系：
+
+* **JEI (Just Enough Items)**：开箱即用，可直接查询 17 个合成配方与物品用途。
+* **REI (Roughly Enough Items)**：开箱即用，原生配方全面兼容。
+* **Jade**：开箱即用，可直接读取方块与实体的基础注册元数据与血量信息。
+* **EMI**：截至 2026-09-06，EMI 官方尚未提供针对 Minecraft 26.2 的稳定发行版本。本模组保持纯正原版标准数据结构，不引入临时伪兼容层，等待 EMI 官方 26.2 发行后即可直接无缝读取。
+
+详细兼容性调研与测试记录参见 [docs/兼容性.md](docs/兼容性.md)。
+
+---
+
+## 工程与技术文档
+
+关于跨大版本重构与测试的深度技术细节，可参阅仓库内的附带文档：
+
+- [docs/移植说明.md](docs/移植说明.md) — 1.12.2 到 26.2 的机制对照、时钟模型替换与现代化决策记录
+- [docs/兼容性.md](docs/兼容性.md) — 外部辅助模组生态调研与适配原则
+- [docs/测试清单.md](docs/测试清单.md) — 覆盖 12 种生物、特殊方块、音效及联机行为的手动实机验证清单
+
+---
+
+## 开发与构建
+
+本项目使用系统安装的 Gradle 9.2.1 与 Java 25 进行模块化开发：
+
+<details>
+<summary>点击展开构建命令参考</summary>
 
 ```bash
+# 启动客户端测试环境
 gradle runClient
+
+# 启动专用服务器测试环境
 gradle runServer
+
+# 运行数据生成器（DataGen 生成战利品表、模型与配方）
 gradle runData
+
+# 编译并输出最终 Mod Jar
 gradle build
 ```
 
-开发和构建统一使用 JDK 25
+构建产物将输出至 `build/libs/` 目录。
+</details>
 
-## 配置
+---
 
-NeoForge 首次运行后会生成 Deadly Monsters 公共配置
+## 鸣谢与开源许可
 
-移植版保留原版默认怪物倍率和自然生成权重
+* 原作设计与 1.10–1.12 代码：[bigbang87/deadly-monsters](https://github.com/bigbang87/deadly-monsters)
+* 1.12.2 维护与修复版本：[ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters)
+* Minecraft 26.2 原生重构移植：[HansOffice](https://github.com/HansOffice)
 
-`spawnRate` 与 `disabled` 会影响生物群系生成列表，修改后建议重启世界或专用服务器
-
-## 移植原则
-
-这是原生移植，不是旧版兼容垫片
-
-少量 1.12.2 实现细节无法或不应该逐字复制
-
-- 不再接入已经过时的 Hostile Worlds Invasions 旧版联动
-- 旧版数字 `dayLengthTicks` 已退役，Sunlight Drop 与 Haunted Cow 使用 Minecraft 26.2 当前世界时钟标记
-- Topielec 原版深水搜索存在近似每 tick 大范围扫描问题，移植版保留可见行为并限制刷新频率
-- 旧 metadata 物品映射到当前独立物品 ID
-- 方块修改类物品使用当前交互权限检查，避免绕过现代保护逻辑
-
-## 上游与许可
-
-原项目 [ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters)
-
-上游使用 MIT License，本仓库保留原始版权与许可文本 [`LICENSE`](LICENSE)
+本项目遵循 [MIT License](LICENSE) 开源协议发布，完整保留原作者版权与署名文件。
