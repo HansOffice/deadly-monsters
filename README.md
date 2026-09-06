@@ -7,9 +7,9 @@
 [![Release](https://img.shields.io/github/v/release/HansOffice/deadly-monsters?style=flat-square&color=238636)](https://github.com/HansOffice/deadly-monsters/releases)
 [![License](https://img.shields.io/badge/License-MIT-0969DA?style=flat-square)](LICENSE)
 
-经典恐怖生物与防御工事模组 **Deadly Monsters** 面向 Minecraft 26.2 的现代原生重构移植版。
+经典恐怖生物与防御工事模组 **Deadly Monsters** 面向 Minecraft 26.2 的现代原生重构移植版
 
-原模组作者为 **bigbang87**，1.12.2 版本维护者为 **ACGaming**。本移植版完整保留了原版 12 种独特致命生物、防御工事建筑体系与特殊功能物品，同时全面迁移至现代 Minecraft 26.2 数据驱动规范、BlockState / 模型体系、实体渲染状态与时钟机制，并优化了高频搜索逻辑，杜绝旧版兼容垫片。
+原模组作者为 **bigbang87**，1.12.2 版本维护者为 **ACGaming**；本移植版完整保留原版 12 种独特致命生物、防御工事建筑体系与特殊功能物品，同时全面迁移至现代 Minecraft 26.2 数据驱动规范、BlockState / 模型体系、实体渲染状态与时钟机制，并优化高频搜索逻辑，杜绝旧版兼容垫片
 
 ---
 
@@ -28,7 +28,7 @@
 
 ## 安装与运行
 
-本模组提供针对主流加载器的独立构建版本。请前往 [GitHub Releases](https://github.com/HansOffice/deadly-monsters/releases) 下载对应文件，**两个版本切勿同时安装**：
+本模组提供针对主流加载器的独立构建版本，前往 [GitHub Releases](https://github.com/HansOffice/deadly-monsters/releases) 下载对应文件（**两个版本切勿同时安装**）：
 
 | 加载器 | 支持版本 | 文件名 | 前置要求 |
 |---|---|---|---|
@@ -39,7 +39,7 @@
 
 ## 怪物图鉴
 
-本移植版完整复刻了原版 12 种各具危险特征的敌对生物，所有实体均已配置现代生物群系分布（Biome Modifier）与独立属性倍率：
+本移植版完整复刻原版 12 种各具危险特征的敌对生物，所有实体均已配置现代生物群系分布（Biome Modifier）与独立属性倍率：
 
 | 实体 ID | 中文名称 | 主要生成环境 | 核心机制与致命危险 |
 |---|---|---|---|
@@ -60,7 +60,7 @@
 
 ## 防御工事与特色物品
 
-为了抵御凶猛的致命怪物，模组提供了完整的防御工事与特殊战利品体系：
+为了抵御凶猛的致命怪物，模组提供完整的防御工事与特殊战利品体系：
 
 ### 1. 防御工事建筑
 
@@ -93,16 +93,16 @@
 
 * 配置文件路径：`config/dmonsters-common.toml`
 * 关键配置段落：
-  * **全局属性倍率**：可集中按比例调整全模组怪物的最大生命、攻击伤害与移动速度。
-  * **单怪独立倍率与开关**：每种怪物均拥有独立的 `healthMultiplier`、`attackMultiplier`、`speedMultiplier`、`spawnRate`（生成权重）以及 `disabled`（彻底禁用）。
+  * **全局属性倍率**：可集中按比例调整全模组怪物的最大生命、攻击伤害与移动速度
+  * **单怪独立倍率与开关**：每种怪物均拥有独立的 `healthMultiplier`、`attackMultiplier`、`speedMultiplier`、`spawnRate`（生成权重）以及 `disabled`（彻底禁用）
   * **特殊机制开关**：
-    * `mutant_steve.breakBlocks`：是否允许变异史蒂夫在特殊攻击时破坏方块（默认开启）。
-    * `haunted_cow.disableTimeChange`：是否关闭附魔牛受到无效武器攻击时强制转夜的机制。
-    * `topielec.harpoonOnly`：是否限制水鬼仅能被鱼叉造成玩家直接伤害（默认开启）。
-    * `unborn_baby.blindness`：是否启用未出世婴儿的周期失明光环。
+    * `mutant_steve.breakBlocks`：是否允许变异史蒂夫在特殊攻击时破坏方块（默认开启）
+    * `haunted_cow.disableTimeChange`：是否关闭附魔牛受到无效武器攻击时强制转夜的机制
+    * `topielec.harpoonOnly`：是否限制水鬼仅能被鱼叉造成玩家直接伤害（默认开启）
+    * `unborn_baby.blindness`：是否启用未出世婴儿的周期失明光环
 
 > [!NOTE]
-> 修改 `spawnRate` 或 `disabled` 会在世界加载时影响生物群系的生成列表注入，修改后建议重新进入世界或重启专用服务器。
+> 修改 `spawnRate` 或 `disabled` 会在世界加载时影响生物群系的生成列表注入，修改后建议重新进入世界或重启专用服务器
 
 ---
 
@@ -110,12 +110,12 @@
 
 本模组所有方块、物品、实体均遵循 Minecraft 标准 Registry 架构，合成配方采用纯原版 JSON 数据驱动体系：
 
-* **JEI (Just Enough Items)**：开箱即用，可直接查询 17 个合成配方与物品用途。
-* **REI (Roughly Enough Items)**：开箱即用，原生配方全面兼容。
-* **Jade**：开箱即用，可直接读取方块与实体的基础注册元数据与血量信息。
-* **EMI**：截至 2026-09-06，EMI 官方尚未提供针对 Minecraft 26.2 的稳定发行版本。本模组保持纯正原版标准数据结构，不引入临时伪兼容层，等待 EMI 官方 26.2 发行后即可直接无缝读取。
+* **JEI (Just Enough Items)**：开箱即用，可直接查询 17 个合成配方与物品用途
+* **REI (Roughly Enough Items)**：开箱即用，原生配方全面兼容
+* **Jade**：开箱即用，可直接读取方块与实体的基础注册元数据与血量信息
+* **EMI**：截至 2026-09-06，EMI 官方尚未提供针对 Minecraft 26.2 的稳定发行版本；本模组保持纯正原版标准数据结构，不引入临时伪兼容层，等待 EMI 官方 26.2 发行后即可直接无缝读取
 
-详细兼容性调研与测试记录参见 [docs/兼容性.md](docs/兼容性.md)。
+详细兼容性调研与测试记录参见 [docs/兼容性.md](docs/兼容性.md)
 
 ---
 
@@ -150,7 +150,7 @@ gradle runData
 gradle build
 ```
 
-构建产物将输出至 `build/libs/` 目录。
+构建产物将输出至 `build/libs/` 目录
 </details>
 
 ---
@@ -161,4 +161,4 @@ gradle build
 * 1.12.2 维护与修复版本：[ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters)
 * Minecraft 26.2 原生重构移植：[HansOffice](https://github.com/HansOffice)
 
-本项目遵循 [MIT License](LICENSE) 开源协议发布，完整保留原作者版权与署名文件。
+本项目遵循 [MIT License](LICENSE) 开源协议发布，完整保留原作者版权与署名文件
