@@ -4,10 +4,10 @@ import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.entity.ClimberEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
-public final class ClimberRenderer extends MobRenderer<ClimberEntity, ClimberRenderState, ClimberModel> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(
+public final class ClimberRenderer extends MobRenderer<ClimberEntity, ClimberModel> {
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
             DeadlyMonsters.MOD_ID, "textures/entity/climber.png");
 
     public ClimberRenderer(EntityRendererProvider.Context context) {
@@ -15,18 +15,8 @@ public final class ClimberRenderer extends MobRenderer<ClimberEntity, ClimberRen
     }
 
     @Override
-    public Identifier getTextureLocation(ClimberRenderState state) {
+    public ResourceLocation getTextureLocation(ClimberEntity entity) {
         return TEXTURE;
     }
 
-    @Override
-    public ClimberRenderState createRenderState() {
-        return new ClimberRenderState();
-    }
-
-    @Override
-    public void extractRenderState(ClimberEntity entity, ClimberRenderState state, float partialTicks) {
-        super.extractRenderState(entity, state, partialTicks);
-        state.attackTime = entity.getAttackAnim(partialTicks);
-    }
-}
+        }

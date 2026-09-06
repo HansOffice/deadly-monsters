@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
@@ -51,6 +51,6 @@ public final class ModNaturalSpawns {
     }
 
     private static TagKey<Biome> tag(String name) {
-        return TagKey.create(Registries.BIOME, Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name));
+        return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name));
     }
 }

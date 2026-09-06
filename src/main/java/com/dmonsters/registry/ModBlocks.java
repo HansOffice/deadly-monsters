@@ -14,7 +14,7 @@ import java.util.function.Function;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -66,7 +66,7 @@ public final class ModBlocks {
             Function<BlockBehaviour.Properties, T> factory,
             BlockBehaviour.Properties properties) {
         ResourceKey<Block> key = ResourceKey.create(
-                Registries.BLOCK, Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name));
+                Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name));
         T block = factory.apply(properties.setId(key));
         Registry.register(BuiltInRegistries.BLOCK, key, block);
         return new RegistryRef<>(block);

@@ -1,7 +1,8 @@
 package com.dmonsters.client;
 
 import com.dmonsters.DeadlyMonsters;
-import net.minecraft.client.model.EntityModel;
+import com.dmonsters.entity.EntrailEntity;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -10,13 +11,14 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 /** Modern model-layer port of the original 64x64 Entrail model. */
-public final class EntrailModel extends EntityModel<LivingEntityRenderState> {
+public final class EntrailModel extends HierarchicalModel<EntrailEntity> {
+    private final ModelPart root;
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "entrail"), "main");
+            ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "entrail"), "main");
 
     private final ModelPart head;
     private final ModelPart middle;
@@ -24,11 +26,16 @@ public final class EntrailModel extends EntityModel<LivingEntityRenderState> {
     private final ModelPart end;
 
     public EntrailModel(ModelPart root) {
-        super(root);
+        this.root = root;
         this.head = root.getChild("head");
         this.middle = root.getChild("middle");
         this.bottom = root.getChild("bottom");
         this.end = root.getChild("end");
+    }
+
+    @Override
+    public ModelPart root() {
+        return this.root;
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -50,15 +57,14 @@ public final class EntrailModel extends EntityModel<LivingEntityRenderState> {
     }
 
     @Override
-    public void setupAnim(LivingEntityRenderState state) {
-        super.setupAnim(state);
-        this.middle.xRot = Mth.cos(state.ageInTicks * 0.2F + 0.3F * (float) Math.PI) * (float) Math.PI * 0.05F;
+    public void setupAnim(EntrailEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.middle.xRot = Mth.cos(ageInTicks * 0.2F + 0.3F * (float) Math.PI) * (float) Math.PI * 0.05F;
         this.middle.y = 5.0F;
-        this.bottom.xRot = Mth.cos(state.ageInTicks * 0.2F + 0.05F * (float) Math.PI) * (float) Math.PI * 0.10F;
-        this.bottom.y = Mth.sin(state.ageInTicks * 0.2F + 0.05F * (float) Math.PI) * (float) Math.PI * 0.2F + 5.0F;
-        this.end.xRot = Mth.cos(state.ageInTicks * 0.2F) * (float) Math.PI * 0.15F;
-        this.end.y = Mth.sin(state.ageInTicks * 0.2F) * (float) Math.PI * 0.4F + 5.0F;
-        this.head.yRot = state.yRot * (float) (Math.PI / 180.0D);
-        this.head.xRot = state.xRot * (float) (Math.PI / 180.0D);
+        this.bottom.xRot = Mth.cos(ageInTicks * 0.2F + 0.05F * (float) Math.PI) * (float) Math.PI * 0.10F;
+        this.bottom.y = Mth.sin(ageInTicks * 0.2F + 0.05F * (float) Math.PI) * (float) Math.PI * 0.2F + 5.0F;
+        this.end.xRot = Mth.cos(ageInTicks * 0.2F) * (float) Math.PI * 0.15F;
+        this.end.y = Mth.sin(ageInTicks * 0.2F) * (float) Math.PI * 0.4F + 5.0F;
+        this.head.yRot = netHeadYaw * (float) (Math.PI / 180.0D);
+        this.head.xRot = headPitch * (float) (Math.PI / 180.0D);
     }
 }

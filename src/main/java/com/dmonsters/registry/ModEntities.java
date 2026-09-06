@@ -20,7 +20,7 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRe
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
@@ -140,7 +140,7 @@ public final class ModEntities {
 
     private static <T extends Entity> RegistryRef<EntityType<T>> registerType(String name, EntityType.Builder<T> builder) {
         ResourceKey<EntityType<?>> key = ResourceKey.create(
-                Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name));
+                Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name));
         EntityType<T> type = builder.build(key);
         Registry.register(BuiltInRegistries.ENTITY_TYPE, key, type);
         return new RegistryRef<>(type);

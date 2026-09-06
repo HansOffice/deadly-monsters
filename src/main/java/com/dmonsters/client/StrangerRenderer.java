@@ -4,10 +4,10 @@ import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.entity.StrangerEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
-public final class StrangerRenderer extends MobRenderer<StrangerEntity, StrangerRenderState, StrangerModel> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(
+public final class StrangerRenderer extends MobRenderer<StrangerEntity, StrangerModel> {
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
             DeadlyMonsters.MOD_ID, "textures/entity/stranger.png");
 
     public StrangerRenderer(EntityRendererProvider.Context context) {
@@ -15,18 +15,8 @@ public final class StrangerRenderer extends MobRenderer<StrangerEntity, Stranger
     }
 
     @Override
-    public Identifier getTextureLocation(StrangerRenderState state) {
+    public ResourceLocation getTextureLocation(StrangerEntity entity) {
         return TEXTURE;
     }
 
-    @Override
-    public StrangerRenderState createRenderState() {
-        return new StrangerRenderState();
-    }
-
-    @Override
-    public void extractRenderState(StrangerEntity entity, StrangerRenderState state, float partialTicks) {
-        super.extractRenderState(entity, state, partialTicks);
-        state.attackTime = entity.getAttackAnim(partialTicks);
-    }
-}
+        }

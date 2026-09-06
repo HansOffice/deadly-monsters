@@ -9,11 +9,11 @@ import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.chicken.Chicken;
+import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
@@ -108,7 +108,7 @@ public final class LuckyEggProjectile extends ThrowableItemProjectile {
     }
 
     private void spawnChicken(ServerLevel level) {
-        Chicken chicken = EntityTypes.CHICKEN.create(level, EntitySpawnReason.TRIGGERED);
+        Chicken chicken = EntityTypes.CHICKEN.create(level, MobSpawnType.TRIGGERED);
         if (chicken != null) {
             chicken.setAge(-24000);
             chicken.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
@@ -117,7 +117,7 @@ public final class LuckyEggProjectile extends ThrowableItemProjectile {
     }
 
     private void spawnZombieChicken(ServerLevel level) {
-        ZombieChickenEntity chicken = ModEntities.ZOMBIE_CHICKEN.get().create(level, EntitySpawnReason.TRIGGERED);
+        ZombieChickenEntity chicken = ModEntities.ZOMBIE_CHICKEN.get().create(level, MobSpawnType.TRIGGERED);
         if (chicken != null) {
             chicken.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
             level.addFreshEntity(chicken);

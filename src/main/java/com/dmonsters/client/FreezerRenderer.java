@@ -4,12 +4,12 @@ import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.entity.FreezerEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
-public final class FreezerRenderer extends MobRenderer<FreezerEntity, FreezerRenderState, FreezerModel> {
-    private static final Identifier IDLE_TEXTURE = Identifier.fromNamespaceAndPath(
+public final class FreezerRenderer extends MobRenderer<FreezerEntity, FreezerModel> {
+    private static final ResourceLocation IDLE_TEXTURE = ResourceLocation.fromNamespaceAndPath(
             DeadlyMonsters.MOD_ID, "textures/entity/freezer_idle.png");
-    private static final Identifier ANGRY_TEXTURE = Identifier.fromNamespaceAndPath(
+    private static final ResourceLocation ANGRY_TEXTURE = ResourceLocation.fromNamespaceAndPath(
             DeadlyMonsters.MOD_ID, "textures/entity/freezer_angry.png");
 
     public FreezerRenderer(EntityRendererProvider.Context context) {
@@ -17,19 +17,8 @@ public final class FreezerRenderer extends MobRenderer<FreezerEntity, FreezerRen
     }
 
     @Override
-    public Identifier getTextureLocation(FreezerRenderState state) {
-        return state.aggressive ? ANGRY_TEXTURE : IDLE_TEXTURE;
+    public ResourceLocation getTextureLocation(FreezerEntity entity) {
+        return entity.isAggressive() ? ANGRY_TEXTURE : IDLE_TEXTURE;
     }
 
-    @Override
-    public FreezerRenderState createRenderState() {
-        return new FreezerRenderState();
-    }
-
-    @Override
-    public void extractRenderState(FreezerEntity entity, FreezerRenderState state, float partialTicks) {
-        super.extractRenderState(entity, state, partialTicks);
-        state.aggressive = entity.isAggressive();
-        state.attackTime = entity.getAttackAnim(partialTicks);
-    }
-}
+        }

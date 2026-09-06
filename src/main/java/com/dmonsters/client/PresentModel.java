@@ -1,7 +1,8 @@
 package com.dmonsters.client;
 
 import com.dmonsters.DeadlyMonsters;
-import net.minecraft.client.model.EntityModel;
+import com.dmonsters.entity.PresentEntity;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -10,22 +11,28 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 /** Modern model-layer port of the original Present monster model. */
-public final class PresentModel extends EntityModel<LivingEntityRenderState> {
+public final class PresentModel extends HierarchicalModel<PresentEntity> {
+    private final ModelPart root;
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "present"), "main");
+            ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "present"), "main");
     private final ModelPart head;
     private final ModelPart rightLeg;
     private final ModelPart leftLeg;
 
     public PresentModel(ModelPart root) {
-        super(root);
+        this.root = root;
         this.head = root.getChild("head");
         this.rightLeg = root.getChild("right_leg");
         this.leftLeg = root.getChild("left_leg");
+    }
+
+    @Override
+    public ModelPart root() {
+        return this.root;
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -51,11 +58,10 @@ public final class PresentModel extends EntityModel<LivingEntityRenderState> {
     }
 
     @Override
-    public void setupAnim(LivingEntityRenderState state) {
-        super.setupAnim(state);
-        this.rightLeg.xRot = Mth.cos(state.walkAnimationPos * 0.6662F) * 1.4F * state.walkAnimationSpeed;
-        this.leftLeg.xRot = Mth.cos(state.walkAnimationPos * 0.6662F + (float) Math.PI) * 1.4F * state.walkAnimationSpeed;
-        this.head.yRot = state.yRot * (float) (Math.PI / 180.0D);
-        this.head.xRot = state.xRot * (float) (Math.PI / 180.0D);
+    public void setupAnim(PresentEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.rightLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+        this.leftLeg.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+        this.head.yRot = netHeadYaw * (float) (Math.PI / 180.0D);
+        this.head.xRot = headPitch * (float) (Math.PI / 180.0D);
     }
 }

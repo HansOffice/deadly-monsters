@@ -3,7 +3,7 @@ package com.dmonsters.registry;
 import com.dmonsters.DeadlyMonsters;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
 public final class ModSounds {
@@ -79,7 +79,7 @@ public final class ModSounds {
     }
 
     private static RegistryRef<SoundEvent> register(String name) {
-        Identifier id = Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name);
         SoundEvent sound = SoundEvent.createVariableRangeEvent(id);
         Registry.register(BuiltInRegistries.SOUND_EVENT, id, sound);
         return new RegistryRef<>(sound);

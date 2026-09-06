@@ -2,13 +2,13 @@ package com.dmonsters.entity;
 
 import com.dmonsters.registry.ModSounds;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -18,14 +18,14 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.cubemob.Slime;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 /** Native 26.2 port of the original Entrail monster. */
 public final class EntrailEntity extends Monster {
-    private static final Identifier SLIME_ID = Identifier.fromNamespaceAndPath("minecraft", "slime");
+    private static final ResourceLocation SLIME_ID = ResourceLocation.fromNamespaceAndPath("minecraft", "slime");
 
     public EntrailEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level);
@@ -64,7 +64,7 @@ public final class EntrailEntity extends Monster {
         if (!source.is(DamageTypeTags.IS_FIRE)) {
             EntityType<?> slimeType = BuiltInRegistries.ENTITY_TYPE.getValue(SLIME_ID);
             if (slimeType != null) {
-                Entity entity = slimeType.create(level, EntitySpawnReason.TRIGGERED);
+                Entity entity = slimeType.create(level, MobSpawnType.TRIGGERED);
                 if (entity instanceof Slime slime) {
                     slime.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
                     level.addFreshEntity(slime);

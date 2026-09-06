@@ -4,12 +4,12 @@ import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.entity.BloodyMaidenEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
-public final class BloodyMaidenRenderer extends MobRenderer<BloodyMaidenEntity, BloodyMaidenRenderState, BloodyMaidenModel> {
-    private static final Identifier NORMAL_TEXTURE = Identifier.fromNamespaceAndPath(
+public final class BloodyMaidenRenderer extends MobRenderer<BloodyMaidenEntity, BloodyMaidenModel> {
+    private static final ResourceLocation NORMAL_TEXTURE = ResourceLocation.fromNamespaceAndPath(
             DeadlyMonsters.MOD_ID, "textures/entity/bloody_maiden.png");
-    private static final Identifier TRIGGERED_TEXTURE = Identifier.fromNamespaceAndPath(
+    private static final ResourceLocation TRIGGERED_TEXTURE = ResourceLocation.fromNamespaceAndPath(
             DeadlyMonsters.MOD_ID, "textures/entity/bloody_maiden_triggered.png");
 
     public BloodyMaidenRenderer(EntityRendererProvider.Context context) {
@@ -17,18 +17,8 @@ public final class BloodyMaidenRenderer extends MobRenderer<BloodyMaidenEntity, 
     }
 
     @Override
-    public Identifier getTextureLocation(BloodyMaidenRenderState state) {
-        return state.triggered ? TRIGGERED_TEXTURE : NORMAL_TEXTURE;
+    public ResourceLocation getTextureLocation(BloodyMaidenEntity entity) {
+        return entity.isTriggered() ? TRIGGERED_TEXTURE : NORMAL_TEXTURE;
     }
 
-    @Override
-    public BloodyMaidenRenderState createRenderState() {
-        return new BloodyMaidenRenderState();
-    }
-
-    @Override
-    public void extractRenderState(BloodyMaidenEntity entity, BloodyMaidenRenderState state, float partialTicks) {
-        super.extractRenderState(entity, state, partialTicks);
-        state.triggered = entity.isTriggered();
-    }
-}
+        }

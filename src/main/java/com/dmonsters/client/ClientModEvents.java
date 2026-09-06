@@ -2,39 +2,39 @@ package com.dmonsters.client;
 
 import com.dmonsters.registry.ModEntities;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
-import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 
 public final class ClientModEvents implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ModelLayerRegistry.registerModelLayer(BloodyMaidenModel.LAYER_LOCATION, BloodyMaidenModel::createBodyLayer);
-        ModelLayerRegistry.registerModelLayer(ClimberModel.LAYER_LOCATION, ClimberModel::createBodyLayer);
-        ModelLayerRegistry.registerModelLayer(EntrailModel.LAYER_LOCATION, EntrailModel::createBodyLayer);
-        ModelLayerRegistry.registerModelLayer(FallenLeaderModel.LAYER_LOCATION, FallenLeaderModel::createBodyLayer);
-        ModelLayerRegistry.registerModelLayer(FreezerModel.LAYER_LOCATION, FreezerModel::createBodyLayer);
-        ModelLayerRegistry.registerModelLayer(HauntedCowModel.LAYER_LOCATION, HauntedCowModel::createBodyLayer);
-        ModelLayerRegistry.registerModelLayer(MutantSteveModel.LAYER_LOCATION, MutantSteveModel::createBodyLayer);
-        ModelLayerRegistry.registerModelLayer(PresentModel.LAYER_LOCATION, PresentModel::createBodyLayer);
-        ModelLayerRegistry.registerModelLayer(StrangerModel.LAYER_LOCATION, StrangerModel::createBodyLayer);
-        ModelLayerRegistry.registerModelLayer(TopielecModel.LAYER_LOCATION, TopielecModel::createBodyLayer);
-        ModelLayerRegistry.registerModelLayer(UnbornBabyModel.LAYER_LOCATION, UnbornBabyModel::createBodyLayer);
-        ModelLayerRegistry.registerModelLayer(ZombieChickenModel.LAYER_LOCATION, ZombieChickenModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(BloodyMaidenModel.LAYER_LOCATION, BloodyMaidenModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(ClimberModel.LAYER_LOCATION, ClimberModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(EntrailModel.LAYER_LOCATION, EntrailModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(FallenLeaderModel.LAYER_LOCATION, FallenLeaderModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(FreezerModel.LAYER_LOCATION, FreezerModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(HauntedCowModel.LAYER_LOCATION, HauntedCowModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(MutantSteveModel.LAYER_LOCATION, MutantSteveModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(PresentModel.LAYER_LOCATION, PresentModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(StrangerModel.LAYER_LOCATION, StrangerModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(TopielecModel.LAYER_LOCATION, TopielecModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(UnbornBabyModel.LAYER_LOCATION, UnbornBabyModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(ZombieChickenModel.LAYER_LOCATION, ZombieChickenModel::createBodyLayer);
 
-        EntityRenderers.register(ModEntities.BLOODY_MAIDEN.get(), BloodyMaidenRenderer::new);
-        EntityRenderers.register(ModEntities.CLIMBER.get(), ClimberRenderer::new);
-        EntityRenderers.register(ModEntities.ENTRAIL.get(), EntrailRenderer::new);
-        EntityRenderers.register(ModEntities.FALLEN_LEADER.get(), FallenLeaderRenderer::new);
-        EntityRenderers.register(ModEntities.FREEZER.get(), FreezerRenderer::new);
-        EntityRenderers.register(ModEntities.HAUNTED_COW.get(), HauntedCowRenderer::new);
-        EntityRenderers.register(ModEntities.MUTANT_STEVE.get(), MutantSteveRenderer::new);
-        EntityRenderers.register(ModEntities.PRESENT.get(), PresentRenderer::new);
-        EntityRenderers.register(ModEntities.STRANGER.get(), StrangerRenderer::new);
-        EntityRenderers.register(ModEntities.TOPIELEC.get(), TopielecRenderer::new);
-        EntityRenderers.register(ModEntities.UNBORN_BABY.get(), UnbornBabyRenderer::new);
-        EntityRenderers.register(ModEntities.ZOMBIE_CHICKEN.get(), ZombieChickenRenderer::new);
-        EntityRenderers.register(ModEntities.LUCKY_EGG_PROJECTILE.get(), ThrownItemRenderer::new);
-        EntityRenderers.register(ModEntities.DAGON_PROJECTILE.get(), ThrownItemRenderer::new);
+        EntityRendererRegistry.register(ModEntities.BLOODY_MAIDEN.get(), BloodyMaidenRenderer::new);
+        EntityRendererRegistry.register(ModEntities.CLIMBER.get(), ClimberRenderer::new);
+        EntityRendererRegistry.register(ModEntities.ENTRAIL.get(), EntrailRenderer::new);
+        EntityRendererRegistry.register(ModEntities.FALLEN_LEADER.get(), FallenLeaderRenderer::new);
+        EntityRendererRegistry.register(ModEntities.FREEZER.get(), FreezerRenderer::new);
+        EntityRendererRegistry.register(ModEntities.HAUNTED_COW.get(), HauntedCowRenderer::new);
+        EntityRendererRegistry.register(ModEntities.MUTANT_STEVE.get(), MutantSteveRenderer::new);
+        EntityRendererRegistry.register(ModEntities.PRESENT.get(), PresentRenderer::new);
+        EntityRendererRegistry.register(ModEntities.STRANGER.get(), StrangerRenderer::new);
+        EntityRendererRegistry.register(ModEntities.TOPIELEC.get(), TopielecRenderer::new);
+        EntityRendererRegistry.register(ModEntities.UNBORN_BABY.get(), UnbornBabyRenderer::new);
+        EntityRendererRegistry.register(ModEntities.ZOMBIE_CHICKEN.get(), ZombieChickenRenderer::new);
+        EntityRendererRegistry.register(ModEntities.LUCKY_EGG_PROJECTILE.get(), ThrownItemRenderer::new);
+        EntityRendererRegistry.register(ModEntities.DAGON_PROJECTILE.get(), ThrownItemRenderer::new);
     }
 }

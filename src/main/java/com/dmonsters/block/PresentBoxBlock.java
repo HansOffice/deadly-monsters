@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Mob;
@@ -116,7 +116,7 @@ public final class PresentBoxBlock extends Block {
 
     private static void spawnRandomMonster(ServerLevel level, BlockPos pos, Player player, RandomSource random) {
         EntityType<? extends Mob> type = MONSTERS.get(random.nextInt(MONSTERS.size()));
-        Mob mob = type.create(level, EntitySpawnReason.TRIGGERED);
+        Mob mob = type.create(level, MobSpawnType.TRIGGERED);
         if (mob != null) {
             mob.snapTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, player.getYRot(), 0.0F);
             level.addFreshEntity(mob);
