@@ -11,6 +11,7 @@ import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.minecraft.world.InteractionResult;
 import org.slf4j.Logger;
 
 public final class DeadlyMonsters implements ModInitializer {
@@ -29,7 +30,10 @@ public final class DeadlyMonsters implements ModInitializer {
 
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) ->
                 DeadlyMonstersConfig.onEntityJoinLevel(entity, entity.isLoadedFromDisk()));
-        AttackEntityCallback.EVENT.register(DeadlyMonstersConfig::onPlayerAttack);
+        AttackEntityCallback.EVENT.register((player, level, hand, target, hitResult) ->
+                player.isSpectator()
+                        ? InteractionResult.PASS
+                        : DeadlyMonstersConfig.onPlayerAttack(player, level, hand, target, hitResult));
 
         LOGGER.info("Loading Deadly Monsters Fabric port for Minecraft 26.2");
     }
