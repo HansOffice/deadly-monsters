@@ -1,6 +1,5 @@
 package com.dmonsters.block;
 
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,7 +14,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -45,7 +43,7 @@ public final class DumpBlock extends Block {
             Level level,
             BlockPos pos,
             Block changedBlock,
-            @Nullable Orientation orientation,
+            BlockPos changedPos,
             boolean movedByPiston) {
         if (!(level instanceof ServerLevel serverLevel)) {
             return;

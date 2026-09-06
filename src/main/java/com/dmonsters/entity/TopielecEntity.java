@@ -116,7 +116,7 @@ public final class TopielecEntity extends Monster {
         for (int dx = -radius; dx <= radius; dx += step) {
             for (int dz = -radius; dz <= radius; dz += step) {
                 int depth = 0;
-                for (int y = origin.getY(); y > level.getMinY(); y--) {
+                for (int y = origin.getY(); y > level.getMinBuildHeight(); y--) {
                     BlockPos probe = new BlockPos(origin.getX() + dx, y, origin.getZ() + dz);
                     if (!level.getFluidState(probe).is(FluidTags.WATER)) {
                         break;
@@ -142,14 +142,10 @@ public final class TopielecEntity extends Monster {
         this.setAirSupply(air);
         if (air <= -20) {
             this.setAirSupply(0);
-            this.hurtServer(level, this.damageSources().drown(), 2.0F);
+            this.hurt(this.damageSources().drown(), 2.0F);
         }
     }
 
-    @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
 
     @Override
     public boolean isPushedByFluid() {

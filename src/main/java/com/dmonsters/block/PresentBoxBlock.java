@@ -11,7 +11,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -30,15 +29,15 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public final class PresentBoxBlock extends Block {
     private static final VoxelShape SHAPE = Block.box(2.08D, 0.0D, 2.08D, 13.92D, 12.0D, 13.92D);
     private static final List<EntityType<? extends Mob>> MONSTERS = List.of(
-            EntityTypes.CREEPER,
-            EntityTypes.ZOMBIE,
-            EntityTypes.SKELETON,
-            EntityTypes.SILVERFISH,
-            EntityTypes.BLAZE,
-            EntityTypes.MAGMA_CUBE,
-            EntityTypes.ZOMBIE_HORSE,
-            EntityTypes.SKELETON_HORSE,
-            EntityTypes.ZOMBIFIED_PIGLIN);
+            EntityType.CREEPER,
+            EntityType.ZOMBIE,
+            EntityType.SKELETON,
+            EntityType.SILVERFISH,
+            EntityType.BLAZE,
+            EntityType.MAGMA_CUBE,
+            EntityType.ZOMBIE_HORSE,
+            EntityType.SKELETON_HORSE,
+            EntityType.ZOMBIFIED_PIGLIN);
 
     public PresentBoxBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -116,9 +115,9 @@ public final class PresentBoxBlock extends Block {
 
     private static void spawnRandomMonster(ServerLevel level, BlockPos pos, Player player, RandomSource random) {
         EntityType<? extends Mob> type = MONSTERS.get(random.nextInt(MONSTERS.size()));
-        Mob mob = type.create(level, MobSpawnType.TRIGGERED);
+        Mob mob = type.create(level);
         if (mob != null) {
-            mob.snapTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, player.getYRot(), 0.0F);
+            mob.moveTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, player.getYRot(), 0.0F);
             level.addFreshEntity(mob);
         }
     }

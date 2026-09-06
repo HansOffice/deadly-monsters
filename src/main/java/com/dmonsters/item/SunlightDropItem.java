@@ -9,9 +9,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.clock.ClockTimeMarkers;
-import net.minecraft.world.clock.WorldClock;
-import net.minecraft.world.clock.WorldClocks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -31,15 +28,14 @@ public final class SunlightDropItem extends Item {
         }
 
         ServerLevel overworld = playerLevel.getServer().overworld();
-        long time = overworld.getOverworldClockTime() % 24000L;
+        long time = overworld.getDayTime() % 24000L;
         if (time < 13000L) {
             return InteractionResult.FAIL;
         }
 
-        if (overworld.getGameRules().get(GameRules.ADVANCE_TIME)) {
-            Registry<WorldClock> clocks = overworld.registryAccess().lookupOrThrow(Registries.WORLD_CLOCK);
-            Holder<WorldClock> overworldClock = clocks.getOrThrow(WorldClocks.OVERWORLD);
-            overworld.clockManager().moveToTimeMarker(overworldClock, ClockTimeMarkers.DAY);
+        if (overworld.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
+            long delta = (24000L - time) % 24000L;
+            overworld.setDayTime(overworld.getDayTime() + delta);
         }
 
         playerLevel.playSound(null, player.getX(), player.getY(), player.getZ(),

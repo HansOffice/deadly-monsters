@@ -43,13 +43,14 @@ public final class FreezerEntity extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, Entity target) {
-        if (!super.doHurtTarget(level, target)) {
+    public boolean doHurtTarget(Entity target) {
+        ServerLevel level = (ServerLevel) this.level();
+        if (!super.doHurtTarget(target)) {
             return false;
         }
 
         if (target instanceof LivingEntity living) {
-            living.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 600));
+            living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 600));
         }
         this.playSound(ModSounds.FREEZER_ATTACK.get(), 1.0F, 1.0F);
         return true;
@@ -58,7 +59,7 @@ public final class FreezerEntity extends Monster {
     @Override
     public void aiStep() {
         if (!this.level().isClientSide()) {
-            if (this.level().isBrightOutside()
+            if (this.level().isDay()
                     && this.level().canSeeSky(this.blockPosition())
                     && this.getLightLevelDependentMagicValue() > 0.5F
                     && this.getRandom().nextFloat() < 0.05F) {

@@ -11,11 +11,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -41,7 +40,8 @@ public final class LuckyEggProjectile extends ThrowableItemProjectile {
     }
 
     public LuckyEggProjectile(Level level, LivingEntity owner, ItemStack stack) {
-        super(ModEntities.LUCKY_EGG_PROJECTILE.get(), owner, level, stack);
+        super(ModEntities.LUCKY_EGG_PROJECTILE.get(), owner, level);
+        this.setItem(stack);
     }
 
     @Override
@@ -86,7 +86,7 @@ public final class LuckyEggProjectile extends ThrowableItemProjectile {
                 stack.setDamageValue(damage);
             }
         }
-        this.spawnAtLocation(level, stack);
+        this.spawnAtLocation(stack);
     }
 
     private Item randomReward() {
@@ -108,18 +108,18 @@ public final class LuckyEggProjectile extends ThrowableItemProjectile {
     }
 
     private void spawnChicken(ServerLevel level) {
-        Chicken chicken = EntityTypes.CHICKEN.create(level, MobSpawnType.TRIGGERED);
+        Chicken chicken = EntityType.CHICKEN.create(level);
         if (chicken != null) {
             chicken.setAge(-24000);
-            chicken.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+            chicken.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
             level.addFreshEntity(chicken);
         }
     }
 
     private void spawnZombieChicken(ServerLevel level) {
-        ZombieChickenEntity chicken = ModEntities.ZOMBIE_CHICKEN.get().create(level, MobSpawnType.TRIGGERED);
+        ZombieChickenEntity chicken = ModEntities.ZOMBIE_CHICKEN.get().create(level);
         if (chicken != null) {
-            chicken.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+            chicken.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
             level.addFreshEntity(chicken);
         }
     }

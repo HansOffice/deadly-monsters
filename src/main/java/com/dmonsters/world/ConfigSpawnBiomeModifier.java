@@ -23,7 +23,7 @@ public record ConfigSpawnBiomeModifier(
             return;
         }
 
-        EntityType<?> type = this.spawner.type();
+        EntityType<?> type = this.spawner.type;
         if (!DeadlyMonstersConfig.naturalSpawnsEnabled(type)) {
             return;
         }
@@ -34,7 +34,8 @@ public record ConfigSpawnBiomeModifier(
         }
 
         MobSpawnSettingsBuilder spawns = builder.getMobSpawnSettings();
-        spawns.addSpawn(type.getCategory(), weight, this.spawner);
+        spawns.addSpawn(type.getCategory(), new MobSpawnSettings.SpawnerData(
+                type, weight, this.spawner.minCount, this.spawner.maxCount));
     }
 
     @Override

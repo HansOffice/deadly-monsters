@@ -38,8 +38,9 @@ public final class ZombieChickenEntity extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, Entity target) {
-        if (!super.doHurtTarget(level, target)) {
+    public boolean doHurtTarget(Entity target) {
+        ServerLevel level = (ServerLevel) this.level();
+        if (!super.doHurtTarget(target)) {
             return false;
         }
 
@@ -52,7 +53,7 @@ public final class ZombieChickenEntity extends Monster {
             float pitch = chicken.getXRot();
             chicken.discard();
             ZombieChickenEntity converted = new ZombieChickenEntity(ModEntities.ZOMBIE_CHICKEN.get(), level);
-            converted.snapTo(x, y, z, yaw, pitch);
+            converted.moveTo(x, y, z, yaw, pitch);
             level.addFreshEntity(converted);
         }
         return true;
@@ -61,7 +62,7 @@ public final class ZombieChickenEntity extends Monster {
     @Override
     public void aiStep() {
         if (!this.level().isClientSide()
-                && this.level().isBrightOutside()
+                && this.level().isDay()
                 && this.level().canSeeSky(this.blockPosition())
                 && this.getLightLevelDependentMagicValue() > 0.5F
                 && this.getRandom().nextFloat() < 0.05F) {

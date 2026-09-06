@@ -1,6 +1,6 @@
 package com.dmonsters.item;
 
-import java.util.function.Consumer;
+import java.util.List;
 
 import com.dmonsters.config.DeadlyMonstersConfig;
 import com.dmonsters.entity.TopielecEntity;
@@ -15,7 +15,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 
 /** Reusable fishing/Topielec weapon matching the four original harpoon tiers. */
@@ -45,31 +44,31 @@ public final class HarpoonItem extends Item {
             if (level.getRandom().nextFloat() < 0.25F) {
                 // The 1.12.2 code built four metadata variants of Items.FISH and immediately
                 // reduced them back to Item objects, so all four entries actually dropped raw fish.
-                player.spawnAtLocation(level, Items.COD);
+                player.spawnAtLocation(Items.COD);
             }
         }
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (attacker.level() instanceof ServerLevel level) {
             float damage = target instanceof TopielecEntity ? this.topielecDamage : 1.0F;
-            target.hurtServer(level, target.damageSources().generic(), damage);
+            target.hurt(target.damageSources().generic(), damage);
         }
         stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
+        return true;
     }
 
     @Override
     public void appendHoverText(
             ItemStack stack,
             Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> tooltip,
+            List<Component> tooltip,
             TooltipFlag flag) {
-        tooltip.accept(Component.translatable("item.dmonsters.add_information.harpoon_1").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.dmonsters.add_information.harpoon_1").withStyle(ChatFormatting.GRAY));
         if (DeadlyMonstersConfig.VALUES.topielecHarpoonOnly.get()) {
-            tooltip.accept(Component.translatable("item.dmonsters.add_information.harpoon_2").withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("item.dmonsters.add_information.harpoon_2").withStyle(ChatFormatting.GRAY));
         }
     }
 }
