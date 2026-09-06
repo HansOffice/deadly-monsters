@@ -6,6 +6,9 @@ on:
       - 'fabric/1.21.1'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,6 +18,181 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+
+      - name: 回迁 Minecraft 1.21.1 核心 API
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+
+          java_root = Path('src/main/java/com/dmonsters')
+          replacements = [
+              ('net.minecraft.resources.Identifier', 'net.minecraft.resources.ResourceLocation'),
+              ('Identifier', 'ResourceLocation'),
+              ('EntitySpawnReason', 'MobSpawnType'),
+              ('net.minecraft.world.entity.animal.golem.IronGolem', 'net.minecraft.world.entity.animal.IronGolem'),
+              ('net.minecraft.world.entity.monster.cubemob.Slime', 'net.minecraft.world.entity.monster.Slime'),
+              ('net.minecraft.world.entity.animal.chicken.Chicken', 'net.minecraft.world.entity.animal.Chicken'),
+              ('net.minecraft.world.level.gamerules.GameRules', 'net.minecraft.world.level.GameRules'),
+              ('org.jspecify.annotations.Nullable', 'javax.annotation.Nullable'),
+          ]
+
+          for path in java_root.rglob('*.java'):
+              text = path.read_text(encoding='utf-8')
+              for old, new in replacements:
+                  text = text.replace(old, new)
+              path.write_text(text, encoding='utf-8')
+
+          client = java_root / 'client'
+
+          for path in client.glob('*Model.java'):
+              base = path.stem[:-5]
+              entity = f'{base}Entity'
+              text = path.read_text(encoding='utf-8')
+              if 'extends EntityModel<' not in text:
+                  continue
+
+              text = text.replace(
+                  'import net.minecraft.client.model.EntityModel;',
+                  'import net.minecraft.client.model.HierarchicalModel;')
+              entity_import = f'import com.dmonsters.entity.{entity};\n'
+              if entity_import not in text:
+                  if 'import com.dmonsters.DeadlyMonsters;\n' in text:
+                      text = text.replace(
+                          'import com.dmonsters.DeadlyMonsters;\n',
+                          'import com.dmonsters.DeadlyMonsters;\n' + entity_import,
+                          1)
+                  else:
+                      text = text.replace('\n\nimport ', '\n\n' + entity_import + 'import ', 1)
+
+              text = re.sub(
+                  r'extends EntityModel<[^>]+>',
+                  f'extends HierarchicalModel<{entity}>',
+                  text,
+                  count=1)
+
+              class_pattern = rf'(public final class {re.escape(base)}Model extends HierarchicalModel<{entity}> \{{\n)'
+              if 'private final ModelPart root;' not in text:
+                  text = re.sub(class_pattern, r'\1    private final ModelPart root;\n', text, count=1)
+
+              text = text.replace('        super(root);\n', '        this.root = root;\n', 1)
+
+              marker = '    public static LayerDefinition createBodyLayer() {'
+              if 'public ModelPart root()' not in text and marker in text:
+                  text = text.replace(
+                      marker,
+                      '    @Override\n    public ModelPart root() {\n        return this.root;\n    }\n\n' + marker,
+                      1)
+
+              setup = (
+                  f'    @Override\n'
+                  f'    public void setupAnim({entity} entity, float limbSwing, float limbSwingAmount, '
+                  f'float ageInTicks, float netHeadYaw, float headPitch) {{')
+              text = re.sub(
+                  r'    @Override\n    public void setupAnim\([^)]*\) \{',
+                  setup,
+                  text,
+                  count=1)
+              text = text.replace('        super.setupAnim(state);\n', '')
+              text = text.replace('state.walkAnimationPos', 'limbSwing')
+              text = text.replace('state.walkAnimationSpeed', 'limbSwingAmount')
+              text = text.replace('state.ageInTicks', 'ageInTicks')
+              text = text.replace('state.yRot', 'netHeadYaw')
+              text = text.replace('state.xRot', 'headPitch')
+              text = text.replace('state.attackTime', 'this.attackTime')
+              text = text.replace('state.armsRaised', 'entity.isArmsRaised()')
+              text = text.replace('state.triggered', 'entity.isTriggered()')
+              text = text.replace('state.aggressive', 'entity.isAggressive()')
+              text = text.replace('state.isBaby', 'entity.isBaby()')
+              text = text.replace('state.isInWater', 'entity.isInWater()')
+              path.write_text(text, encoding='utf-8')
+
+          def remove_method(text: str, name: str) -> str:
+              while True:
+                  pos = text.find(name + '(')
+                  if pos < 0:
+                      return text
+                  start = text.rfind('@Override', 0, pos)
+                  if start < 0:
+                      return text
+                  brace = text.find('{', pos)
+                  if brace < 0:
+                      return text
+                  depth = 0
+                  end = brace
+                  while end < len(text):
+                      if text[end] == '{':
+                          depth += 1
+                      elif text[end] == '}':
+                          depth -= 1
+                          if depth == 0:
+                              end += 1
+                              while end < len(text) and text[end] in '\r\n':
+                                  end += 1
+                              text = text[:start] + text[end:]
+                              break
+                      end += 1
+                  else:
+                      return text
+
+          for path in client.glob('*Renderer.java'):
+              text = path.read_text(encoding='utf-8')
+              match = re.search(
+                  r'extends MobRenderer<\s*(\w+Entity)\s*,\s*[^,>]+\s*,\s*(\w+Model)\s*>',
+                  text)
+              if not match:
+                  continue
+              entity, model = match.groups()
+              text = re.sub(
+                  r'extends MobRenderer<\s*\w+Entity\s*,\s*[^,>]+\s*,\s*\w+Model\s*>',
+                  f'extends MobRenderer<{entity}, {model}>',
+                  text,
+                  count=1)
+              text = re.sub(
+                  r'public ResourceLocation getTextureLocation\([^)]*\)',
+                  f'public ResourceLocation getTextureLocation({entity} entity)',
+                  text,
+                  count=1)
+              text = text.replace('state.triggered', 'entity.isTriggered()')
+              text = text.replace('state.aggressive', 'entity.isAggressive()')
+              text = remove_method(text, 'createRenderState')
+              text = remove_method(text, 'extractRenderState')
+              text = re.sub(
+                  r'protected void scale\([^)]*\)',
+                  f'protected void scale({entity} entity, PoseStack poseStack, float partialTickTime)',
+                  text,
+                  count=1)
+              text = re.sub(
+                  r'import net\.minecraft\.client\.renderer\.entity\.state\.LivingEntityRenderState;\n',
+                  '', text)
+              path.write_text(text, encoding='utf-8')
+
+          for path in client.glob('*RenderState.java'):
+              path.unlink()
+
+          client_events = client / 'ClientModEvents.java'
+          text = client_events.read_text(encoding='utf-8')
+          text = text.replace(
+              'net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry',
+              'net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry')
+          text = text.replace('ModelLayerRegistry.registerModelLayer', 'EntityModelLayerRegistry.registerModelLayer')
+          text = text.replace(
+              'import net.minecraft.client.renderer.entity.EntityRenderers;\n',
+              'import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;\n')
+          text = text.replace('EntityRenderers.register(', 'EntityRendererRegistry.register(')
+          client_events.write_text(text, encoding='utf-8')
+          PY
+
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/main/java
+          if ! git diff --cached --quiet; then
+            git commit -m '回迁 Minecraft 1.21.1 核心 API [skip ci]'
+            git push origin HEAD:fabric/1.21.1
+          fi
 
       - name: 配置 JDK 21
         uses: actions/setup-java@v4
