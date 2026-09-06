@@ -1,13 +1,19 @@
-name: 手动构建 Fabric
+name: 发布 Fabric v1.0-26.2
 
 on:
+  push:
+    branches:
+      - 'fabric/26.2'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  build:
+  build-release:
     runs-on: ubuntu-latest
     steps:
-      - name: 检出仓库
+      - name: 检出 Fabric 分支
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -24,5 +30,46 @@ jobs:
         with:
           gradle-version: '9.5.1'
 
-      - name: 构建模组
+      - name: 构建 Fabric 模组
         run: gradle build
+
+      - name: 校验发布 JAR
+        shell: bash
+        run: |
+          set -euo pipefail
+          JAR='build/libs/dmonsters-fabric-1.0-26.2.jar'
+          test -f "$JAR"
+          test -s "$JAR"
+          jar tf "$JAR" | grep -Fx 'fabric.mod.json'
+          jar tf "$JAR" | grep -Eq '^LICENSE_'
+
+      - name: 创建 Fabric Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG='v1.0-26.2-fabric'
+          JAR='build/libs/dmonsters-fabric-1.0-26.2.jar'
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release delete "$TAG" --yes --cleanup-tag
+          fi
+
+          cat > release-notes.md <<'EOF'
+          Deadly Monsters Fabric 版，适用于 Minecraft 26.2 / Fabric Loader 0.19.5 / Fabric API 0.159.0+26.2
+
+          - 原生 Fabric 移植，不引入 Architectury 或 NeoForge 兼容层
+          - 包含 12 种原版怪物、方块、物品、渲染、配方、战利品、声音、配置与自然生成
+          - 使用 Java 25、Gradle 9.5.1、Fabric Loom 1.17.20 构建
+          - JEI、REI、Jade 按标准配方和注册结构兼容，不包含 EMI 专用适配
+          - 发布 JAR 由 GitHub Actions 从 `fabric/26.2` 分支直接构建并上传
+          - 构建与 JAR 元数据校验通过后才会创建本 Release
+
+          实际玩法与专用服务器联合验证仍以仓库 `测试清单.md` 为准
+          EOF
+
+          gh release create "$TAG" "$JAR#dmonsters-fabric-1.0-26.2.jar" \
+            --target "$GITHUB_SHA" \
+            --title 'Deadly Monsters v1.0-26.2 Fabric' \
+            --notes-file release-notes.md
