@@ -6,10 +6,10 @@ modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 displayURL="https://github.com/HansOffice/deadly-monsters"
-authors="bigbang87 (original), HansOffice (26.2 port)"
+authors="bigbang87（原作者）, HansOffice（26.2 移植）"
 description='''
-A NeoForge 26.2 port of the original Deadly Monsters mod for Minecraft 1.12.2.
-The port is being migrated subsystem-by-subsystem while preserving original registry identifiers where practical.
+Deadly Monsters 原版 Minecraft 1.12.2 模组的 NeoForge 26.2 移植版
+保留原版注册标识和玩法身份，并使用当前 Minecraft 与 NeoForge 机制完成迁移
 '''
 
 [[dependencies.${mod_id}]]

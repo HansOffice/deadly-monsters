@@ -1,42 +1,56 @@
-# Deadly Monsters — NeoForge 26.2 Port
+# Deadly Monsters — NeoForge 26.2 移植版
 
-A native NeoForge port of [ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters) from Minecraft Forge 1.12.2 to Minecraft 26.2.
+这是 [ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters) 从 Minecraft Forge 1.12.2 原生移植到 Minecraft 26.2 / NeoForge 的版本
 
-The port keeps the original `dmonsters` registry IDs and gameplay identity while replacing the removed Forge 1.12.2 APIs with current Minecraft/NeoForge systems.
+移植尽量保留原版 `dmonsters` 注册 ID、玩法身份、资源和行为，同时用当前 Minecraft / NeoForge 机制替代已经移除的旧 Forge API
 
-## Target
+## 目标环境
 
-- Minecraft: **26.2**
-- NeoForge: **26.2.0.75**
-- ModDevGradle: **2.0.146**
-- Gradle: **9.2.1**
-- Java: **25**
-- Mod ID: `dmonsters`
+- Minecraft **26.2**
+- NeoForge **26.2.0.75**
+- ModDevGradle **2.0.146**
+- Gradle **9.2.1**
+- Java **25**
+- Mod ID `dmonsters`
 
-## Status
+## 当前状态
 
-The source, gameplay content, client renderers, resources and data migration are complete. Runtime/gameplay validation is intentionally tracked separately in [`TESTING.md`](TESTING.md).
+源码、玩法内容、客户端渲染、资源和数据迁移已经完成
 
-Ported content includes:
+运行时和实际游玩验证单独记录在 [`测试清单.md`](测试清单.md)
 
-- all 12 original monsters with native 26.2 entity types, attributes, AI and renderers;
-- all original monster spawn eggs;
-- the original blocks and their special behavior;
-- Rebar, four Harpoons, Lucky Egg, Dagon and the original monster-drop utility items;
-- Lucky Egg and Dagon projectiles;
-- original textures and sounds;
-- modern blockstates, models and item definitions;
-- all 17 original crafting recipes;
-- entity/block loot tables using current item IDs and loot syntax;
-- configurable monster health, strength, speed, natural-spawn weighting and disable switches;
-- special configuration for Mutant Steve, Unborn Baby, Haunted Cow and Topielec;
-- natural spawning through a config-aware NeoForge biome modifier.
+已完成内容包括
 
-See [`PORTING.md`](PORTING.md) for compatibility decisions and deliberate modernizations.
+- 12 种原版怪物及对应实体类型、属性、AI 和渲染
+- 12 种原版怪物刷怪蛋
+- 原版方块和特殊行为
+- Rebar、四种 Harpoon、Lucky Egg、Dagon 与原版怪物掉落功能物品
+- Lucky Egg 与 Dagon 投射物
+- 原版贴图与声音
+- 当前格式的 blockstate、方块模型、物品模型与 item definition
+- 17 个原版合成配方
+- 当前格式的实体与方块战利品表
+- 怪物生命、攻击、速度、自然生成权重和禁用开关配置
+- Mutant Steve、Unborn Baby、Haunted Cow、Topielec 专用配置
+- 通过 NeoForge biome modifier 实现的自然生成
 
-## Development runs
+更详细的移植决策见 [`移植说明.md`](移植说明.md)
 
-A system Gradle 9.2.1 installation is currently used; this repository does not ship a Gradle wrapper.
+## 配方查看与信息显示兼容性
+
+本模组没有自定义配方类型、配方容器或特殊工作台，现有合成全部走 Minecraft 原生配方系统
+
+因此 JEI、REI 会直接读取这些原生配方，不需要额外桥接层
+
+Jade 会通过标准方块、实体注册信息读取本模组内容，也不需要专用 provider 才能显示基础信息
+
+EMI 截至 2026-09-06 尚未提供 Minecraft 26.2 版本，因此当前无法进行 26.2 实机联合验证，本模组不对 EMI 添加硬依赖或临时兼容层，继续保持标准数据结构，等待 EMI 提供 26.2 构建后即可直接复验
+
+完整兼容性说明见 [`兼容性.md`](兼容性.md)
+
+## 开发运行
+
+本仓库当前使用系统 Gradle 9.2.1，不包含 Gradle Wrapper
 
 ```bash
 gradle runClient
@@ -45,26 +59,30 @@ gradle runData
 gradle build
 ```
 
-Use JDK 25 for all development and build commands.
+开发和构建统一使用 JDK 25
 
-## Configuration
+## 配置
 
-NeoForge generates the Deadly Monsters common configuration on first run. The port preserves the original default monster multipliers and spawn rates.
+NeoForge 首次运行后会生成 Deadly Monsters 公共配置
 
-Natural-spawn `spawnRate` and `disabled` settings affect biome spawn lists and should be changed before starting/restarting the world or dedicated server.
+移植版保留原版默认怪物倍率和自然生成权重
 
-## Compatibility decisions
+`spawnRate` 与 `disabled` 会影响生物群系生成列表，修改后建议重启世界或专用服务器
 
-This is a native port, not a compatibility shim. A few 1.12.2 implementation details cannot or should not be reproduced literally:
+## 移植原则
 
-- **Hostile Worlds Invasions integration** is not included because the 26.2 port has no dependency on that legacy integration.
-- The old numeric **`dayLengthTicks`** option is retired. Minecraft 26.2 uses data-driven world clocks/timelines; Sunlight Drop and Haunted Cow use the active Overworld clock markers instead.
-- The original Topielec deep-water search contained an effectively every-tick wide-area scan. The visible behavior is preserved with a bounded refresh cadence rather than copying the performance bug.
-- Legacy metadata items were mapped to their modern IDs (for example fish, clay balls, fireworks, dyes and stained glass).
-- Modern interaction permission checks are used where old direct block replacement would otherwise bypass current protection APIs.
+这是原生移植，不是旧版兼容垫片
 
-## Upstream and license
+少量 1.12.2 实现细节无法或不应该逐字复制
 
-Original project: [ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters)
+- 不再接入已经过时的 Hostile Worlds Invasions 旧版联动
+- 旧版数字 `dayLengthTicks` 已退役，Sunlight Drop 与 Haunted Cow 使用 Minecraft 26.2 当前世界时钟标记
+- Topielec 原版深水搜索存在近似每 tick 大范围扫描问题，移植版保留可见行为并限制刷新频率
+- 旧 metadata 物品映射到当前独立物品 ID
+- 方块修改类物品使用当前交互权限检查，避免绕过现代保护逻辑
 
-The upstream project is licensed under the MIT License. The original copyright and license notice are retained in [`LICENSE`](LICENSE).
+## 上游与许可
+
+原项目 [ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters)
+
+上游使用 MIT License，本仓库保留原始版权与许可文本 [`LICENSE`](LICENSE)
