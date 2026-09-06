@@ -1,56 +1,55 @@
-# Deadly Monsters — NeoForge 26.2 移植版
+# Deadly Monsters — NeoForge 1.21.1 移植版
 
-这是 [ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters) 从 Minecraft Forge 1.12.2 原生移植到 Minecraft 26.2 / NeoForge 的版本
+这是 Deadly Monsters 从 Minecraft Forge 1.12.2 原生移植到 Minecraft 1.21.1 / NeoForge 的分支
 
-移植尽量保留原版 `dmonsters` 注册 ID、玩法身份、资源和行为，同时用当前 Minecraft / NeoForge 机制替代已经移除的旧 Forge API
+移植尽量保留原版 `dmonsters` 注册 ID、资源、玩法身份和可见行为，同时使用 Minecraft 1.21.1 与 NeoForge 21.1 的原生机制替代旧 Forge API
 
 ## 目标环境
 
-- Minecraft **26.2**
-- NeoForge **26.2.0.75**
+- Minecraft **1.21.1**
+- NeoForge **21.1.212**
 - ModDevGradle **2.0.146**
 - Gradle **9.2.1**
-- Java **25**
+- Java **21**
 - Mod ID `dmonsters`
 
 ## 当前状态
 
-源码、玩法内容、客户端渲染、资源和数据迁移已经完成
+仓库侧 1.21.1 回迁已经完成，并已在 GitHub Actions 使用 JDK 21 执行真实 `gradle build` 验证
 
-运行时和实际游玩验证单独记录在 [`测试清单.md`](测试清单.md)
+构建通过不等于实机验证完成，客户端启动、专用服务器启动、模型观感、自然生成、配置行为和兼容模组联合运行仍按 [`测试清单.md`](测试清单.md) 复验
 
-已完成内容包括
+当前包含
 
-- 12 种原版怪物及对应实体类型、属性、AI 和渲染
-- 12 种原版怪物刷怪蛋
+- 12 种原版怪物及实体类型、属性、AI、模型和渲染器
+- 12 种原版怪物生成器物品
 - 原版方块和特殊行为
-- Rebar、四种 Harpoon、Lucky Egg、Dagon 与原版怪物掉落功能物品
+- Rebar、四种 Harpoon、Lucky Egg、Dagon 与怪物掉落功能物品
 - Lucky Egg 与 Dagon 投射物
-- 原版贴图与声音
-- 当前格式的 blockstate、方块模型、物品模型与 item definition
-- 17 个原版合成配方
-- 当前格式的实体与方块战利品表
-- 怪物生命、攻击、速度、自然生成权重和禁用开关配置
+- 原版贴图、声音、Logo 与 credits
+- 1.21.1 使用的 blockstate、方块模型与 `models/item` 物品模型
+- 17 个标准合成配方
+- 实体与方块战利品表
+- 怪物生命、攻击、速度、自然生成权重和禁用配置
 - Mutant Steve、Unborn Baby、Haunted Cow、Topielec 专用配置
-- 通过 NeoForge biome modifier 实现的自然生成
+- NeoForge biome modifier 自然生成
+- Barbed Wire 的 1.21.1 CUTOUT 渲染声明
 
-更详细的移植决策见 [`移植说明.md`](移植说明.md)
+详细技术决策见 [`移植说明.md`](移植说明.md)
 
-## 配方查看与信息显示兼容性
+## 配方查看与信息显示
 
-本模组没有自定义配方类型、配方容器或特殊工作台，现有合成全部走 Minecraft 原生配方系统
+Deadly Monsters 没有自定义配方类型、配方菜单、特殊工作台或 BlockEntity 数据面板
 
-因此 JEI、REI 会直接读取这些原生配方，不需要额外桥接层
+现有 17 个配方全部使用 Minecraft 标准 crafting 体系，因此 JEI 与 REI 不需要 Deadly Monsters 专用桥接层即可读取标准配方
 
-Jade 会通过标准方块、实体注册信息读取本模组内容，也不需要专用 provider 才能显示基础信息
+Jade 的基础方块和实体信息同样可以依赖标准注册信息，本分支不添加空壳 provider 或硬依赖
 
-EMI 截至 2026-09-06 尚未提供 Minecraft 26.2 版本，因此当前无法进行 26.2 实机联合验证，本模组不对 EMI 添加硬依赖或临时兼容层，继续保持标准数据结构，等待 EMI 提供 26.2 构建后即可直接复验
-
-完整兼容性说明见 [`兼容性.md`](兼容性.md)
+这些结论属于结构兼容判断，联合实机验证状态见 [`兼容性.md`](兼容性.md) 与 [`测试清单.md`](测试清单.md)
 
 ## 开发运行
 
-本仓库当前使用系统 Gradle 9.2.1，不包含 Gradle Wrapper
+本仓库不包含 Gradle Wrapper
 
 ```bash
 gradle runClient
@@ -59,30 +58,32 @@ gradle runData
 gradle build
 ```
 
-开发和构建统一使用 JDK 25
+开发和构建统一使用 JDK 21
+
+GitHub Actions 默认只保留手动构建入口，不在每次推送时自动运行
 
 ## 配置
 
 NeoForge 首次运行后会生成 Deadly Monsters 公共配置
 
-移植版保留原版默认怪物倍率和自然生成权重
+`spawnRate` 与 `disabled` 会在生物群系生成列表构建时读取，修改后需要完整重启对应客户端进程或专用服务器进程
 
-`spawnRate` 与 `disabled` 会影响生物群系生成列表，修改后建议重启世界或专用服务器
+其他倍率和行为开关同样按启动时配置状态工作，不提供热重载承诺
 
-## 移植原则
+## 1.21.1 回迁原则
 
-这是原生移植，不是旧版兼容垫片
+这是 1.21.1 原生回迁，不是 26.2 API 兼容垫片
 
-少量 1.12.2 实现细节无法或不应该逐字复制
-
-- 不再接入已经过时的 Hostile Worlds Invasions 旧版联动
-- 旧版数字 `dayLengthTicks` 已退役，Sunlight Drop 与 Haunted Cow 使用 Minecraft 26.2 当前世界时钟标记
-- Topielec 原版深水搜索存在近似每 tick 大范围扫描问题，移植版保留可见行为并限制刷新频率
-- 旧 metadata 物品映射到当前独立物品 ID
-- 方块修改类物品使用当前交互权限检查，避免绕过现代保护逻辑
+- 1.21.1 使用旧实体模型与渲染器签名，不保留 26.2 RenderState 中间层
+- 1.21.1 使用 `ResourceLocation`、旧 `MobSpawnType` 与对应实体、方块、物品接口
+- Sunlight Drop 与 Haunted Cow 使用 1.21.1 `getDayTime` / `setDayTime` 世界时间接口
+- Barbed Wire 在 1.21.1 显式使用 CUTOUT 渲染层，保持原版透明纹理行为
+- 1.21.1 继续使用 `assets/dmonsters/models/item`，不保留 1.21.4 才引入的 `assets/<namespace>/items` 物品定义目录
+- Topielec 保留深水拖拽的可见行为，同时限制高成本深水搜索刷新频率
+- 不重新接入已经过时的 Hostile Worlds Invasions、Mantle、CoroUtil 等旧版硬依赖
 
 ## 上游与许可
 
-原项目 [ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters)
+移植基线与原始资源来自 Deadly Monsters 1.12.2 项目，上游署名继续保留 `bigbang87` 原作者信息
 
-上游使用 MIT License，本仓库保留原始版权与许可文本 [`LICENSE`](LICENSE)
+仓库保留原始 MIT License 与版权文本 [`LICENSE`](LICENSE)

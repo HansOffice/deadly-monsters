@@ -1,13 +1,7 @@
-name: 构建 NeoForge 1.21.1
+name: 手动构建 NeoForge 1.21.1
 
 on:
-  push:
-    branches:
-      - 'neoforge/1.21.1'
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   build:
@@ -15,27 +9,6 @@ jobs:
     steps:
       - name: 检出仓库
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-
-      - name: 应用 1.21.1 回迁
-        run: |
-          python3 .github/backport_1211.py
-          python3 .github/fix_1211_round2.py
-
-      - name: 写回源码回迁
-        shell: bash
-        run: |
-          set -euo pipefail
-          git diff --check
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/main/java
-          if ! git diff --cached --quiet; then
-            git commit -m '完成 NeoForge 1.21.1 API 回迁 [skip ci]'
-            git push origin HEAD:neoforge/1.21.1
-          fi
 
       - name: 配置 JDK 21
         uses: actions/setup-java@v4
