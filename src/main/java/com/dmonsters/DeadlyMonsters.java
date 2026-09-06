@@ -1,40 +1,37 @@
 package com.dmonsters;
 
 import com.dmonsters.config.DeadlyMonstersConfig;
-import com.dmonsters.registry.ModBiomeModifiers;
 import com.dmonsters.registry.ModBlocks;
 import com.dmonsters.registry.ModCreativeTabs;
 import com.dmonsters.registry.ModEntities;
 import com.dmonsters.registry.ModItems;
+import com.dmonsters.registry.ModNaturalSpawns;
 import com.dmonsters.registry.ModSounds;
 import com.mojang.logging.LogUtils;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.neoforge.common.NeoForge;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.EntityLoadData;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import org.slf4j.Logger;
 
-@Mod(DeadlyMonsters.MOD_ID)
-public final class DeadlyMonsters {
+public final class DeadlyMonsters implements ModInitializer {
     public static final String MOD_ID = "dmonsters";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public DeadlyMonsters(IEventBus modEventBus, ModContainer modContainer) {
-        ModBlocks.BLOCKS.register(modEventBus);
-        ModEntities.ENTITY_TYPES.register(modEventBus);
-        ModItems.ITEMS.register(modEventBus);
-        ModSounds.SOUND_EVENTS.register(modEventBus);
-        ModCreativeTabs.TABS.register(modEventBus);
-        ModBiomeModifiers.BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
+    @Override
+    public void onInitialize() {
+        DeadlyMonstersConfig.load();
+        ModBlocks.initialize();
+        ModEntities.initialize();
+        ModItems.initialize();
+        ModSounds.initialize();
+        ModCreativeTabs.initialize();
+        ModNaturalSpawns.initialize();
 
-        modEventBus.addListener(ModEntities::registerAttributes);
-        modEventBus.addListener(ModEntities::registerSpawnPlacements);
+        ServerEntityEvents.ENTITY_LOAD.register((entity, level) ->
+                DeadlyMonstersConfig.onEntityJoinLevel(entity, ((EntityLoadData) entity).isLoadedFromDisk()));
+        AttackEntityCallback.EVENT.register(DeadlyMonstersConfig::onPlayerAttack);
 
-        modContainer.registerConfig(ModConfig.Type.COMMON, DeadlyMonstersConfig.SPEC);
-        NeoForge.EVENT_BUS.addListener(DeadlyMonstersConfig::onEntityJoinLevel);
-        NeoForge.EVENT_BUS.addListener(DeadlyMonstersConfig::onPlayerAttack);
-
-        LOGGER.info("Loading Deadly Monsters NeoForge port for Minecraft 26.2");
+        LOGGER.info("Loading Deadly Monsters Fabric port for Minecraft 26.2");
     }
 }

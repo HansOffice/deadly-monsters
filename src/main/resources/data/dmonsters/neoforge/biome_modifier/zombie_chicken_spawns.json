@@ -1,1 +1,0 @@
-{"type":"dmonsters:config_spawns","biomes":"#minecraft:is_overworld","spawner":{"type":"dmonsters:zombie_chicken","minCount":1,"maxCount":8}}

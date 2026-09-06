@@ -1,48 +1,40 @@
 package com.dmonsters.client;
 
-import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.registry.ModEntities;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
-@EventBusSubscriber(modid = DeadlyMonsters.MOD_ID, value = Dist.CLIENT)
-public final class ClientModEvents {
-    private ClientModEvents() {}
+public final class ClientModEvents implements ClientModInitializer {
+    @Override
+    public void onInitializeClient() {
+        ModelLayerRegistry.registerModelLayer(BloodyMaidenModel.LAYER_LOCATION, BloodyMaidenModel::createBodyLayer);
+        ModelLayerRegistry.registerModelLayer(ClimberModel.LAYER_LOCATION, ClimberModel::createBodyLayer);
+        ModelLayerRegistry.registerModelLayer(EntrailModel.LAYER_LOCATION, EntrailModel::createBodyLayer);
+        ModelLayerRegistry.registerModelLayer(FallenLeaderModel.LAYER_LOCATION, FallenLeaderModel::createBodyLayer);
+        ModelLayerRegistry.registerModelLayer(FreezerModel.LAYER_LOCATION, FreezerModel::createBodyLayer);
+        ModelLayerRegistry.registerModelLayer(HauntedCowModel.LAYER_LOCATION, HauntedCowModel::createBodyLayer);
+        ModelLayerRegistry.registerModelLayer(MutantSteveModel.LAYER_LOCATION, MutantSteveModel::createBodyLayer);
+        ModelLayerRegistry.registerModelLayer(PresentModel.LAYER_LOCATION, PresentModel::createBodyLayer);
+        ModelLayerRegistry.registerModelLayer(StrangerModel.LAYER_LOCATION, StrangerModel::createBodyLayer);
+        ModelLayerRegistry.registerModelLayer(TopielecModel.LAYER_LOCATION, TopielecModel::createBodyLayer);
+        ModelLayerRegistry.registerModelLayer(UnbornBabyModel.LAYER_LOCATION, UnbornBabyModel::createBodyLayer);
+        ModelLayerRegistry.registerModelLayer(ZombieChickenModel.LAYER_LOCATION, ZombieChickenModel::createBodyLayer);
 
-    @SubscribeEvent
-    public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(BloodyMaidenModel.LAYER_LOCATION, BloodyMaidenModel::createBodyLayer);
-        event.registerLayerDefinition(ClimberModel.LAYER_LOCATION, ClimberModel::createBodyLayer);
-        event.registerLayerDefinition(EntrailModel.LAYER_LOCATION, EntrailModel::createBodyLayer);
-        event.registerLayerDefinition(FallenLeaderModel.LAYER_LOCATION, FallenLeaderModel::createBodyLayer);
-        event.registerLayerDefinition(FreezerModel.LAYER_LOCATION, FreezerModel::createBodyLayer);
-        event.registerLayerDefinition(HauntedCowModel.LAYER_LOCATION, HauntedCowModel::createBodyLayer);
-        event.registerLayerDefinition(MutantSteveModel.LAYER_LOCATION, MutantSteveModel::createBodyLayer);
-        event.registerLayerDefinition(PresentModel.LAYER_LOCATION, PresentModel::createBodyLayer);
-        event.registerLayerDefinition(StrangerModel.LAYER_LOCATION, StrangerModel::createBodyLayer);
-        event.registerLayerDefinition(TopielecModel.LAYER_LOCATION, TopielecModel::createBodyLayer);
-        event.registerLayerDefinition(UnbornBabyModel.LAYER_LOCATION, UnbornBabyModel::createBodyLayer);
-        event.registerLayerDefinition(ZombieChickenModel.LAYER_LOCATION, ZombieChickenModel::createBodyLayer);
-    }
-
-    @SubscribeEvent
-    public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ModEntities.BLOODY_MAIDEN.get(), BloodyMaidenRenderer::new);
-        event.registerEntityRenderer(ModEntities.CLIMBER.get(), ClimberRenderer::new);
-        event.registerEntityRenderer(ModEntities.ENTRAIL.get(), EntrailRenderer::new);
-        event.registerEntityRenderer(ModEntities.FALLEN_LEADER.get(), FallenLeaderRenderer::new);
-        event.registerEntityRenderer(ModEntities.FREEZER.get(), FreezerRenderer::new);
-        event.registerEntityRenderer(ModEntities.HAUNTED_COW.get(), HauntedCowRenderer::new);
-        event.registerEntityRenderer(ModEntities.MUTANT_STEVE.get(), MutantSteveRenderer::new);
-        event.registerEntityRenderer(ModEntities.PRESENT.get(), PresentRenderer::new);
-        event.registerEntityRenderer(ModEntities.STRANGER.get(), StrangerRenderer::new);
-        event.registerEntityRenderer(ModEntities.TOPIELEC.get(), TopielecRenderer::new);
-        event.registerEntityRenderer(ModEntities.UNBORN_BABY.get(), UnbornBabyRenderer::new);
-        event.registerEntityRenderer(ModEntities.ZOMBIE_CHICKEN.get(), ZombieChickenRenderer::new);
-        event.registerEntityRenderer(ModEntities.LUCKY_EGG_PROJECTILE.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(ModEntities.DAGON_PROJECTILE.get(), ThrownItemRenderer::new);
+        EntityRenderers.register(ModEntities.BLOODY_MAIDEN.get(), BloodyMaidenRenderer::new);
+        EntityRenderers.register(ModEntities.CLIMBER.get(), ClimberRenderer::new);
+        EntityRenderers.register(ModEntities.ENTRAIL.get(), EntrailRenderer::new);
+        EntityRenderers.register(ModEntities.FALLEN_LEADER.get(), FallenLeaderRenderer::new);
+        EntityRenderers.register(ModEntities.FREEZER.get(), FreezerRenderer::new);
+        EntityRenderers.register(ModEntities.HAUNTED_COW.get(), HauntedCowRenderer::new);
+        EntityRenderers.register(ModEntities.MUTANT_STEVE.get(), MutantSteveRenderer::new);
+        EntityRenderers.register(ModEntities.PRESENT.get(), PresentRenderer::new);
+        EntityRenderers.register(ModEntities.STRANGER.get(), StrangerRenderer::new);
+        EntityRenderers.register(ModEntities.TOPIELEC.get(), TopielecRenderer::new);
+        EntityRenderers.register(ModEntities.UNBORN_BABY.get(), UnbornBabyRenderer::new);
+        EntityRenderers.register(ModEntities.ZOMBIE_CHICKEN.get(), ZombieChickenRenderer::new);
+        EntityRenderers.register(ModEntities.LUCKY_EGG_PROJECTILE.get(), ThrownItemRenderer::new);
+        EntityRenderers.register(ModEntities.DAGON_PROJECTILE.get(), ThrownItemRenderer::new);
     }
 }

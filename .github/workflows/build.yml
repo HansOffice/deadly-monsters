@@ -1,4 +1,4 @@
-name: 手动构建
+name: 手动构建 Fabric
 
 on:
   workflow_dispatch:
@@ -19,10 +19,10 @@ jobs:
           java-version: '25'
           distribution: 'temurin'
 
-      - name: 配置 Gradle 9.2.1
+      - name: 配置 Gradle 9.5.1
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '9.2.1'
+          gradle-version: '9.5.1'
 
       - name: 构建模组
         run: gradle build

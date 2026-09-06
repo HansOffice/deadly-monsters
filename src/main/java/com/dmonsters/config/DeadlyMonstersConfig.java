@@ -1,12 +1,26 @@
 package com.dmonsters.config;
 
-import java.util.List;
-
+import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.entity.HauntedCowEntity;
 import com.dmonsters.entity.TopielecEntity;
 import com.dmonsters.item.HarpoonItem;
 import com.dmonsters.registry.ModEntities;
 import com.dmonsters.registry.ModSounds;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -15,49 +29,72 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.clock.ClockTimeMarkers;
 import net.minecraft.world.clock.WorldClock;
 import net.minecraft.world.clock.WorldClocks;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gamerules.GameRules;
-import net.neoforged.neoforge.common.ModConfigSpec;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraft.world.phys.EntityHitResult;
 
-/** NeoForge configuration replacement for the original Forge 1.12.2 config. */
 public final class DeadlyMonstersConfig {
-    public static final Settings VALUES;
-    public static final ModConfigSpec SPEC;
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final String FILE_NAME = "dmonsters.json";
 
-    static {
-        Pair<Settings, ModConfigSpec> pair = new ModConfigSpec.Builder().configure(Settings::new);
-        VALUES = pair.getLeft();
-        SPEC = pair.getRight();
+    public static final Settings VALUES = new Settings();
+
+    private DeadlyMonstersConfig() {
     }
 
-    private DeadlyMonstersConfig() {}
+    public static void load() {
+        Path path = FabricLoader.getInstance().getConfigDir().resolve(FILE_NAME);
+        try {
+            Files.createDirectories(path.getParent());
+            if (Files.notExists(path)) {
+                writeDefaults(path);
+                return;
+            }
+            try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+                JsonElement root = JsonParser.parseReader(reader);
+                if (!root.isJsonObject()) {
+                    throw new IOException("配置根节点必须是 JSON 对象");
+                }
+                VALUES.load(root.getAsJsonObject());
+            }
+        } catch (Exception exception) {
+            DeadlyMonsters.LOGGER.error("Failed to load Deadly Monsters Fabric config from {}", path, exception);
+        }
+    }
+
+    private static void writeDefaults(Path path) throws IOException {
+        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            GSON.toJson(VALUES.toJson(), writer);
+        }
+    }
 
     public static boolean naturalSpawnsEnabled(EntityType<?> type) {
         MonsterSettings settings = settingsFor(type);
         return settings == null || !settings.disabled.get();
     }
 
-    /** Spawn weighting used when the config-aware biome modifiers are applied during world/server startup. */
     public static int spawnRate(EntityType<?> type) {
         MonsterSettings settings = settingsFor(type);
         return settings == null ? 0 : settings.spawnRate.get();
     }
 
-    public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide() || !(event.getEntity() instanceof LivingEntity living)) {
+    public static void onEntityJoinLevel(Entity entity, boolean loadedFromDisk) {
+        if (!(entity instanceof LivingEntity living)) {
             return;
         }
 
@@ -78,7 +115,7 @@ public final class DeadlyMonstersConfig {
         setBaseValue(living, Attributes.ATTACK_DAMAGE, strength);
         setBaseValue(living, Attributes.MAX_HEALTH, health);
 
-        if (!event.loadedFromDisk() && previouslyFull) {
+        if (!loadedFromDisk && previouslyFull) {
             living.setHealth(living.getMaxHealth());
         } else {
             living.setHealth(Math.min(previousHealth, living.getMaxHealth()));
@@ -92,38 +129,41 @@ public final class DeadlyMonstersConfig {
         }
     }
 
-    public static void onPlayerAttack(AttackEntityEvent event) {
-        if (event.getEntity().level().isClientSide()) {
-            return;
+    public static InteractionResult onPlayerAttack(
+            Player player,
+            Level level,
+            InteractionHand hand,
+            Entity target,
+            EntityHitResult hitResult) {
+        if (level.isClientSide()) {
+            return InteractionResult.PASS;
         }
 
-        if (event.getTarget() instanceof TopielecEntity
+        if (target instanceof TopielecEntity
                 && !VALUES.topielec.disabled.get()
-                && VALUES.topielecHarpoonOnly.get()) {
-            if (!(event.getEntity().getMainHandItem().getItem() instanceof HarpoonItem)) {
-                event.setCanceled(true);
-                return;
-            }
+                && VALUES.topielecHarpoonOnly.get()
+                && !(player.getMainHandItem().getItem() instanceof HarpoonItem)) {
+            return InteractionResult.FAIL;
         }
 
-        if (!(event.getTarget() instanceof HauntedCowEntity)
+        if (!(target instanceof HauntedCowEntity)
                 || VALUES.hauntedCow.disabled.get()
                 || VALUES.hauntedCowDisableTimeChange.get()) {
-            return;
+            return InteractionResult.PASS;
         }
 
-        ItemStack held = event.getEntity().getMainHandItem();
+        ItemStack held = player.getMainHandItem();
         if (held.is(ItemTags.SWORDS) || held.is(Items.BOW) || isConfiguredHauntedCowWeapon(held.getItem())) {
-            return;
+            return InteractionResult.PASS;
         }
 
-        if (!(event.getEntity().level() instanceof ServerLevel playerLevel)) {
-            return;
+        if (!(level instanceof ServerLevel playerLevel)) {
+            return InteractionResult.PASS;
         }
         ServerLevel overworld = playerLevel.getServer().overworld();
         long time = overworld.getOverworldClockTime() % 24000L;
         if (time >= 13000L) {
-            return;
+            return InteractionResult.PASS;
         }
 
         if (overworld.getGameRules().get(GameRules.ADVANCE_TIME)) {
@@ -131,9 +171,9 @@ public final class DeadlyMonstersConfig {
             Holder<WorldClock> overworldClock = clocks.getOrThrow(WorldClocks.OVERWORLD);
             overworld.clockManager().moveToTimeMarker(overworldClock, ClockTimeMarkers.NIGHT);
         }
-        event.getEntity().playSound(ModSounds.HAUNTEDCOW_TIMECHANGE.get(), 1.0F, 1.0F);
-        event.getEntity().sendSystemMessage(
-                Component.translatable("msg.dmonsters.haunted_cow").withStyle(ChatFormatting.DARK_RED));
+        player.playSound(ModSounds.HAUNTEDCOW_TIMECHANGE.get(), 1.0F, 1.0F);
+        player.sendSystemMessage(Component.translatable("msg.dmonsters.haunted_cow").withStyle(ChatFormatting.DARK_RED));
+        return InteractionResult.PASS;
     }
 
     private static boolean isConfiguredHauntedCowWeapon(Item item) {
@@ -162,92 +202,191 @@ public final class DeadlyMonstersConfig {
         return null;
     }
 
-    private record MonsterScale(double baseSpeed, double baseStrength, double baseHealth, MonsterSettings settings) {}
+    private record MonsterScale(double baseSpeed, double baseStrength, double baseHealth, MonsterSettings settings) {
+    }
 
     public static final class Settings {
-        public final ModConfigSpec.DoubleValue globalHealthMultiplier;
-        public final ModConfigSpec.DoubleValue globalStrengthMultiplier;
-        public final ModConfigSpec.DoubleValue globalSpeedMultiplier;
+        public final ConfigValue<Double> globalHealthMultiplier = new ConfigValue<>(1.0D);
+        public final ConfigValue<Double> globalStrengthMultiplier = new ConfigValue<>(1.0D);
+        public final ConfigValue<Double> globalSpeedMultiplier = new ConfigValue<>(1.0D);
 
-        public final MonsterSettings mutantSteve;
-        public final MonsterSettings freezer;
-        public final MonsterSettings climber;
-        public final MonsterSettings entrail;
-        public final MonsterSettings unbornBaby;
-        public final MonsterSettings fallenLeader;
-        public final MonsterSettings bloodyMaiden;
-        public final MonsterSettings zombieChicken;
-        public final MonsterSettings present;
-        public final MonsterSettings stranger;
-        public final MonsterSettings hauntedCow;
-        public final MonsterSettings topielec;
+        public final MonsterSettings mutantSteve = new MonsterSettings(8);
+        public final MonsterSettings freezer = new MonsterSettings(8);
+        public final MonsterSettings climber = new MonsterSettings(8);
+        public final MonsterSettings entrail = new MonsterSettings(12);
+        public final MonsterSettings unbornBaby = new MonsterSettings(12);
+        public final MonsterSettings fallenLeader = new MonsterSettings(12);
+        public final MonsterSettings bloodyMaiden = new MonsterSettings(12);
+        public final MonsterSettings zombieChicken = new MonsterSettings(12);
+        public final MonsterSettings present = new MonsterSettings(12);
+        public final MonsterSettings stranger = new MonsterSettings(12);
+        public final MonsterSettings hauntedCow = new MonsterSettings(8);
+        public final MonsterSettings topielec = new MonsterSettings(8);
 
-        public final ModConfigSpec.BooleanValue mutantSteveBreakBlocks;
-        public final ModConfigSpec.BooleanValue babyBlindness;
-        public final ModConfigSpec.IntValue topielecSearchDistance;
-        public final ModConfigSpec.BooleanValue topielecHarpoonOnly;
-        public final ModConfigSpec.ConfigValue<List<? extends String>> hauntedCowValidWeapons;
-        public final ModConfigSpec.BooleanValue hauntedCowDisableTimeChange;
+        public final ConfigValue<Boolean> mutantSteveBreakBlocks = new ConfigValue<>(true);
+        public final ConfigValue<Boolean> babyBlindness = new ConfigValue<>(false);
+        public final ConfigValue<Integer> topielecSearchDistance = new ConfigValue<>(16);
+        public final ConfigValue<Boolean> topielecHarpoonOnly = new ConfigValue<>(false);
+        public final ConfigValue<List<String>> hauntedCowValidWeapons =
+                new ConfigValue<>(List.of("thaumicaugmentation:morphic_tool"));
+        public final ConfigValue<Boolean> hauntedCowDisableTimeChange = new ConfigValue<>(false);
 
-        private Settings(ModConfigSpec.Builder builder) {
-            builder.push("general");
-            globalHealthMultiplier = builder.comment("Global monster health multiplier.").defineInRange("globalHealthMultiplier", 1.0D, 0.01D, 100.0D);
-            globalStrengthMultiplier = builder.comment("Global monster attack multiplier.").defineInRange("globalStrengthMultiplier", 1.0D, 0.01D, 100.0D);
-            globalSpeedMultiplier = builder.comment("Global monster movement speed multiplier.").defineInRange("globalSpeedMultiplier", 1.0D, 0.01D, 10.0D);
-            builder.pop();
+        private void load(JsonObject root) {
+            JsonObject general = section(root, "general");
+            globalHealthMultiplier.set(readDouble(general, "globalHealthMultiplier", globalHealthMultiplier.get(), 0.01D, 100.0D));
+            globalStrengthMultiplier.set(readDouble(general, "globalStrengthMultiplier", globalStrengthMultiplier.get(), 0.01D, 100.0D));
+            globalSpeedMultiplier.set(readDouble(general, "globalSpeedMultiplier", globalSpeedMultiplier.get(), 0.01D, 10.0D));
 
-            mutantSteve = new MonsterSettings(builder, "mutant_steve", 8);
-            freezer = new MonsterSettings(builder, "freezer", 8);
-            climber = new MonsterSettings(builder, "climber", 8);
-            entrail = new MonsterSettings(builder, "entrail", 12);
-            unbornBaby = new MonsterSettings(builder, "unborn_baby", 12);
-            fallenLeader = new MonsterSettings(builder, "fallen_leader", 12);
-            bloodyMaiden = new MonsterSettings(builder, "bloody_maiden", 12);
-            zombieChicken = new MonsterSettings(builder, "zombie_chicken", 12);
-            present = new MonsterSettings(builder, "present", 12);
-            stranger = new MonsterSettings(builder, "stranger", 12);
-            hauntedCow = new MonsterSettings(builder, "haunted_cow", 8);
-            topielec = new MonsterSettings(builder, "topielec", 8);
+            mutantSteve.load(section(root, "mutant_steve"));
+            freezer.load(section(root, "freezer"));
+            climber.load(section(root, "climber"));
+            entrail.load(section(root, "entrail"));
+            unbornBaby.load(section(root, "unborn_baby"));
+            fallenLeader.load(section(root, "fallen_leader"));
+            bloodyMaiden.load(section(root, "bloody_maiden"));
+            zombieChicken.load(section(root, "zombie_chicken"));
+            present.load(section(root, "present"));
+            stranger.load(section(root, "stranger"));
+            hauntedCow.load(section(root, "haunted_cow"));
+            topielec.load(section(root, "topielec"));
 
-            builder.push("mutant_steve");
-            mutantSteveBreakBlocks = builder.define("breakBlocks", true);
-            builder.pop();
+            JsonObject mutant = section(root, "mutant_steve");
+            mutantSteveBreakBlocks.set(readBoolean(mutant, "breakBlocks", mutantSteveBreakBlocks.get()));
 
-            builder.push("unborn_baby");
-            babyBlindness = builder.define("blindness", false);
-            builder.pop();
+            JsonObject baby = section(root, "unborn_baby");
+            babyBlindness.set(readBoolean(baby, "blindness", babyBlindness.get()));
 
-            builder.push("topielec");
-            topielecSearchDistance = builder.defineInRange("searchDistance", 16, 1, 128);
-            topielecHarpoonOnly = builder.define("harpoonOnly", false);
-            builder.pop();
+            JsonObject topielecSection = section(root, "topielec");
+            topielecSearchDistance.set(readInt(topielecSection, "searchDistance", topielecSearchDistance.get(), 1, 128));
+            topielecHarpoonOnly.set(readBoolean(topielecSection, "harpoonOnly", topielecHarpoonOnly.get()));
 
-            builder.push("haunted_cow");
-            hauntedCowValidWeapons = builder.defineList(
-                    "validWeapons",
-                    List.of("thaumicaugmentation:morphic_tool"),
-                    value -> value instanceof String);
-            hauntedCowDisableTimeChange = builder.define("disableTimeChange", false);
-            builder.pop();
+            JsonObject haunted = section(root, "haunted_cow");
+            hauntedCowValidWeapons.set(readStrings(haunted, "validWeapons", hauntedCowValidWeapons.get()));
+            hauntedCowDisableTimeChange.set(readBoolean(haunted, "disableTimeChange", hauntedCowDisableTimeChange.get()));
+        }
+
+        private JsonObject toJson() {
+            JsonObject root = new JsonObject();
+            JsonObject general = new JsonObject();
+            general.addProperty("globalHealthMultiplier", globalHealthMultiplier.get());
+            general.addProperty("globalStrengthMultiplier", globalStrengthMultiplier.get());
+            general.addProperty("globalSpeedMultiplier", globalSpeedMultiplier.get());
+            root.add("general", general);
+
+            root.add("mutant_steve", mutantSteve.toJson());
+            root.add("freezer", freezer.toJson());
+            root.add("climber", climber.toJson());
+            root.add("entrail", entrail.toJson());
+            root.add("unborn_baby", unbornBaby.toJson());
+            root.add("fallen_leader", fallenLeader.toJson());
+            root.add("bloody_maiden", bloodyMaiden.toJson());
+            root.add("zombie_chicken", zombieChicken.toJson());
+            root.add("present", present.toJson());
+            root.add("stranger", stranger.toJson());
+            root.add("haunted_cow", hauntedCow.toJson());
+            root.add("topielec", topielec.toJson());
+
+            root.getAsJsonObject("mutant_steve").addProperty("breakBlocks", mutantSteveBreakBlocks.get());
+            root.getAsJsonObject("unborn_baby").addProperty("blindness", babyBlindness.get());
+            root.getAsJsonObject("topielec").addProperty("searchDistance", topielecSearchDistance.get());
+            root.getAsJsonObject("topielec").addProperty("harpoonOnly", topielecHarpoonOnly.get());
+
+            JsonArray weapons = new JsonArray();
+            hauntedCowValidWeapons.get().forEach(weapons::add);
+            root.getAsJsonObject("haunted_cow").add("validWeapons", weapons);
+            root.getAsJsonObject("haunted_cow").addProperty("disableTimeChange", hauntedCowDisableTimeChange.get());
+            return root;
         }
     }
 
     public static final class MonsterSettings {
-        public final ModConfigSpec.DoubleValue healthMultiplier;
-        public final ModConfigSpec.DoubleValue strengthMultiplier;
-        public final ModConfigSpec.DoubleValue speedMultiplier;
-        public final ModConfigSpec.IntValue spawnRate;
-        public final ModConfigSpec.BooleanValue disabled;
+        public final ConfigValue<Double> healthMultiplier = new ConfigValue<>(1.0D);
+        public final ConfigValue<Double> strengthMultiplier = new ConfigValue<>(1.0D);
+        public final ConfigValue<Double> speedMultiplier = new ConfigValue<>(1.0D);
+        public final ConfigValue<Integer> spawnRate;
+        public final ConfigValue<Boolean> disabled = new ConfigValue<>(false);
 
-        private MonsterSettings(ModConfigSpec.Builder builder, String name, int defaultSpawnRate) {
-            builder.push(name);
-            healthMultiplier = builder.defineInRange("healthMultiplier", 1.0D, 0.01D, 100.0D);
-            strengthMultiplier = builder.defineInRange("strengthMultiplier", 1.0D, 0.01D, 100.0D);
-            speedMultiplier = builder.defineInRange("speedMultiplier", 1.0D, 0.01D, 10.0D);
-            spawnRate = builder.comment("Natural spawn weighting. Restart the world/server after changing this value.")
-                    .defineInRange("spawnRate", defaultSpawnRate, 0, 1000);
-            disabled = builder.comment("Disable natural spawning for this monster.").define("disabled", false);
-            builder.pop();
+        private MonsterSettings(int defaultSpawnRate) {
+            this.spawnRate = new ConfigValue<>(defaultSpawnRate);
         }
+
+        private void load(JsonObject section) {
+            healthMultiplier.set(readDouble(section, "healthMultiplier", healthMultiplier.get(), 0.01D, 100.0D));
+            strengthMultiplier.set(readDouble(section, "strengthMultiplier", strengthMultiplier.get(), 0.01D, 100.0D));
+            speedMultiplier.set(readDouble(section, "speedMultiplier", speedMultiplier.get(), 0.01D, 10.0D));
+            spawnRate.set(readInt(section, "spawnRate", spawnRate.get(), 0, 1000));
+            disabled.set(readBoolean(section, "disabled", disabled.get()));
+        }
+
+        private JsonObject toJson() {
+            JsonObject object = new JsonObject();
+            object.addProperty("healthMultiplier", healthMultiplier.get());
+            object.addProperty("strengthMultiplier", strengthMultiplier.get());
+            object.addProperty("speedMultiplier", speedMultiplier.get());
+            object.addProperty("spawnRate", spawnRate.get());
+            object.addProperty("disabled", disabled.get());
+            return object;
+        }
+    }
+
+    public static final class ConfigValue<T> {
+        private T value;
+
+        private ConfigValue(T value) {
+            this.value = value;
+        }
+
+        public T get() {
+            return this.value;
+        }
+
+        private void set(T value) {
+            this.value = value;
+        }
+    }
+
+    private static JsonObject section(JsonObject root, String name) {
+        JsonElement element = root.get(name);
+        return element != null && element.isJsonObject() ? element.getAsJsonObject() : new JsonObject();
+    }
+
+    private static double readDouble(JsonObject object, String key, double fallback, double min, double max) {
+        try {
+            double value = object.has(key) ? object.get(key).getAsDouble() : fallback;
+            return Math.max(min, Math.min(max, value));
+        } catch (RuntimeException ignored) {
+            return fallback;
+        }
+    }
+
+    private static int readInt(JsonObject object, String key, int fallback, int min, int max) {
+        try {
+            int value = object.has(key) ? object.get(key).getAsInt() : fallback;
+            return Math.max(min, Math.min(max, value));
+        } catch (RuntimeException ignored) {
+            return fallback;
+        }
+    }
+
+    private static boolean readBoolean(JsonObject object, String key, boolean fallback) {
+        try {
+            return object.has(key) ? object.get(key).getAsBoolean() : fallback;
+        } catch (RuntimeException ignored) {
+            return fallback;
+        }
+    }
+
+    private static List<String> readStrings(JsonObject object, String key, List<String> fallback) {
+        JsonElement element = object.get(key);
+        if (element == null || !element.isJsonArray()) {
+            return fallback;
+        }
+        List<String> values = new ArrayList<>();
+        for (JsonElement entry : element.getAsJsonArray()) {
+            if (entry.isJsonPrimitive() && entry.getAsJsonPrimitive().isString()) {
+                values.add(entry.getAsString());
+            }
+        }
+        return values.isEmpty() ? fallback : List.copyOf(values);
     }
 }

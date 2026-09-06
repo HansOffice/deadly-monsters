@@ -10,53 +10,65 @@ import com.dmonsters.block.PresentBlock;
 import com.dmonsters.block.PresentBoxBlock;
 import com.dmonsters.block.SoulEyeBlock;
 import com.dmonsters.block.StrengthenedBlock;
+import java.util.function.Function;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
-/** Block registry retaining the original 1.12.2 registry IDs. */
 public final class ModBlocks {
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(DeadlyMonsters.MOD_ID);
-
-    public static final DeferredBlock<StrengthenedBlock> STRENGTHENED_STONE = BLOCKS.registerBlock(
+    public static final RegistryRef<StrengthenedBlock> STRENGTHENED_STONE = register(
             "strengthened_stone",
-            properties -> new StrengthenedBlock(properties.strength(10.0F, 25.0F), Blocks.STONE.defaultBlockState()));
+            properties -> new StrengthenedBlock(properties.strength(10.0F, 25.0F), Blocks.STONE.defaultBlockState()),
+            BlockBehaviour.Properties.of());
 
-    public static final DeferredBlock<StrengthenedBlock> STRENGTHENED_COBBLESTONE = BLOCKS.registerBlock(
+    public static final RegistryRef<StrengthenedBlock> STRENGTHENED_COBBLESTONE = register(
             "strengthened_cobblestone",
-            properties -> new StrengthenedBlock(properties.strength(10.0F, 25.0F), Blocks.COBBLESTONE.defaultBlockState()));
+            properties -> new StrengthenedBlock(properties.strength(10.0F, 25.0F), Blocks.COBBLESTONE.defaultBlockState()),
+            BlockBehaviour.Properties.of());
 
-    public static final DeferredBlock<BarbedWireBlock> BARBED_WIRE = BLOCKS.registerBlock(
-            "barbed_wire",
-            properties -> new BarbedWireBlock(properties.strength(1.0F, 1.0F).noOcclusion()));
+    public static final RegistryRef<BarbedWireBlock> BARBED_WIRE = register(
+            "barbed_wire", BarbedWireBlock::new, BlockBehaviour.Properties.of().strength(1.0F, 1.0F).noOcclusion());
 
-    public static final DeferredBlock<MeshFenceBlock> MESH_FENCE = BLOCKS.registerBlock(
-            "mesh_fence",
-            properties -> new MeshFenceBlock(properties.strength(5.0F, 5.0F).noOcclusion()));
+    public static final RegistryRef<MeshFenceBlock> MESH_FENCE = register(
+            "mesh_fence", MeshFenceBlock::new, BlockBehaviour.Properties.of().strength(5.0F, 5.0F).noOcclusion());
 
-    public static final DeferredBlock<MeshFencePoleBlock> MESH_FENCE_POLE = BLOCKS.registerBlock(
-            "mesh_fence_pole",
-            properties -> new MeshFencePoleBlock(properties.strength(5.0F, 5.0F).noOcclusion()));
+    public static final RegistryRef<MeshFencePoleBlock> MESH_FENCE_POLE = register(
+            "mesh_fence_pole", MeshFencePoleBlock::new, BlockBehaviour.Properties.of().strength(5.0F, 5.0F).noOcclusion());
 
-    public static final DeferredBlock<DumpBlock> DUMP = BLOCKS.registerBlock(
-            "dump",
-            properties -> new DumpBlock(properties.strength(1.0F, 1.0F).noOcclusion()));
+    public static final RegistryRef<DumpBlock> DUMP = register(
+            "dump", DumpBlock::new, BlockBehaviour.Properties.of().strength(1.0F, 1.0F).noOcclusion());
 
-    public static final DeferredBlock<SoulEyeBlock> SOUL_EYE = BLOCKS.registerBlock(
-            "soul_eye",
-            properties -> new SoulEyeBlock(properties.strength(3.0F, 3.0F).randomTicks().noOcclusion()));
+    public static final RegistryRef<SoulEyeBlock> SOUL_EYE = register(
+            "soul_eye", SoulEyeBlock::new, BlockBehaviour.Properties.of().strength(3.0F, 3.0F).randomTicks().noOcclusion());
 
-    public static final DeferredBlock<PresentBlock> PRESENT_BLOCK = BLOCKS.registerBlock(
-            "present_block",
-            properties -> new PresentBlock(properties.strength(3.0F, 50.0F).randomTicks()));
+    public static final RegistryRef<PresentBlock> PRESENT_BLOCK = register(
+            "present_block", PresentBlock::new, BlockBehaviour.Properties.of().strength(3.0F, 50.0F).randomTicks());
 
-    public static final DeferredBlock<ChristmasTreeBlock> CHRISTMAS_TREE = BLOCKS.registerBlock(
-            "christmas_tree",
-            properties -> new ChristmasTreeBlock(properties.strength(2.0F, 50.0F).randomTicks().noOcclusion()));
+    public static final RegistryRef<ChristmasTreeBlock> CHRISTMAS_TREE = register(
+            "christmas_tree", ChristmasTreeBlock::new, BlockBehaviour.Properties.of().strength(2.0F, 50.0F).randomTicks().noOcclusion());
 
-    public static final DeferredBlock<PresentBoxBlock> PRESENT_BOX = BLOCKS.registerBlock(
-            "present_box",
-            properties -> new PresentBoxBlock(properties.strength(1.0F, 50.0F).noOcclusion()));
+    public static final RegistryRef<PresentBoxBlock> PRESENT_BOX = register(
+            "present_box", PresentBoxBlock::new, BlockBehaviour.Properties.of().strength(1.0F, 50.0F).noOcclusion());
 
-    private ModBlocks() {}
+    private ModBlocks() {
+    }
+
+    public static void initialize() {
+    }
+
+    private static <T extends Block> RegistryRef<T> register(
+            String name,
+            Function<BlockBehaviour.Properties, T> factory,
+            BlockBehaviour.Properties properties) {
+        ResourceKey<Block> key = ResourceKey.create(
+                Registries.BLOCK, Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name));
+        T block = factory.apply(properties.setId(key));
+        Registry.register(BuiltInRegistries.BLOCK, key, block);
+        return new RegistryRef<>(block);
+    }
 }

@@ -1,17 +1,16 @@
 package com.dmonsters.registry;
 
 import com.dmonsters.DeadlyMonsters;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class ModCreativeTabs {
-    public static final DeferredRegister<CreativeModeTab> TABS =
-            DeferredRegister.create(Registries.CREATIVE_MODE_TAB, DeadlyMonsters.MOD_ID);
-
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN = TABS.register("main", () ->
+    public static final RegistryRef<CreativeModeTab> MAIN = new RegistryRef<>(Registry.register(
+            BuiltInRegistries.CREATIVE_MODE_TAB,
+            Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "main"),
             CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.dmonsters"))
                     .icon(() -> ModItems.REBAR.get().getDefaultInstance())
@@ -54,7 +53,11 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.HARPOON_DIAMOND.get());
                         output.accept(ModItems.HARPOON_OBSIDIAN.get());
                     })
-                    .build());
+                    .build()));
 
-    private ModCreativeTabs() {}
+    private ModCreativeTabs() {
+    }
+
+    public static void initialize() {
+    }
 }
