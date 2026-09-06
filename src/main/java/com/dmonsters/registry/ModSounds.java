@@ -7,9 +7,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/**
- * Modern registry for every SoundEvent that the original 1.12.2 mod actually registered.
- */
+/** Modern registry for Deadly Monsters sound events. */
 public final class ModSounds {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
             DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, DeadlyMonsters.MOD_ID);
@@ -73,6 +71,11 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> PRESENT_HURT = register("mob.present.hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> PRESENT_AMBIENT = register("mob.present.idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> PRESENT_ATTACK = register("mob.present.attack");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> ZOMBIE_CHICKEN_DEATH = register("mob.zombie_chicken.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ZOMBIE_CHICKEN_HURT = register("mob.zombie_chicken.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ZOMBIE_CHICKEN_AMBIENT = register("mob.zombie_chicken.idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ZOMBIE_CHICKEN_ATTACK = register("mob.zombie_chicken.attack");
 
     private ModSounds() {
     }
