@@ -98,7 +98,7 @@
   * **特殊机制开关**：
     * `mutant_steve.breakBlocks`：是否允许突变史蒂夫在特殊攻击时破坏方块（默认开启）
     * `haunted_cow.disableTimeChange`：是否关闭闹鬼牛受到无效武器攻击时强制转夜的机制
-    * `topielec.harpoonOnly`：是否限制异形水鬼仅能被鱼叉造成玩家直接伤害（默认开启）
+    * `topielec.harpoonOnly`：是否限制异形水鬼仅能被鱼叉造成玩家直接伤害（默认关闭）
     * `unborn_baby.blindness`：是否启用腹中胎儿的周期失明光环
 
 > [!NOTE]
@@ -131,7 +131,7 @@
 
 ## 开发与构建
 
-本项目使用系统安装的 Gradle 9.2.1 与 Java 25 进行模块化开发：
+本项目使用系统安装的 Gradle 9.5.1 与 Java 25 进行模块化开发：
 
 <details>
 <summary>点击展开构建命令参考</summary>
