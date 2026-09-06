@@ -1,1 +1,3 @@
-{"parent":"minecraft:item/generated","textures":{"layer0":"dmonsters:block/soul_eye_awake"}}
+{
+  "parent": "dmonsters:block/soul_eye_awake"
+}
