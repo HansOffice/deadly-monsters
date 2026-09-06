@@ -1,14 +1,19 @@
 package com.dmonsters.client;
 
+import com.dmonsters.registry.ModBlocks;
 import com.dmonsters.registry.ModEntities;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 
 public final class ClientModEvents implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BARBED_WIRE.get(), RenderType.cutout());
+
         EntityModelLayerRegistry.registerModelLayer(BloodyMaidenModel.LAYER_LOCATION, BloodyMaidenModel::createBodyLayer);
         EntityModelLayerRegistry.registerModelLayer(ClimberModel.LAYER_LOCATION, ClimberModel::createBodyLayer);
         EntityModelLayerRegistry.registerModelLayer(EntrailModel.LAYER_LOCATION, EntrailModel::createBodyLayer);
