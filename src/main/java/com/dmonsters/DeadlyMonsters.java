@@ -29,7 +29,7 @@ public final class DeadlyMonsters implements ModInitializer {
         ModNaturalSpawns.initialize();
 
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) ->
-                DeadlyMonstersConfig.onEntityJoinLevel(entity, entity.isLoadedFromDisk()));
+                DeadlyMonstersConfig.onEntityJoinLevel(entity, false));
         AttackEntityCallback.EVENT.register((player, level, hand, target, hitResult) ->
                 player.isSpectator()
                         ? InteractionResult.PASS

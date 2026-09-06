@@ -49,7 +49,7 @@ public final class BloodyMaidenEntity extends Monster {
     @Override
     public void aiStep() {
         if (!this.level().isClientSide()
-                && this.level().isBrightOutside()
+                && this.level().isDay()
                 && this.level().canSeeSky(this.blockPosition())
                 && this.getLightLevelDependentMagicValue() > 0.5F
                 && this.getRandom().nextFloat() < 0.05F) {
@@ -59,13 +59,14 @@ public final class BloodyMaidenEntity extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, Entity target) {
-        if (!super.doHurtTarget(level, target)) {
+    public boolean doHurtTarget(Entity target) {
+        ServerLevel level = (ServerLevel) this.level();
+        if (!super.doHurtTarget(target)) {
             return false;
         }
         this.playSound(ModSounds.MAIDEN_ATTACK.get(), 1.0F, 1.0F);
         if (this.isTriggered()) {
-            target.hurtServer(level, level.damageSources().generic(), 999.0F);
+            target.hurt(level.damageSources().generic(), 999.0F);
         }
         this.setTriggered(true);
         return true;

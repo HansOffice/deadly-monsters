@@ -45,7 +45,7 @@ public final class EntrailEntity extends Monster {
     @Override
     public void aiStep() {
         if (!this.level().isClientSide()
-                && this.level().isBrightOutside()
+                && this.level().isDay()
                 && this.level().canSeeSky(this.blockPosition())
                 && this.getLightLevelDependentMagicValue() > 0.5F
                 && this.getRandom().nextFloat() < 0.05F) {
@@ -60,23 +60,24 @@ public final class EntrailEntity extends Monster {
     }
 
     @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
+    public boolean hurt(DamageSource source, float damage) {
         if (!source.is(DamageTypeTags.IS_FIRE)) {
-            EntityType<?> slimeType = BuiltInRegistries.ENTITY_TYPE.getValue(SLIME_ID);
+            EntityType<?> slimeType = BuiltInRegistries.ENTITY_TYPE.get(SLIME_ID);
             if (slimeType != null) {
-                Entity entity = slimeType.create(level, MobSpawnType.TRIGGERED);
+                Entity entity = slimeType.create(level);
                 if (entity instanceof Slime slime) {
-                    slime.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+                    slime.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
                     level.addFreshEntity(slime);
                 }
             }
         }
-        return super.hurtServer(level, source, damage);
+        return super.hurt(source, damage);
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, Entity target) {
-        if (!super.doHurtTarget(level, target)) {
+    public boolean doHurtTarget(Entity target) {
+        ServerLevel level = (ServerLevel) this.level();
+        if (!super.doHurtTarget(target)) {
             return false;
         }
         this.playSound(ModSounds.ENTRAIL_ATTACK.get(), 1.0F, 1.0F);

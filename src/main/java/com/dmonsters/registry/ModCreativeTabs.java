@@ -1,7 +1,7 @@
 package com.dmonsters.registry;
 
 import com.dmonsters.DeadlyMonsters;
-import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -18,7 +18,7 @@ public final class ModCreativeTabs {
     public static final RegistryRef<CreativeModeTab> MAIN = new RegistryRef<>(Registry.register(
             BuiltInRegistries.CREATIVE_MODE_TAB,
             MAIN_KEY,
-            FabricCreativeModeTab.builder()
+            FabricItemGroup.builder()
                     .title(Component.translatable("itemGroup.dmonsters"))
                     .icon(() -> ModItems.REBAR.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {

@@ -37,7 +37,7 @@ public final class StrangerEntity extends Monster {
     @Override
     public void aiStep() {
         if (!this.level().isClientSide()
-                && this.level().isBrightOutside()
+                && this.level().isDay()
                 && this.level().canSeeSky(this.blockPosition())
                 && this.getLightLevelDependentMagicValue() > 0.5F
                 && this.getRandom().nextFloat() < 0.05F) {
@@ -47,15 +47,16 @@ public final class StrangerEntity extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, Entity target) {
-        if (!super.doHurtTarget(level, target)) {
+    public boolean doHurtTarget(Entity target) {
+        ServerLevel level = (ServerLevel) this.level();
+        if (!super.doHurtTarget(target)) {
             return false;
         }
         this.playSound(ModSounds.STRANGER_ATTACK.get(), 1.0F, 1.0F);
         if (target instanceof Player) {
             this.playSound(ModSounds.STRANGER_IMPACT.get(), 1.0F, 1.0F);
             target.push(0.0D, this.getRandom().nextFloat() + 0.1F, 0.0D);
-            target.hurtServer(level, level.damageSources().generic(), 10.0F);
+            target.hurt(level.damageSources().generic(), 10.0F);
         }
         return true;
     }

@@ -55,8 +55,9 @@ public final class PresentEntity extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, Entity target) {
-        if (!super.doHurtTarget(level, target)) {
+    public boolean doHurtTarget(Entity target) {
+        ServerLevel level = (ServerLevel) this.level();
+        if (!super.doHurtTarget(target)) {
             return false;
         }
         this.playSound(ModSounds.PRESENT_ATTACK.get(), 1.0F, 1.0F);
@@ -97,13 +98,13 @@ public final class PresentEntity extends Monster {
             level.setBlockAndUpdate(lightPos, Blocks.TORCH.defaultBlockState());
         }
 
-        EntityType<?> creeperType = BuiltInRegistries.ENTITY_TYPE.getValue(ResourceLocation.withDefaultNamespace("creeper"));
+        EntityType<?> creeperType = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.withDefaultNamespace("creeper"));
         if (creeperType != null) {
             // The 1.12.2 floor/ceiling loop reaches the center twice, spawning two Creepers at the torch.
             for (int i = 0; i < 2; i++) {
-                Entity spawned = creeperType.create(level, MobSpawnType.TRIGGERED);
+                Entity spawned = creeperType.create(level);
                 if (spawned instanceof Creeper creeper) {
-                    creeper.snapTo(lightPos.getX() + 0.5D, lightPos.getY(), lightPos.getZ() + 0.5D, 0.0F, 0.0F);
+                    creeper.moveTo(lightPos.getX() + 0.5D, lightPos.getY(), lightPos.getZ() + 0.5D, 0.0F, 0.0F);
                     level.addFreshEntity(creeper);
                 }
             }

@@ -39,7 +39,6 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import javax.annotation.Nullable;
 
 /**
  * Native 26.2 port of the original Climber monster.
@@ -88,7 +87,7 @@ public final class ClimberEntity extends Monster {
     @Override
     public void aiStep() {
         if (!this.level().isClientSide()
-                && this.level().isBrightOutside()
+                && this.level().isDay()
                 && this.level().canSeeSky(this.blockPosition())
                 && this.getLightLevelDependentMagicValue() > 0.5F
                 && this.getRandom().nextFloat() < 0.05F) {
@@ -98,8 +97,9 @@ public final class ClimberEntity extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, Entity target) {
-        if (!super.doHurtTarget(level, target)) {
+    public boolean doHurtTarget(Entity target) {
+        ServerLevel level = (ServerLevel) this.level();
+        if (!super.doHurtTarget(target)) {
             return false;
         }
         this.playSound(ModSounds.CLIMBER_ATTACK.get(), 1.0F, 1.0F);
@@ -124,11 +124,11 @@ public final class ClimberEntity extends Monster {
     }
 
     @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
+    public SpawnGroupData finalizeSpawn(
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
             MobSpawnType spawnReason,
-            @Nullable SpawnGroupData groupData) {
+            SpawnGroupData groupData) {
         groupData = super.finalizeSpawn(level, difficulty, spawnReason, groupData);
         RandomSource random = level.getRandom();
 
@@ -182,14 +182,14 @@ public final class ClimberEntity extends Monster {
     }
 
     public static final class ClimberEffectsGroupData implements SpawnGroupData {
-        private @Nullable Holder<MobEffect> effect;
+        private Holder<MobEffect> effect;
 
         private void setRandomEffect(RandomSource random) {
             int selected = random.nextInt(5);
             if (selected == 0) {
-                this.effect = MobEffects.SPEED;
+                this.effect = MobEffects.MOVEMENT_SPEED;
             } else if (selected == 1) {
-                this.effect = MobEffects.STRENGTH;
+                this.effect = MobEffects.DAMAGE_BOOST;
             } else if (selected == 2) {
                 this.effect = MobEffects.REGENERATION;
             } else if (selected == 3) {

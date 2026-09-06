@@ -8,13 +8,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,7 +21,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import javax.annotation.Nullable;
 
 /** Port of the original support-only, damaging barbed wire. */
 public final class BarbedWireBlock extends Block {
@@ -49,7 +47,7 @@ public final class BarbedWireBlock extends Block {
     }
 
     @Override
-    public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState state = this.defaultBlockState();
         if (!state.canSurvive(context.getLevel(), context.getClickedPos())) {
             Player player = context.getPlayer();
@@ -65,17 +63,15 @@ public final class BarbedWireBlock extends Block {
     @Override
     protected BlockState updateShape(
             BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
             Direction directionToNeighbour,
-            BlockPos neighbourPos,
             BlockState neighbourState,
-            RandomSource random) {
+            LevelAccessor level,
+            BlockPos pos,
+            BlockPos neighbourPos) {
         if (directionToNeighbour == Direction.DOWN && !state.canSurvive(level, pos)) {
-            ticks.scheduleTick(pos, this, 1);
+            level.scheduleTick(pos, this, 1);
         }
-        return super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
+        return super.updateShape(state, directionToNeighbour, neighbourState, level, pos, neighbourPos);
     }
 
     @Override
@@ -86,13 +82,7 @@ public final class BarbedWireBlock extends Block {
     }
 
     @Override
-    protected void entityInside(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Entity entity,
-            InsideBlockEffectApplier effectApplier,
-            boolean isPrecise) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         entity.hurt(level.damageSources().cactus(), 1.0F);
         Vec3 motion = entity.getDeltaMovement();
         entity.setDeltaMovement(motion.x * 0.2D, motion.y, motion.z * 0.2D);

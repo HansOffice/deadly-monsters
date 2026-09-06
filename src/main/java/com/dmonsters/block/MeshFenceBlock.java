@@ -11,11 +11,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import javax.annotation.Nullable;
 
 /** Mesh fence segment that must remain linked to a pole within eight blocks. */
 public final class MeshFenceBlock extends FenceBlock {
@@ -31,7 +30,7 @@ public final class MeshFenceBlock extends FenceBlock {
     }
 
     @Override
-    public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockGetter level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         if (!this.hasPolePath(level, pos)) {
@@ -50,16 +49,14 @@ public final class MeshFenceBlock extends FenceBlock {
     @Override
     protected BlockState updateShape(
             BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
             Direction directionToNeighbour,
-            BlockPos neighbourPos,
             BlockState neighbourState,
-            RandomSource random) {
-        BlockState updated = super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
+            LevelAccessor level,
+            BlockPos pos,
+            BlockPos neighbourPos) {
+        BlockState updated = super.updateShape(state, directionToNeighbour, neighbourState, level, pos, neighbourPos);
         if (directionToNeighbour.getAxis().isHorizontal() && !this.hasPolePath(level, pos)) {
-            ticks.scheduleTick(pos, this, 1);
+            level.scheduleTick(pos, this, 1);
         }
         return updated;
     }

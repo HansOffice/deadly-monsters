@@ -31,9 +31,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.clock.ClockTimeMarkers;
-import net.minecraft.world.clock.WorldClock;
-import net.minecraft.world.clock.WorldClocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -161,15 +158,14 @@ public final class DeadlyMonstersConfig {
             return InteractionResult.PASS;
         }
         ServerLevel overworld = playerLevel.getServer().overworld();
-        long time = overworld.getOverworldClockTime() % 24000L;
+        long time = overworld.getDayTime() % 24000L;
         if (time >= 13000L) {
             return InteractionResult.PASS;
         }
 
-        if (overworld.getGameRules().get(GameRules.ADVANCE_TIME)) {
-            Registry<WorldClock> clocks = overworld.registryAccess().lookupOrThrow(Registries.WORLD_CLOCK);
-            Holder<WorldClock> overworldClock = clocks.getOrThrow(WorldClocks.OVERWORLD);
-            overworld.clockManager().moveToTimeMarker(overworldClock, ClockTimeMarkers.NIGHT);
+        if (overworld.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
+            long delta = (13000L - time + 24000L) % 24000L;
+            overworld.setDayTime(overworld.getDayTime() + delta);
         }
         player.playSound(ModSounds.HAUNTEDCOW_TIMECHANGE.get(), 1.0F, 1.0F);
         player.sendSystemMessage(Component.translatable("msg.dmonsters.haunted_cow").withStyle(ChatFormatting.DARK_RED));

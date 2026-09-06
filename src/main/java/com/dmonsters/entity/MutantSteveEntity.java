@@ -57,7 +57,7 @@ public final class MutantSteveEntity extends Monster {
     @Override
     public void aiStep() {
         if (!this.level().isClientSide()
-                && this.level().isBrightOutside()
+                && this.level().isDay()
                 && this.level().canSeeSky(this.blockPosition())
                 && this.getLightLevelDependentMagicValue() > 0.5F
                 && this.getRandom().nextFloat() < 0.05F) {
@@ -67,8 +67,9 @@ public final class MutantSteveEntity extends Monster {
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, Entity target) {
-        if (!super.doHurtTarget(level, target)) {
+    public boolean doHurtTarget(Entity target) {
+        ServerLevel level = (ServerLevel) this.level();
+        if (!super.doHurtTarget(target)) {
             return false;
         }
         if (target instanceof LivingEntity living) {
@@ -76,9 +77,7 @@ public final class MutantSteveEntity extends Monster {
             living.knockback(
                     2.0D,
                     target.getX() - this.getX(),
-                    target.getZ() - this.getZ(),
-                    level.damageSources().mobAttack(this),
-                    (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+                    target.getZ() - this.getZ());
         }
         return true;
     }
@@ -146,7 +145,7 @@ public final class MutantSteveEntity extends Monster {
             if (++this.breakTicks >= 20 && !this.mutant.isInWater()) {
                 this.breakTicks = 0;
                 if (this.mutant.level() instanceof ServerLevel level
-                        && level.getGameRules().get(GameRules.MOB_GRIEFING)) {
+                        && level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
                     boolean destroyed = this.destroyAround(level, 0, 0.25F);
                     destroyed |= this.destroyAround(level, 1, 0.5F);
                     destroyed |= this.destroyAround(level, 2, 0.75F);

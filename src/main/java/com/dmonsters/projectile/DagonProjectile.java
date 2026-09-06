@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -21,7 +21,8 @@ public final class DagonProjectile extends ThrowableItemProjectile {
     }
 
     public DagonProjectile(Level level, LivingEntity owner, ItemStack stack) {
-        super(ModEntities.DAGON_PROJECTILE.get(), owner, level, stack);
+        super(ModEntities.DAGON_PROJECTILE.get(), owner, level);
+        this.setItem(stack);
     }
 
     @Override
@@ -40,7 +41,7 @@ public final class DagonProjectile extends ThrowableItemProjectile {
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
         if (this.level() instanceof ServerLevel level) {
-            this.spawnAtLocation(level, ModItems.DAGON.get());
+            this.spawnAtLocation(ModItems.DAGON.get());
             this.level().broadcastEntityEvent(this, (byte) 3);
             this.discard();
         }

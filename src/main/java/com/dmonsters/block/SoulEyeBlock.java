@@ -63,7 +63,7 @@ public final class SoulEyeBlock extends Block {
         boolean consumed = false;
         for (Mob mob : level.getEntitiesOfClass(Mob.class, area)) {
             if (random.nextFloat() <= 0.5F) {
-                mob.spawnAtLocation(level, SOUL_DROPS.get(random.nextInt(SOUL_DROPS.size())));
+                mob.spawnAtLocation(SOUL_DROPS.get(random.nextInt(SOUL_DROPS.size())));
             }
             level.sendParticles(
                     ParticleTypes.SMOKE,

@@ -26,9 +26,9 @@ public final class EntrailFleshItem extends Item {
         float yaw = target.getYRot();
         target.discard();
 
-        EntrailEntity entrail = ModEntities.ENTRAIL.get().create(level, MobSpawnType.TRIGGERED);
+        EntrailEntity entrail = ModEntities.ENTRAIL.get().create(level);
         if (entrail != null) {
-            entrail.snapTo(x, y, z, yaw, 0.0F);
+            entrail.moveTo(x, y, z, yaw, 0.0F);
             level.addFreshEntity(entrail);
         }
         stack.shrink(1);
