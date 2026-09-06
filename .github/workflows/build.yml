@@ -1,12 +1,7 @@
-name: Repair models and release v1.0-26.2
+name: Build
 
 on:
-  push:
-    branches:
-      - main
-
-permissions:
-  contents: write
+  workflow_dispatch:
 
 jobs:
   build:
@@ -17,70 +12,6 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-
-      - name: Restore original UV-mapped block models
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          from urllib.request import urlopen
-          import json
-
-          files = [
-              "barbed_wire.json",
-              "christmas_tree.json",
-              "dump_1.json",
-              "dump_2.json",
-              "dump_3.json",
-              "dump_4.json",
-              "mesh_fence.json",
-              "mesh_fence_pole.json",
-              "present_box.json",
-              "soul_eye_awake.json",
-              "soul_eye_awaking.json",
-              "soul_eye_sleeping.json",
-          ]
-          root = Path("src/main/resources/assets/dmonsters/models/block")
-          base = "https://raw.githubusercontent.com/ACGaming/deadly-monsters/master/src/main/resources/assets/dmonsters/models/block/"
-
-          for name in files:
-              text = urlopen(base + name).read().decode("utf-8")
-              text = text.replace("dmonsters:blocks/", "dmonsters:block/")
-              json.loads(text)
-              (root / name).write_text(text, encoding="utf-8", newline="\n")
-
-          (root / "soul_eye_base.json").unlink(missing_ok=True)
-
-          # Guard against the regression that produced atlas/mosaic item icons.
-          for name in ("christmas_tree.json", "mesh_fence.json", "mesh_fence_pole.json", "present_box.json"):
-              model = json.loads((root / name).read_text(encoding="utf-8"))
-              faces = [face for element in model.get("elements", []) for face in element.get("faces", {}).values()]
-              if not faces or not all("uv" in face for face in faces):
-                  raise SystemExit(f"{name}: missing authored UV mapping")
-
-          for name in ("soul_eye_awake.json", "soul_eye_awaking.json", "soul_eye_sleeping.json"):
-              model = json.loads((root / name).read_text(encoding="utf-8"))
-              faces = [face for element in model.get("elements", []) for face in element.get("faces", {}).values()]
-              if not faces or not all("uv" in face for face in faces):
-                  raise SystemExit(f"{name}: missing authored UV mapping")
-
-          item_models = Path("src/main/resources/assets/dmonsters/models/item")
-          for name in ("christmas_tree.json", "soul_eye.json"):
-              model = json.loads((item_models / name).read_text(encoding="utf-8"))
-              if model.get("parent") == "minecraft:item/generated":
-                  raise SystemExit(f"{name}: block texture atlas must not be rendered as a generated flat item")
-          PY
-
-      - name: Commit repaired source assets
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/main/resources/assets/dmonsters/models
-          if ! git diff --cached --quiet; then
-            git commit -m "Restore authored UV mappings [skip ci]"
-            git push origin HEAD:main
-          fi
 
       - name: Setup JDK 25
         uses: actions/setup-java@v4
@@ -93,39 +24,5 @@ jobs:
         with:
           gradle-version: '9.2.1'
 
-      - name: Validate JSON resources
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import json
-          for root in (Path("src/main/resources/assets/dmonsters"), Path("src/main/resources/data/dmonsters")):
-              for path in root.rglob("*.json"):
-                  json.loads(path.read_text(encoding="utf-8"))
-          print("All Deadly Monsters JSON resources parsed successfully")
-          PY
-
       - name: Build with Gradle
         run: gradle build
-
-      - name: Verify release JAR
-        run: test -f build/libs/dmonsters-1.0-26.2.jar
-
-      - name: Replace GitHub release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release delete "v1.0-26.2" --cleanup-tag --yes || true
-          gh release create "v1.0-26.2" \
-            "build/libs/dmonsters-1.0-26.2.jar#dmonsters-1.0-26.2.jar" \
-            --target "$(git rev-parse HEAD)" \
-            --title "Deadly Monsters v1.0-26.2" \
-            --notes-file - <<'EOF'
-          Deadly Monsters for Minecraft 26.2 / NeoForge 26.2.0.75.
-
-          - Restored the original authored UV mappings for special block models instead of approximating atlas textures.
-          - Fixed Soul Eye and Christmas Tree inventory/hand rendering without flattening their block texture atlases.
-          - Restored original item presentation transforms for Barbed Wire, Mesh Fence, Mesh Fence Pole, Christmas Tree and Present Box.
-          - Corrected Dump, Mesh Fence, Mesh Fence Pole, Present Box, Soul Eye and Christmas Tree block-model texture mapping.
-          - Retains the monster sound-path and Zombie Chicken sound fixes from the previous build.
-          - Full Java 25 / Gradle 9.2.1 build and JSON resource parse validation passed before publication.
-          EOF
