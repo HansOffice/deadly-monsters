@@ -87,7 +87,9 @@ Fabric 首次运行后会生成 `config/dmonsters.json`
 
 配置字段继续保留原版移植版的含义和默认值
 
-`spawnRate` 与 `disabled` 会影响生物群系生成列表，修改后需要重启世界或专用服务器
+Fabric 版在模组初始化时读取配置，修改后需要重启客户端或专用服务器
+
+`spawnRate` 与 `disabled` 会在生物群系生成修改注册时读取，因此同样需要完整重启对应进程后生效
 
 Fabric 版没有为了配置额外依赖 Cloth Config、YACL 或其他配置框架
 
