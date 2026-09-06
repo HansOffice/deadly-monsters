@@ -1,7 +1,12 @@
-name: Build
+name: Release v1.0-26.2
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -26,3 +31,25 @@ jobs:
 
       - name: Build with Gradle
         run: gradle build
+
+      - name: Verify release JAR
+        run: test -f build/libs/dmonsters-1.0-26.2.jar
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v1.0-26.2" \
+            "build/libs/dmonsters-1.0-26.2.jar#dmonsters-1.0-26.2.jar" \
+            --target "$GITHUB_SHA" \
+            --title "Deadly Monsters v1.0-26.2" \
+            --notes-file - <<'EOF'
+          Deadly Monsters for Minecraft 26.2 / NeoForge 26.2.0.75.
+
+          - Fixed missing Soul Eye and Christmas Tree inventory models.
+          - Restored monster sound playback by normalizing sound resource paths.
+          - Added the previously unused Zombie Chicken sound set.
+          - Cleaned legacy sound definition fields for the modern resource loader.
+          - Restored Rebar block-edit permission checks.
+          - Includes the complete NeoForge 26.2 port of all original monsters, blocks, items, recipes, loot, configuration and natural spawning.
+          EOF
