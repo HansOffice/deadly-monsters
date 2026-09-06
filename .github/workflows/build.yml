@@ -1,4 +1,4 @@
-name: 整理 v1.0-26.2 Release
+name: 重建 v1.0-26.2 Release
 
 on:
   push:
@@ -10,44 +10,64 @@ permissions:
   contents: write
 
 jobs:
-  tidy-release:
+  rebuild-release:
     runs-on: ubuntu-latest
     steps:
-      - name: 下载现有 NeoForge 与 Fabric 构建
+      - name: 检出 NeoForge 发布源码
+        uses: actions/checkout@v4
+        with:
+          ref: 'c17e2b4315a9b3795258383a23a73a2ee1732b22'
+          path: neoforge
+          fetch-depth: 0
+
+      - name: 检出 Fabric 发布源码
+        uses: actions/checkout@v4
+        with:
+          ref: '${{ github.sha }}'
+          path: fabric
+          fetch-depth: 0
+
+      - name: 配置 JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+
+      - name: 配置 NeoForge 构建环境
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.2.1'
+
+      - name: 构建 NeoForge
+        working-directory: neoforge
+        run: gradle build
+
+      - name: 配置 Fabric 构建环境
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5.1'
+
+      - name: 构建 Fabric
+        working-directory: fabric
+        run: gradle build
+
+      - name: 整理并校验两个 JAR
         shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           mkdir -p release-assets
 
-          gh release download 'v1.0-26.2' \
-            --repo "$GITHUB_REPOSITORY" \
-            --pattern 'dmonsters-1.0-26.2.jar' \
-            --dir release-assets
+          cp neoforge/build/libs/dmonsters-1.0-26.2.jar release-assets/dmonsters-neoforge-1.0-26.2.jar
+          cp fabric/build/libs/dmonsters-fabric-1.0-26.2.jar release-assets/dmonsters-fabric-1.0-26.2.jar
 
-          gh release download 'v1.0-26.2-fabric' \
-            --repo "$GITHUB_REPOSITORY" \
-            --pattern 'dmonsters-fabric-1.0-26.2.jar' \
-            --dir release-assets
+          test -s release-assets/dmonsters-neoforge-1.0-26.2.jar
+          test -s release-assets/dmonsters-fabric-1.0-26.2.jar
+          jar tf release-assets/dmonsters-neoforge-1.0-26.2.jar | grep -Eq 'META-INF/neoforge.mods.toml|META-INF/mods.toml'
+          jar tf release-assets/dmonsters-fabric-1.0-26.2.jar | grep -Fx 'fabric.mod.json'
 
-          echo '6a312e7f4a63f8b7991d2756f2ebb7bebea31438528f5cf7bdb33e73d7da52d6  release-assets/dmonsters-1.0-26.2.jar' | sha256sum -c -
-          echo '75a2b6a93675c225cab9656a0c4ae8d2c52d5c8089953e7b7a28c0ad9ca96340  release-assets/dmonsters-fabric-1.0-26.2.jar' | sha256sum -c -
+          sha256sum release-assets/*.jar
 
-          mv release-assets/dmonsters-1.0-26.2.jar release-assets/dmonsters-neoforge-1.0-26.2.jar
-
-      - name: 清理旧 Releases
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          gh release list --repo "$GITHUB_REPOSITORY" --limit 100 --json tagName --jq '.[].tagName' | while read -r tag; do
-            [[ -n "$tag" ]] || continue
-            gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag
-          done
-
-      - name: 创建统一 Release
+      - name: 创建唯一 Release
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -69,6 +89,6 @@ jobs:
             'release-assets/dmonsters-neoforge-1.0-26.2.jar#dmonsters-neoforge-1.0-26.2.jar' \
             'release-assets/dmonsters-fabric-1.0-26.2.jar#dmonsters-fabric-1.0-26.2.jar' \
             --repo "$GITHUB_REPOSITORY" \
-            --target 'd1b34b8304e8fae3eeb9125ebd8fc53d6023fa99' \
+            --target "$GITHUB_SHA" \
             --title 'Deadly Monsters v1.0-26.2' \
             --notes-file release-notes.md
