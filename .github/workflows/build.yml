@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: 回迁 Minecraft 1.21.1 核心 API
+      - name: 回迁 1.21.1 行为接口
         shell: bash
         run: |
           set -euo pipefail
@@ -27,150 +27,160 @@ jobs:
           from pathlib import Path
           import re
 
-          java_root = Path('src/main/java/com/dmonsters')
-          replacements = [
-              ('net.minecraft.resources.Identifier', 'net.minecraft.resources.ResourceLocation'),
-              ('Identifier', 'ResourceLocation'),
-              ('EntitySpawnReason', 'MobSpawnType'),
-              ('net.minecraft.world.entity.animal.golem.IronGolem', 'net.minecraft.world.entity.animal.IronGolem'),
-              ('net.minecraft.world.entity.monster.cubemob.Slime', 'net.minecraft.world.entity.monster.Slime'),
-              ('net.minecraft.world.entity.animal.chicken.Chicken', 'net.minecraft.world.entity.animal.Chicken'),
-              ('net.minecraft.world.level.gamerules.GameRules', 'net.minecraft.world.level.GameRules'),
-              ('org.jspecify.annotations.Nullable', 'javax.annotation.Nullable'),
-          ]
+          root = Path('src/main/java/com/dmonsters')
 
-          for path in java_root.rglob('*.java'):
+          for path in root.rglob('*.java'):
               text = path.read_text(encoding='utf-8')
-              for old, new in replacements:
-                  text = text.replace(old, new)
+              text = text.replace('import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;\n', '')
+              text = text.replace('import javax.annotation.Nullable;\n', '')
+              text = text.replace('@Nullable ', '')
+              text = text.replace('@Nullable\n', '')
+              text = text.replace('net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile',
+                                  'net.minecraft.world.entity.projectile.ThrowableItemProjectile')
+              text = text.replace('import net.minecraft.world.entity.EntityTypes;\n', '')
+              text = text.replace('EntityTypes.', 'EntityType.')
+              text = text.replace('.isBrightOutside()', '.isDay()')
+              text = text.replace('.getMinY()', '.getMinBuildHeight()')
+              text = text.replace('MobEffects.SLOWNESS', 'MobEffects.MOVEMENT_SLOWDOWN')
+              text = text.replace('MobEffects.SPEED', 'MobEffects.MOVEMENT_SPEED')
+              text = text.replace('MobEffects.STRENGTH', 'MobEffects.DAMAGE_BOOST')
+              text = text.replace('BuiltInRegistries.ENTITY_TYPE.getValue(', 'BuiltInRegistries.ENTITY_TYPE.get(')
+              text = text.replace('.snapTo(', '.moveTo(')
+              text = text.replace('.create(level, MobSpawnType.TRIGGERED)', '.create(level)')
+              text = text.replace('.spawnAtLocation(level, ', '.spawnAtLocation(')
+              text = text.replace('.hurtServer(level, ', '.hurt(')
+              text = text.replace('super.hurtServer(level, ', 'super.hurt(')
+              text = text.replace('level.getGameRules().get(GameRules.MOB_GRIEFING)',
+                                  'level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)')
+
+              old_sig = 'public boolean doHurtTarget(ServerLevel level, Entity target) {'
+              if old_sig in text:
+                  text = text.replace(old_sig,
+                      'public boolean doHurtTarget(Entity target) {\n        ServerLevel level = (ServerLevel) this.level();')
+                  text = text.replace('super.doHurtTarget(level, target)', 'super.doHurtTarget(target)')
+
+              text = re.sub(
+                  r'public boolean hurtServer\(ServerLevel level, DamageSource source, float damage\)',
+                  'public boolean hurt(DamageSource source, float damage)', text)
               path.write_text(text, encoding='utf-8')
 
-          client = java_root / 'client'
-
-          for path in client.glob('*Model.java'):
-              base = path.stem[:-5]
-              entity = f'{base}Entity'
+          # 1.21.1 使用旧世界时间接口
+          for rel, marker in [
+              ('config/DeadlyMonstersConfig.java', 'NIGHT'),
+              ('item/SunlightDropItem.java', 'DAY'),
+          ]:
+              path = root / rel
               text = path.read_text(encoding='utf-8')
-              if 'extends EntityModel<' not in text:
-                  continue
-
-              text = text.replace(
-                  'import net.minecraft.client.model.EntityModel;',
-                  'import net.minecraft.client.model.HierarchicalModel;')
-              entity_import = f'import com.dmonsters.entity.{entity};\n'
-              if entity_import not in text:
-                  if 'import com.dmonsters.DeadlyMonsters;\n' in text:
-                      text = text.replace(
-                          'import com.dmonsters.DeadlyMonsters;\n',
-                          'import com.dmonsters.DeadlyMonsters;\n' + entity_import,
-                          1)
-                  else:
-                      text = text.replace('\n\nimport ', '\n\n' + entity_import + 'import ', 1)
-
-              text = re.sub(
-                  r'extends EntityModel<[^>]+>',
-                  f'extends HierarchicalModel<{entity}>',
-                  text,
-                  count=1)
-
-              class_pattern = rf'(public final class {re.escape(base)}Model extends HierarchicalModel<{entity}> \{{\n)'
-              if 'private final ModelPart root;' not in text:
-                  text = re.sub(class_pattern, r'\1    private final ModelPart root;\n', text, count=1)
-
-              text = text.replace('        super(root);\n', '        this.root = root;\n', 1)
-
-              marker = '    public static LayerDefinition createBodyLayer() {'
-              if 'public ModelPart root()' not in text and marker in text:
-                  text = text.replace(
-                      marker,
-                      '    @Override\n    public ModelPart root() {\n        return this.root;\n    }\n\n' + marker,
-                      1)
-
-              setup = (
-                  f'    @Override\n'
-                  f'    public void setupAnim({entity} entity, float limbSwing, float limbSwingAmount, '
-                  f'float ageInTicks, float netHeadYaw, float headPitch) {{')
-              text = re.sub(
-                  r'    @Override\n    public void setupAnim\([^)]*\) \{',
-                  setup,
-                  text,
-                  count=1)
-              text = text.replace('        super.setupAnim(state);\n', '')
-              text = text.replace('state.walkAnimationPos', 'limbSwing')
-              text = text.replace('state.walkAnimationSpeed', 'limbSwingAmount')
-              text = text.replace('state.ageInTicks', 'ageInTicks')
-              text = text.replace('state.yRot', 'netHeadYaw')
-              text = text.replace('state.xRot', 'headPitch')
-              text = text.replace('state.attackTime', 'this.attackTime')
-              text = text.replace('state.armsRaised', 'entity.isArmsRaised()')
-              text = text.replace('state.triggered', 'entity.isTriggered()')
-              text = text.replace('state.aggressive', 'entity.isAggressive()')
-              text = text.replace('state.isBaby', 'entity.isBaby()')
-              text = text.replace('state.isInWater', 'entity.isInWater()')
+              for imp in [
+                  'import net.minecraft.world.clock.ClockTimeMarkers;\n',
+                  'import net.minecraft.world.clock.WorldClock;\n',
+                  'import net.minecraft.world.clock.WorldClocks;\n',
+              ]:
+                  text = text.replace(imp, '')
+              text = text.replace('long time = overworld.getOverworldClockTime() % 24000L;',
+                                  'long time = overworld.getDayTime() % 24000L;')
+              old = '''if (overworld.getGameRules().get(GameRules.ADVANCE_TIME)) {
+            Registry<WorldClock> clocks = overworld.registryAccess().lookupOrThrow(Registries.WORLD_CLOCK);
+            Holder<WorldClock> overworldClock = clocks.getOrThrow(WorldClocks.OVERWORLD);
+            overworld.clockManager().moveToTimeMarker(overworldClock, ClockTimeMarkers.%s);
+        }''' % marker
+              if marker == 'NIGHT':
+                  new = '''if (overworld.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
+            long delta = (13000L - time + 24000L) % 24000L;
+            overworld.setDayTime(overworld.getDayTime() + delta);
+        }'''
+              else:
+                  new = '''if (overworld.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
+            long delta = (24000L - time) % 24000L;
+            overworld.setDayTime(overworld.getDayTime() + delta);
+        }'''
+              text = text.replace(old, new)
               path.write_text(text, encoding='utf-8')
 
-          def remove_method(text: str, name: str) -> str:
-              while True:
-                  pos = text.find(name + '(')
-                  if pos < 0:
-                      return text
-                  start = text.rfind('@Override', 0, pos)
-                  if start < 0:
-                      return text
-                  brace = text.find('{', pos)
-                  if brace < 0:
-                      return text
-                  depth = 0
-                  end = brace
-                  while end < len(text):
-                      if text[end] == '{':
-                          depth += 1
-                      elif text[end] == '}':
-                          depth -= 1
-                          if depth == 0:
-                              end += 1
-                              while end < len(text) and text[end] in '\r\n':
-                                  end += 1
-                              text = text[:start] + text[end:]
-                              break
-                      end += 1
-                  else:
-                      return text
+          # 1.21.1 方块回调仍使用 LevelAccessor / 旧 entityInside 签名
+          barbed = root / 'block/BarbedWireBlock.java'
+          text = barbed.read_text(encoding='utf-8')
+          text = text.replace('import net.minecraft.world.entity.InsideBlockEffectApplier;\n', '')
+          text = text.replace('import net.minecraft.world.level.ScheduledTickAccess;\n', 'import net.minecraft.world.level.LevelAccessor;\n')
+          text = re.sub(
+              r'''    @Override\n    protected BlockState updateShape\(\n            BlockState state,\n            LevelReader level,\n            ScheduledTickAccess ticks,\n            BlockPos pos,\n            Direction directionToNeighbour,\n            BlockPos neighbourPos,\n            BlockState neighbourState,\n            RandomSource random\) \{\n        if \(directionToNeighbour == Direction.DOWN && !state.canSurvive\(level, pos\)\) \{\n            ticks.scheduleTick\(pos, this, 1\);\n        \}\n        return super.updateShape\(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random\);\n    \}''',
+              '''    @Override\n    protected BlockState updateShape(\n            BlockState state,\n            Direction directionToNeighbour,\n            BlockState neighbourState,\n            LevelAccessor level,\n            BlockPos pos,\n            BlockPos neighbourPos) {\n        if (directionToNeighbour == Direction.DOWN && !state.canSurvive(level, pos)) {\n            level.scheduleTick(pos, this, 1);\n        }\n        return super.updateShape(state, directionToNeighbour, neighbourState, level, pos, neighbourPos);\n    }''', text)
+          text = re.sub(
+              r'''    @Override\n    protected void entityInside\(\n            BlockState state,\n            Level level,\n            BlockPos pos,\n            Entity entity,\n            InsideBlockEffectApplier effectApplier,\n            boolean isPrecise\) \{''',
+              '''    @Override\n    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {''', text)
+          barbed.write_text(text, encoding='utf-8')
 
-          for path in client.glob('*Renderer.java'):
+          mesh = root / 'block/MeshFenceBlock.java'
+          text = mesh.read_text(encoding='utf-8')
+          text = text.replace('import net.minecraft.world.level.LevelReader;\nimport net.minecraft.world.level.ScheduledTickAccess;\n',
+                              'import net.minecraft.world.level.LevelReader;\nimport net.minecraft.world.level.LevelAccessor;\n')
+          text = re.sub(
+              r'''    @Override\n    protected BlockState updateShape\(\n            BlockState state,\n            LevelReader level,\n            ScheduledTickAccess ticks,\n            BlockPos pos,\n            Direction directionToNeighbour,\n            BlockPos neighbourPos,\n            BlockState neighbourState,\n            RandomSource random\) \{\n        BlockState updated = super.updateShape\(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random\);\n        if \(directionToNeighbour.getAxis\(\).isHorizontal\(\) && !this.hasPolePath\(level, pos\)\) \{\n            ticks.scheduleTick\(pos, this, 1\);\n        \}\n        return updated;\n    \}''',
+              '''    @Override\n    protected BlockState updateShape(\n            BlockState state,\n            Direction directionToNeighbour,\n            BlockState neighbourState,\n            LevelAccessor level,\n            BlockPos pos,\n            BlockPos neighbourPos) {\n        BlockState updated = super.updateShape(state, directionToNeighbour, neighbourState, level, pos, neighbourPos);\n        if (directionToNeighbour.getAxis().isHorizontal() && !this.hasPolePath(level, pos)) {\n            level.scheduleTick(pos, this, 1);\n        }\n        return updated;\n    }''', text)
+          mesh.write_text(text, encoding='utf-8')
+
+          dump = root / 'block/DumpBlock.java'
+          text = dump.read_text(encoding='utf-8')
+          text = text.replace('import net.minecraft.world.level.redstone.Orientation;\n', '')
+          text = text.replace('            Block changedBlock,\n            Orientation orientation,\n            boolean movedByPiston)',
+                              '            Block changedBlock,\n            BlockPos changedPos,\n            boolean movedByPiston)')
+          dump.write_text(text, encoding='utf-8')
+
+          # 旧版投射物构造器不接收 ItemStack
+          for rel in ['projectile/LuckyEggProjectile.java', 'projectile/DagonProjectile.java']:
+              path = root / rel
               text = path.read_text(encoding='utf-8')
-              match = re.search(
-                  r'extends MobRenderer<\s*(\w+Entity)\s*,\s*[^,>]+\s*,\s*(\w+Model)\s*>',
-                  text)
-              if not match:
-                  continue
-              entity, model = match.groups()
               text = re.sub(
-                  r'extends MobRenderer<\s*\w+Entity\s*,\s*[^,>]+\s*,\s*\w+Model\s*>',
-                  f'extends MobRenderer<{entity}, {model}>',
-                  text,
-                  count=1)
-              text = re.sub(
-                  r'public ResourceLocation getTextureLocation\([^)]*\)',
-                  f'public ResourceLocation getTextureLocation({entity} entity)',
-                  text,
-                  count=1)
-              text = text.replace('state.triggered', 'entity.isTriggered()')
-              text = text.replace('state.aggressive', 'entity.isAggressive()')
-              text = remove_method(text, 'createRenderState')
-              text = remove_method(text, 'extractRenderState')
-              text = re.sub(
-                  r'protected void scale\([^)]*\)',
-                  f'protected void scale({entity} entity, PoseStack poseStack, float partialTickTime)',
-                  text,
-                  count=1)
-              text = re.sub(
-                  r'import net\.minecraft\.client\.renderer\.entity\.state\.LivingEntityRenderState;\n',
-                  '', text)
+                  r'super\((ModEntities\.[A-Z_]+\.get\(\)), owner, level, stack\);',
+                  r'super(\1, owner, level);\n        this.setItem(stack);', text)
               path.write_text(text, encoding='utf-8')
 
-          for path in client.glob('*RenderState.java'):
-              path.unlink()
+          # Topielec 在 1.21.1 不能覆盖 final 的 canBreatheUnderwater
+          topielec = root / 'entity/TopielecEntity.java'
+          text = topielec.read_text(encoding='utf-8')
+          text = re.sub(
+              r'''\n    @Override\n    public boolean canBreatheUnderwater\(\) \{\n        return true;\n    \}\n''', '\n', text)
+          topielec.write_text(text, encoding='utf-8')
+
+          # 旧 knockback 签名
+          mutant = root / 'entity/MutantSteveEntity.java'
+          text = mutant.read_text(encoding='utf-8')
+          text = re.sub(
+              r'''living.knockback\(\n                    2\.0D,\n                    target.getX\(\) - this.getX\(\),\n                    target.getZ\(\) - this.getZ\(\),\n                    level.damageSources\(\).mobAttack\(this\),\n                    \(float\) this.getAttributeValue\(Attributes.ATTACK_DAMAGE\)\);''',
+              '''living.knockback(\n                    2.0D,\n                    target.getX() - this.getX(),\n                    target.getZ() - this.getZ());''', text)
+          mutant.write_text(text, encoding='utf-8')
+
+          # 旧 Tooltip / UseAnim API
+          harpoon = root / 'item/HarpoonItem.java'
+          text = harpoon.read_text(encoding='utf-8')
+          text = text.replace('import java.util.function.Consumer;\n', 'import java.util.List;\n')
+          text = text.replace('import net.minecraft.world.item.component.TooltipDisplay;\n', '')
+          text = re.sub(
+              r'''public void appendHoverText\(\n            ItemStack stack,\n            Item.TooltipContext context,\n            TooltipDisplay display,\n            Consumer<Component> tooltip,\n            TooltipFlag flag\)''',
+              '''public void appendHoverText(\n            ItemStack stack,\n            Item.TooltipContext context,\n            List<Component> tooltip,\n            TooltipFlag flag)''', text)
+          text = text.replace('tooltip.accept(', 'tooltip.add(')
+          text = text.replace('public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {',
+                              'public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {')
+          text = text.replace('        stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);\n    }\n\n    @Override\n    public void appendHoverText',
+                              '        stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);\n        return true;\n    }\n\n    @Override\n    public void appendHoverText')
+          harpoon.write_text(text, encoding='utf-8')
+
+          pill = root / 'item/PoopooPillItem.java'
+          text = pill.read_text(encoding='utf-8')
+          text = text.replace('ItemUseAnimation', 'UseAnim')
+          text = text.replace('import net.minecraft.world.item.UseAnim;\n', 'import net.minecraft.world.item.UseAnim;\n')
+          pill.write_text(text, encoding='utf-8')
+
+          # NeoForge 1.21.1 的 biome spawn builder 接收 SpawnerData
+          modifier = root / 'world/ConfigSpawnBiomeModifier.java'
+          if modifier.exists():
+              text = modifier.read_text(encoding='utf-8')
+              text = text.replace('EntityType<?> type = this.spawner.type();', 'EntityType<?> type = this.spawner.type;')
+              text = text.replace('spawns.addSpawn(type.getCategory(), weight, this.spawner);',
+                  'spawns.addSpawn(type.getCategory(), new MobSpawnSettings.SpawnerData(\n                type, weight, this.spawner.minCount, this.spawner.maxCount));')
+              modifier.write_text(text, encoding='utf-8')
+
+          git_files = list(root.rglob('*.java'))
           PY
 
           git diff --check
@@ -178,7 +188,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add src/main/java
           if ! git diff --cached --quiet; then
-            git commit -m '回迁 Minecraft 1.21.1 核心 API [skip ci]'
+            git commit -m '回迁 NeoForge 1.21.1 行为接口 [skip ci]'
             git push origin HEAD:neoforge/1.21.1
           fi
 
