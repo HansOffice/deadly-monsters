@@ -61,7 +61,7 @@ public final class EntrailEntity extends Monster {
 
     @Override
     public boolean hurt(DamageSource source, float damage) {
-        if (!source.is(DamageTypeTags.IS_FIRE)) {
+        if (this.level() instanceof ServerLevel level && !source.is(DamageTypeTags.IS_FIRE)) {
             EntityType<?> slimeType = BuiltInRegistries.ENTITY_TYPE.get(SLIME_ID);
             if (slimeType != null) {
                 Entity entity = slimeType.create(level);

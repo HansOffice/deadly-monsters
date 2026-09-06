@@ -4,6 +4,7 @@ import com.dmonsters.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -35,7 +36,7 @@ public final class StrengthenedBlock extends Block {
     }
 
     @Override
-    protected InteractionResult useItemOn(
+    protected ItemInteractionResult useItemOn(
             ItemStack itemStack,
             BlockState state,
             Level level,
@@ -44,7 +45,8 @@ public final class StrengthenedBlock extends Block {
             InteractionHand hand,
             BlockHitResult hitResult) {
         if (player.isShiftKeyDown()) {
-            return this.revert(level, pos);
+            this.revert(level, pos);
+            return ItemInteractionResult.SUCCESS;
         }
         return super.useItemOn(itemStack, state, level, pos, player, hand, hitResult);
     }

@@ -8,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -40,7 +41,7 @@ public final class HarpoonItem extends Item {
         }
 
         if (player.isInWater()) {
-            context.getItemInHand().hurtAndBreak(1, player, context.getHand().asEquipmentSlot());
+            context.getItemInHand().hurtAndBreak(1, player, context.getHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             if (level.getRandom().nextFloat() < 0.25F) {
                 // The 1.12.2 code built four metadata variants of Items.FISH and immediately
                 // reduced them back to Item objects, so all four entries actually dropped raw fish.

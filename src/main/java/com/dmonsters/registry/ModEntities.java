@@ -99,7 +99,7 @@ public final class ModEntities {
         event.register(PRESENT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 (type, level, reason, pos, random) -> DeadlyMonstersConfig.naturalSpawnsEnabled(type)
                         && level.canSeeSky(pos)
-                        && Monster.checkSurfaceMonstersSpawnRules(type, level, reason, pos, random),
+                        && Monster.checkMonsterSpawnRules(type, level, reason, pos, random),
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
 
         event.register(TOPIELEC.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
@@ -110,7 +110,7 @@ public final class ModEntities {
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 
-    private static <T extends Mob> void registerCommonMonsterPlacement(RegisterSpawnPlacementsEvent event, EntityType<T> type) {
+    private static <T extends Monster> void registerCommonMonsterPlacement(RegisterSpawnPlacementsEvent event, EntityType<T> type) {
         event.register(type, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 (entityType, level, spawnReason, pos, random) -> DeadlyMonstersConfig.naturalSpawnsEnabled(entityType)
                         && !level.getBiome(pos).is(Biomes.MUSHROOM_FIELDS)
@@ -120,12 +120,12 @@ public final class ModEntities {
 
     private static <T extends Mob> DeferredHolder<EntityType<?>, EntityType<T>> register(String name, EntityType.EntityFactory<T> factory, float width, float height) {
         return ENTITY_TYPES.register(name, () -> EntityType.Builder.of(factory, MobCategory.MONSTER)
-                .sized(width, height).clientTrackingRange(8).updateInterval(3).build(key(name)));
+                .sized(width, height).clientTrackingRange(8).updateInterval(3).build(key(name).location().toString()));
     }
 
     private static <T extends Entity> DeferredHolder<EntityType<?>, EntityType<T>> registerProjectile(String name, EntityType.EntityFactory<T> factory) {
         return ENTITY_TYPES.register(name, () -> EntityType.Builder.of(factory, MobCategory.MISC)
-                .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build(key(name)));
+                .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build(key(name).location().toString()));
     }
 
     private static ResourceKey<EntityType<?>> key(String name) {

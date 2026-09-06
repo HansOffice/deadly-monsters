@@ -14,6 +14,7 @@ import com.dmonsters.item.UnbornBabyEyeItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -71,12 +72,12 @@ public final class ModItems {
     private ModItems() {}
 
     private static DeferredItem<Item> simple(String name) {
-        return ITEMS.registerSimpleItem(name, properties -> properties);
+        return ITEMS.registerSimpleItem(name);
     }
 
     private static <T extends net.minecraft.world.entity.Mob> DeferredItem<SpawnEggItem> spawnEgg(
             String name,
             net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.entity.EntityType<?>, net.minecraft.world.entity.EntityType<T>> type) {
-        return ITEMS.registerItem(name, properties -> new SpawnEggItem(properties.spawnEgg(type.get())));
+        return ITEMS.register(name, () -> new DeferredSpawnEggItem(type, 0xFFFFFF, 0xFFFFFF, new Item.Properties()));
     }
 }

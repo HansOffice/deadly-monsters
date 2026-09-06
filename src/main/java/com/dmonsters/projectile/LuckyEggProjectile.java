@@ -127,7 +127,7 @@ public final class LuckyEggProjectile extends ThrowableItemProjectile {
     @Override
     public void handleEntityEvent(byte id) {
         if (id == 3) {
-            ItemParticleOption eggParticle = new ItemParticleOption(ParticleTypes.ITEM, Items.EGG);
+            ItemParticleOption eggParticle = new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.EGG));
             for (int i = 0; i < 8; i++) {
                 this.level().addParticle(
                         eggParticle,

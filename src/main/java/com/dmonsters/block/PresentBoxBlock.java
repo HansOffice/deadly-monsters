@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -59,7 +60,7 @@ public final class PresentBoxBlock extends Block {
     }
 
     @Override
-    protected InteractionResult useItemOn(
+    protected ItemInteractionResult useItemOn(
             ItemStack stack,
             BlockState state,
             Level level,
@@ -67,7 +68,8 @@ public final class PresentBoxBlock extends Block {
             Player player,
             InteractionHand hand,
             BlockHitResult hitResult) {
-        return openPresent(level, pos, player);
+        openPresent(level, pos, player);
+        return ItemInteractionResult.SUCCESS;
     }
 
     private static InteractionResult openPresent(Level level, BlockPos pos, Player player) {

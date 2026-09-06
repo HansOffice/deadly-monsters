@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,12 +26,13 @@ public final class PoopooPillItem extends Item {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
         if (player.canEat(true)) {
             player.startUsingItem(hand);
-            return InteractionResult.CONSUME;
+            return InteractionResultHolder.consume(stack);
         }
-        return InteractionResult.FAIL;
+        return InteractionResultHolder.fail(stack);
     }
 
     @Override
@@ -44,7 +46,7 @@ public final class PoopooPillItem extends Item {
             if (player.getHealth() > 1.0F) {
                 player.setHealth(1.0F);
             } else {
-                player.hurtServer(serverLevel, player.damageSources().generic(), 999.0F);
+                player.hurt(player.damageSources().generic(), 999.0F);
             }
             return stack;
         }
