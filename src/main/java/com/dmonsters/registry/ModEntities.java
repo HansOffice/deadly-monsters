@@ -106,7 +106,7 @@ public final class ModEntities {
         SpawnPlacements.register(PRESENT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 (type, level, reason, pos, random) -> DeadlyMonstersConfig.naturalSpawnsEnabled(type)
                         && level.canSeeSky(pos)
-                        && Monster.checkSurfaceMonstersSpawnRules(type, level, reason, pos, random));
+                        && Monster.checkMonsterSpawnRules(type, level, reason, pos, random));
 
         SpawnPlacements.register(TOPIELEC.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 (type, level, reason, pos, random) -> DeadlyMonstersConfig.naturalSpawnsEnabled(type)
@@ -115,7 +115,7 @@ public final class ModEntities {
                         && Monster.checkAnyLightMonsterSpawnRules(type, level, reason, pos, random));
     }
 
-    private static <T extends Mob> void registerCommonMonsterPlacement(EntityType<T> type) {
+    private static <T extends Monster> void registerCommonMonsterPlacement(EntityType<T> type) {
         SpawnPlacements.register(type, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 (entityType, level, spawnReason, pos, random) -> DeadlyMonstersConfig.naturalSpawnsEnabled(entityType)
                         && !level.getBiome(pos).is(Biomes.MUSHROOM_FIELDS)
@@ -141,7 +141,7 @@ public final class ModEntities {
     private static <T extends Entity> RegistryRef<EntityType<T>> registerType(String name, EntityType.Builder<T> builder) {
         ResourceKey<EntityType<?>> key = ResourceKey.create(
                 Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name));
-        EntityType<T> type = builder.build(key);
+        EntityType<T> type = builder.build(key.location().toString());
         Registry.register(BuiltInRegistries.ENTITY_TYPE, key, type);
         return new RegistryRef<>(type);
     }

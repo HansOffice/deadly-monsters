@@ -77,11 +77,11 @@ public final class ModItems {
     }
 
     private static RegistryRef<BlockItem> blockItem(String name, RegistryRef<? extends net.minecraft.world.level.block.Block> block) {
-        return register(name, properties -> new BlockItem(block.get(), properties.useBlockDescriptionPrefix()), new Item.Properties());
+        return register(name, properties -> new BlockItem(block.get(), properties), new Item.Properties());
     }
 
     private static <T extends Mob> RegistryRef<SpawnEggItem> spawnEgg(String name, RegistryRef<net.minecraft.world.entity.EntityType<T>> type) {
-        return register(name, properties -> new SpawnEggItem(properties.spawnEgg(type.get())), new Item.Properties());
+        return register(name, properties -> new SpawnEggItem(type.get(), 0xFFFFFF, 0xFFFFFF, properties), new Item.Properties());
     }
 
     private static <T extends Item> RegistryRef<T> register(
@@ -90,7 +90,7 @@ public final class ModItems {
             Item.Properties properties) {
         ResourceKey<Item> key = ResourceKey.create(
                 Registries.ITEM, ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name));
-        T item = factory.apply(properties.setId(key));
+        T item = factory.apply(properties);
         Registry.register(BuiltInRegistries.ITEM, key, item);
         return new RegistryRef<>(item);
     }

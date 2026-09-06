@@ -15,9 +15,9 @@ public final class EntrailFleshItem extends Item {
     }
 
     @Override
-    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!(attacker.level() instanceof ServerLevel level) || target instanceof EntrailEntity) {
-            return;
+            return false;
         }
 
         double x = target.getX();
@@ -32,5 +32,6 @@ public final class EntrailFleshItem extends Item {
             level.addFreshEntity(entrail);
         }
         stack.shrink(1);
+        return true;
     }
 }

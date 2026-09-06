@@ -67,7 +67,7 @@ public final class ModBlocks {
             BlockBehaviour.Properties properties) {
         ResourceKey<Block> key = ResourceKey.create(
                 Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name));
-        T block = factory.apply(properties.setId(key));
+        T block = factory.apply(properties);
         Registry.register(BuiltInRegistries.BLOCK, key, block);
         return new RegistryRef<>(block);
     }
