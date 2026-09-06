@@ -9,7 +9,6 @@ import com.dmonsters.registry.ModNaturalSpawns;
 import com.dmonsters.registry.ModSounds;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.EntityLoadData;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ public final class DeadlyMonsters implements ModInitializer {
         ModNaturalSpawns.initialize();
 
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) ->
-                DeadlyMonstersConfig.onEntityJoinLevel(entity, ((EntityLoadData) entity).isLoadedFromDisk()));
+                DeadlyMonstersConfig.onEntityJoinLevel(entity, entity.isLoadedFromDisk()));
         AttackEntityCallback.EVENT.register(DeadlyMonstersConfig::onPlayerAttack);
 
         LOGGER.info("Loading Deadly Monsters Fabric port for Minecraft 26.2");

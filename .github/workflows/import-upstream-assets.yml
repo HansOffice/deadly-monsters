@@ -15,6 +15,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: 确认当前运行来自分支
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_REF_TYPE}" != "branch" ]]; then
+            echo '资源导入只允许从分支运行'
+            exit 1
+          fi
+
       - name: 获取原版 Deadly Monsters 资源
         run: git clone --depth 1 https://github.com/ACGaming/deadly-monsters.git /tmp/deadly-monsters-upstream
 
@@ -34,7 +43,7 @@ jobs:
           cp "$UP/credits.txt" "$DST/credits.txt"
           cp "$UP/sounds.json" "$DST/sounds.json"
 
-      - name: 提交导入资源
+      - name: 提交导入资源到当前分支
         shell: bash
         run: |
           set -euo pipefail
@@ -46,4 +55,4 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add src/main/resources/assets/dmonsters
           git commit -m '导入原版 Deadly Monsters 二进制资源'
-          git push origin HEAD:main
+          git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"
