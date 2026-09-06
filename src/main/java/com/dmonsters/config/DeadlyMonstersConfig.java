@@ -32,7 +32,6 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
-/** NeoForge configuration replacement for the original Forge 1.12.2 config. */
 public final class DeadlyMonstersConfig {
     public static final Settings VALUES;
     public static final ModConfigSpec SPEC;
@@ -50,7 +49,6 @@ public final class DeadlyMonstersConfig {
         return settings == null || !settings.disabled.get();
     }
 
-    /** Spawn weighting used when the config-aware biome modifiers are applied during world/server startup. */
     public static int spawnRate(EntityType<?> type) {
         MonsterSettings settings = settingsFor(type);
         return settings == null ? 0 : settings.spawnRate.get();
