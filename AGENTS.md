@@ -1,14 +1,18 @@
 # 本仓库协作规则
 
-本仓库是 Deadly Monsters 的 Minecraft 26.2 / NeoForge 移植项目，不属于 cyu 插件生态
+本仓库是 Deadly Monsters 的 Minecraft 26.2 移植项目，不属于 cyu 插件生态
+
+当前 `fabric/26.2` 分支面向 Fabric Loader 与 Fabric API
 
 ## 代码范围
 
-Java、Gradle、资源和数据文件以原模组行为、Minecraft 26.2 与 NeoForge 规范为准
+Java、Gradle、资源和数据文件以原模组行为、Minecraft 26.2 与 Fabric 26.2 规范为准
 
 不强制套用 cyu 项目的 Bukkit、Paper、Folia 架构规则，也不为了形式统一重构原模组移植代码
 
 代码改动优先保持行为准确、依赖克制、差异局部和可维护性
+
+平台适配优先使用 Minecraft 原生能力与 Fabric API，只有真实出现缺口时才增加专用代码
 
 ## 文案范围
 
@@ -38,4 +42,4 @@ GitHub 文档、说明、发布文案、工作流展示名称、用户可见描�
 
 不做无关格式化、不添加空壳兼容层、不引入没有真实用途的依赖
 
-兼容适配优先使用标准 Minecraft / NeoForge 能力，只有真实出现缺口时才增加专用代码
+Fabric 分支不为了跨平台形式统一而反向改造已经稳定的 NeoForge 分支
