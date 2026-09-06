@@ -1,4 +1,4 @@
-# Deadly Monsters — Minecraft 26.2 移植版
+# Deadly Monsters: Modern — Minecraft 26.2 移植版
 
 [![Minecraft](https://img.shields.io/badge/Minecraft-26.2-2EA44F?style=flat-square&logo=minecraft&logoColor=white)](https://minecraft.net/)
 [![NeoForge](https://img.shields.io/badge/NeoForge-26.2.0.75-E37222?style=flat-square)](https://neoforged.net/)
@@ -7,7 +7,7 @@
 [![Release](https://img.shields.io/github/v/release/HansOffice/deadly-monsters?style=flat-square&color=238636)](https://github.com/HansOffice/deadly-monsters/releases)
 [![License](https://img.shields.io/badge/License-MIT-0969DA?style=flat-square)](LICENSE)
 
-经典恐怖生物与防御工事模组 **Deadly Monsters** 面向 Minecraft 26.2 的现代原生重构移植版
+经典恐怖生物与防御工事模组 **Deadly Monsters: Modern** 是 Deadly Monsters 面向 Minecraft 26.2 的现代原生重构移植版
 
 原模组作者为 **bigbang87**，1.12.2 版本维护者为 **ACGaming**；本移植版完整保留原版 12 种独特致命生物、防御工事建筑体系与特殊功能物品，同时全面迁移至现代 Minecraft 26.2 数据驱动规范、BlockState / 模型体系、实体渲染状态与时钟机制，并优化高频搜索逻辑，杜绝旧版兼容垫片
 

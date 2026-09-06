@@ -1,6 +1,6 @@
 # Deadly Monsters 仓库协作规范 (AGENTS.md)
 
-本仓库是经典模组 **Deadly Monsters** 面向 Minecraft 26.2 (NeoForge / Fabric) 的现代原生重构移植项目
+本仓库是经典模组 **Deadly Monsters: Modern** 面向 Minecraft 26.2 (NeoForge / Fabric) 的现代原生重构移植项目
 
 ---
 
