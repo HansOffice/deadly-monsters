@@ -40,6 +40,10 @@ public final class RebarItem extends Item {
         }
 
         Player player = context.getPlayer();
+        if (player != null && !player.mayUseItemAt(pos, context.getClickedFace(), context.getItemInHand())) {
+            return InteractionResult.FAIL;
+        }
+
         if (!level.isClientSide()) {
             level.setBlockAndUpdate(pos, replacement);
             context.getItemInHand().consume(1, player);
