@@ -4,7 +4,7 @@
 [![NeoForge](https://img.shields.io/badge/NeoForge-26.2.0.75-E37222?style=flat-square)](https://neoforged.net/)
 [![Fabric](https://img.shields.io/badge/Fabric-0.19.5-CBB99E?style=flat-square)](https://fabricmc.net/)
 [![Java](https://img.shields.io/badge/Java-25-ED8B00?style=flat-square&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
-[![Release](https://img.shields.io/github/v/release/HansOffice/deadly-monsters?style=flat-square&color=238636)](https://github.com/HansOffice/deadly-monsters/releases)
+[![Release](https://img.shields.io/github/v/release/HansOffice/deadly-monsters-modern?style=flat-square&color=238636)](https://github.com/HansOffice/deadly-monsters-modern/releases)
 [![License](https://img.shields.io/badge/License-MIT-0969DA?style=flat-square)](LICENSE)
 
 经典恐怖生物与防御工事模组 **Deadly Monsters: Modern** 是 Deadly Monsters 面向 Minecraft 26.2 的现代原生重构移植版
@@ -28,7 +28,7 @@
 
 ## 安装与运行
 
-本模组提供针对主流加载器的独立构建版本，前往 [GitHub Releases](https://github.com/HansOffice/deadly-monsters/releases) 下载对应文件（**两个版本切勿同时安装**）：
+本模组提供针对主流加载器的独立构建版本，前往 [GitHub Releases](https://github.com/HansOffice/deadly-monsters-modern/releases) 下载对应文件（**两个版本切勿同时安装**）：
 
 | 加载器 | 支持版本 | 文件名 | 前置要求 |
 |---|---|---|---|
