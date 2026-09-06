@@ -1,7 +1,8 @@
 package com.dmonsters.client;
 
 import com.dmonsters.DeadlyMonsters;
-import net.minecraft.client.model.EntityModel;
+import com.dmonsters.entity.FallenLeaderEntity;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -10,23 +11,29 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 /** Modern model-layer port of the original 64x64 Fallen Leader model. */
-public final class FallenLeaderModel extends EntityModel<LivingEntityRenderState> {
+public final class FallenLeaderModel extends HierarchicalModel<FallenLeaderEntity> {
+    private final ModelPart root;
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "fallen_leader"), "main");
+            ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "fallen_leader"), "main");
 
     private final ModelPart head;
     private final ModelPart leftLeg;
     private final ModelPart rightLeg;
 
     public FallenLeaderModel(ModelPart root) {
-        super(root);
+        this.root = root;
         this.head = root.getChild("head");
         this.leftLeg = root.getChild("left_leg");
         this.rightLeg = root.getChild("right_leg");
+    }
+
+    @Override
+    public ModelPart root() {
+        return this.root;
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -74,11 +81,10 @@ public final class FallenLeaderModel extends EntityModel<LivingEntityRenderState
     }
 
     @Override
-    public void setupAnim(LivingEntityRenderState state) {
-        super.setupAnim(state);
-        this.rightLeg.xRot = Mth.cos(state.walkAnimationPos * 0.6662F) * 1.4F * state.walkAnimationSpeed;
-        this.leftLeg.xRot = Mth.cos(state.walkAnimationPos * 0.6662F + (float) Math.PI) * 1.4F * state.walkAnimationSpeed;
-        this.head.yRot = state.yRot * (float) (Math.PI / 180.0D);
-        this.head.xRot = state.xRot * (float) (Math.PI / 180.0D);
+    public void setupAnim(FallenLeaderEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.rightLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+        this.leftLeg.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+        this.head.yRot = netHeadYaw * (float) (Math.PI / 180.0D);
+        this.head.xRot = headPitch * (float) (Math.PI / 180.0D);
     }
 }

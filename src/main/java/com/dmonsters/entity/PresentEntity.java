@@ -5,13 +5,13 @@ import com.dmonsters.registry.ModBlocks;
 import com.dmonsters.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -97,11 +97,11 @@ public final class PresentEntity extends Monster {
             level.setBlockAndUpdate(lightPos, Blocks.TORCH.defaultBlockState());
         }
 
-        EntityType<?> creeperType = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("creeper"));
+        EntityType<?> creeperType = BuiltInRegistries.ENTITY_TYPE.getValue(ResourceLocation.withDefaultNamespace("creeper"));
         if (creeperType != null) {
             // The 1.12.2 floor/ceiling loop reaches the center twice, spawning two Creepers at the torch.
             for (int i = 0; i < 2; i++) {
-                Entity spawned = creeperType.create(level, EntitySpawnReason.TRIGGERED);
+                Entity spawned = creeperType.create(level, MobSpawnType.TRIGGERED);
                 if (spawned instanceof Creeper creeper) {
                     creeper.snapTo(lightPos.getX() + 0.5D, lightPos.getY(), lightPos.getZ() + 0.5D, 0.0F, 0.0F);
                     level.addFreshEntity(creeper);

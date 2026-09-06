@@ -2,7 +2,7 @@ package com.dmonsters.registry;
 
 import com.dmonsters.DeadlyMonsters;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -81,7 +81,7 @@ public final class ModSounds {
     }
 
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
-        Identifier id = Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name);
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(id));
     }
 }

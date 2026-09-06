@@ -1,7 +1,8 @@
 package com.dmonsters.client;
 
 import com.dmonsters.DeadlyMonsters;
-import net.minecraft.client.model.EntityModel;
+import com.dmonsters.entity.BloodyMaidenEntity;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -9,13 +10,14 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 /** Modern model-layer port of the original Bloody Maiden model. */
-public final class BloodyMaidenModel extends EntityModel<BloodyMaidenRenderState> {
+public final class BloodyMaidenModel extends HierarchicalModel<BloodyMaidenEntity> {
+    private final ModelPart root;
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "bloody_maiden"), "main");
+            ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "bloody_maiden"), "main");
 
     private final ModelPart head;
     private final ModelPart upperLeftLeg;
@@ -24,12 +26,17 @@ public final class BloodyMaidenModel extends EntityModel<BloodyMaidenRenderState
     private final ModelPart upperRightArm;
 
     public BloodyMaidenModel(ModelPart root) {
-        super(root);
+        this.root = root;
         this.head = root.getChild("head");
         this.upperLeftLeg = root.getChild("upper_left_leg");
         this.upperRightLeg = root.getChild("upper_right_leg");
         this.upperLeftArm = root.getChild("upper_left_arm");
         this.upperRightArm = root.getChild("upper_right_arm");
+    }
+
+    @Override
+    public ModelPart root() {
+        return this.root;
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -66,13 +73,12 @@ public final class BloodyMaidenModel extends EntityModel<BloodyMaidenRenderState
     }
 
     @Override
-    public void setupAnim(BloodyMaidenRenderState state) {
-        super.setupAnim(state);
-        this.head.xRot = state.xRot * (float) (Math.PI / 180.0D);
-        this.head.yRot = state.yRot * (float) (Math.PI / 180.0D);
-        this.upperLeftArm.xRot = Mth.cos(state.walkAnimationPos * 0.6662F) * 1.4F * state.walkAnimationSpeed;
-        this.upperRightArm.xRot = Mth.cos(state.walkAnimationPos * 0.6662F + (float) Math.PI) * 1.4F * state.walkAnimationSpeed;
-        this.upperLeftLeg.xRot = Mth.cos(state.walkAnimationPos * 0.6662F + (float) Math.PI) * 1.4F * state.walkAnimationSpeed;
-        this.upperRightLeg.xRot = Mth.cos(state.walkAnimationPos * 0.6662F) * 1.4F * state.walkAnimationSpeed;
+    public void setupAnim(BloodyMaidenEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.head.xRot = headPitch * (float) (Math.PI / 180.0D);
+        this.head.yRot = netHeadYaw * (float) (Math.PI / 180.0D);
+        this.upperLeftArm.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+        this.upperRightArm.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+        this.upperLeftLeg.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+        this.upperRightLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
     }
 }

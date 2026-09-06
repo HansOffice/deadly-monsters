@@ -3,7 +3,7 @@ package com.dmonsters.item;
 import com.dmonsters.entity.EntrailEntity;
 import com.dmonsters.registry.ModEntities;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +26,7 @@ public final class EntrailFleshItem extends Item {
         float yaw = target.getYRot();
         target.discard();
 
-        EntrailEntity entrail = ModEntities.ENTRAIL.get().create(level, EntitySpawnReason.TRIGGERED);
+        EntrailEntity entrail = ModEntities.ENTRAIL.get().create(level, MobSpawnType.TRIGGERED);
         if (entrail != null) {
             entrail.snapTo(x, y, z, yaw, 0.0F);
             level.addFreshEntity(entrail);

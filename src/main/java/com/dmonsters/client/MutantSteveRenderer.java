@@ -5,10 +5,10 @@ import com.dmonsters.entity.MutantSteveEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
-public final class MutantSteveRenderer extends MobRenderer<MutantSteveEntity, MutantSteveRenderState, MutantSteveModel> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(
+public final class MutantSteveRenderer extends MobRenderer<MutantSteveEntity, MutantSteveModel> {
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
             DeadlyMonsters.MOD_ID, "textures/entity/mutant_steve.png");
 
     public MutantSteveRenderer(EntityRendererProvider.Context context) {
@@ -16,24 +16,12 @@ public final class MutantSteveRenderer extends MobRenderer<MutantSteveEntity, Mu
     }
 
     @Override
-    public Identifier getTextureLocation(MutantSteveRenderState state) {
+    public ResourceLocation getTextureLocation(MutantSteveEntity entity) {
         return TEXTURE;
     }
 
-    @Override
-    public MutantSteveRenderState createRenderState() {
-        return new MutantSteveRenderState();
-    }
-
-    @Override
-    public void extractRenderState(MutantSteveEntity entity, MutantSteveRenderState state, float partialTicks) {
-        super.extractRenderState(entity, state, partialTicks);
-        state.armsRaised = entity.isArmsRaised();
-        state.attackTime = entity.getAttackAnim(partialTicks);
-    }
-
-    @Override
-    protected void scale(MutantSteveRenderState state, PoseStack poseStack) {
+            @Override
+    protected void scale(MutantSteveEntity entity, PoseStack poseStack, float partialTickTime) {
         poseStack.scale(1.2F, 1.2F, 1.2F);
     }
 }

@@ -4,11 +4,10 @@ import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.entity.HauntedCowEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
-public final class HauntedCowRenderer extends MobRenderer<HauntedCowEntity, LivingEntityRenderState, HauntedCowModel> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(
+public final class HauntedCowRenderer extends MobRenderer<HauntedCowEntity, HauntedCowModel> {
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
             DeadlyMonsters.MOD_ID, "textures/entity/haunted_cow.png");
 
     public HauntedCowRenderer(EntityRendererProvider.Context context) {
@@ -16,12 +15,8 @@ public final class HauntedCowRenderer extends MobRenderer<HauntedCowEntity, Livi
     }
 
     @Override
-    public Identifier getTextureLocation(LivingEntityRenderState state) {
+    public ResourceLocation getTextureLocation(HauntedCowEntity entity) {
         return TEXTURE;
     }
 
-    @Override
-    public LivingEntityRenderState createRenderState() {
-        return new LivingEntityRenderState();
     }
-}

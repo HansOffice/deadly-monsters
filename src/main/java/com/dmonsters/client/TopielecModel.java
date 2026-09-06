@@ -1,7 +1,8 @@
 package com.dmonsters.client;
 
 import com.dmonsters.DeadlyMonsters;
-import net.minecraft.client.model.EntityModel;
+import com.dmonsters.entity.TopielecEntity;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -9,13 +10,14 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 /** Modern model-layer port of the original Topielec model. */
-public final class TopielecModel extends EntityModel<TopielecRenderState> {
+public final class TopielecModel extends HierarchicalModel<TopielecEntity> {
+    private final ModelPart root;
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "topielec"), "main");
+            ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "topielec"), "main");
     private final ModelPart head;
     private final ModelPart leftUpperLeg;
     private final ModelPart rightUpperLeg;
@@ -23,12 +25,17 @@ public final class TopielecModel extends EntityModel<TopielecRenderState> {
     private final ModelPart rightUpperArm;
 
     public TopielecModel(ModelPart root) {
-        super(root);
+        this.root = root;
         this.head = root.getChild("head");
         this.leftUpperLeg = root.getChild("left_upper_leg");
         this.rightUpperLeg = root.getChild("right_upper_leg");
         this.leftUpperArm = root.getChild("left_upper_arm");
         this.rightUpperArm = root.getChild("right_upper_arm");
+    }
+
+    @Override
+    public ModelPart root() {
+        return this.root;
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -76,14 +83,13 @@ public final class TopielecModel extends EntityModel<TopielecRenderState> {
     }
 
     @Override
-    public void setupAnim(TopielecRenderState state) {
-        super.setupAnim(state);
-        this.rightUpperLeg.xRot = Mth.cos(state.walkAnimationPos * 0.6662F) * 1.4F * state.walkAnimationSpeed;
-        this.leftUpperLeg.xRot = Mth.cos(state.walkAnimationPos * 0.6662F + (float) Math.PI) * 1.4F * state.walkAnimationSpeed;
-        this.head.yRot = state.yRot * (float) (Math.PI / 180.0D);
-        this.head.xRot = state.xRot * (float) (Math.PI / 180.0D);
-        float f = Mth.sin(state.attackTime * (float) Math.PI);
-        float f1 = Mth.sin((1.0F - (1.0F - state.attackTime) * (1.0F - state.attackTime)) * (float) Math.PI);
+    public void setupAnim(TopielecEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.rightUpperLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+        this.leftUpperLeg.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+        this.head.yRot = netHeadYaw * (float) (Math.PI / 180.0D);
+        this.head.xRot = headPitch * (float) (Math.PI / 180.0D);
+        float f = Mth.sin(this.attackTime * (float) Math.PI);
+        float f1 = Mth.sin((1.0F - (1.0F - this.attackTime) * (1.0F - this.attackTime)) * (float) Math.PI);
         this.rightUpperArm.zRot = 0.0F;
         this.leftUpperArm.zRot = 0.0F;
         this.rightUpperArm.yRot = -(0.1F - f * 0.6F);
@@ -91,9 +97,9 @@ public final class TopielecModel extends EntityModel<TopielecRenderState> {
         float base = -(float) Math.PI / 2.25F;
         this.rightUpperArm.xRot = base + f * 1.2F - f1 * 0.4F;
         this.leftUpperArm.xRot = base + f * 1.2F - f1 * 0.4F;
-        this.rightUpperArm.zRot += Mth.cos(state.ageInTicks * 0.09F) * 0.05F + 0.05F;
-        this.leftUpperArm.zRot -= Mth.cos(state.ageInTicks * 0.09F) * 0.05F + 0.05F;
-        this.rightUpperArm.xRot += Mth.sin(state.ageInTicks * 0.067F) * 0.05F;
-        this.leftUpperArm.xRot -= Mth.sin(state.ageInTicks * 0.067F) * 0.05F;
+        this.rightUpperArm.zRot += Mth.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
+        this.leftUpperArm.zRot -= Mth.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
+        this.rightUpperArm.xRot += Mth.sin(ageInTicks * 0.067F) * 0.05F;
+        this.leftUpperArm.xRot -= Mth.sin(ageInTicks * 0.067F) * 0.05F;
     }
 }

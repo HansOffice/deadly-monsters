@@ -4,11 +4,11 @@ import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.entity.ZombieChickenEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 /** Dedicated Zombie Chicken renderer using the original model geometry and texture. */
-public final class ZombieChickenRenderer extends MobRenderer<ZombieChickenEntity, ZombieChickenRenderState, ZombieChickenModel> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(
+public final class ZombieChickenRenderer extends MobRenderer<ZombieChickenEntity, ZombieChickenModel> {
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
             DeadlyMonsters.MOD_ID, "textures/entity/zombie_chicken.png");
 
     public ZombieChickenRenderer(EntityRendererProvider.Context context) {
@@ -16,12 +16,8 @@ public final class ZombieChickenRenderer extends MobRenderer<ZombieChickenEntity
     }
 
     @Override
-    public Identifier getTextureLocation(ZombieChickenRenderState state) {
+    public ResourceLocation getTextureLocation(ZombieChickenEntity entity) {
         return TEXTURE;
     }
 
-    @Override
-    public ZombieChickenRenderState createRenderState() {
-        return new ZombieChickenRenderState();
     }
-}

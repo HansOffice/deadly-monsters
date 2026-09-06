@@ -18,7 +18,7 @@ import com.dmonsters.projectile.DagonProjectile;
 import com.dmonsters.projectile.LuckyEggProjectile;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
@@ -129,6 +129,6 @@ public final class ModEntities {
     }
 
     private static ResourceKey<EntityType<?>> key(String name) {
-        return ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name));
+        return ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, name));
     }
 }

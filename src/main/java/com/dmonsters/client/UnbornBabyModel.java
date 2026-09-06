@@ -1,7 +1,8 @@
 package com.dmonsters.client;
 
 import com.dmonsters.DeadlyMonsters;
-import net.minecraft.client.model.EntityModel;
+import com.dmonsters.entity.UnbornBabyEntity;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -9,13 +10,14 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 /** Modern model-layer port of the original 64x64 Unborn Baby model. */
-public final class UnbornBabyModel extends EntityModel<UnbornBabyRenderState> {
+public final class UnbornBabyModel extends HierarchicalModel<UnbornBabyEntity> {
+    private final ModelPart root;
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "unborn_baby"), "main");
+            ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "unborn_baby"), "main");
 
     private final ModelPart head;
     private final ModelPart rightArm;
@@ -23,11 +25,16 @@ public final class UnbornBabyModel extends EntityModel<UnbornBabyRenderState> {
     private final ModelPart leg;
 
     public UnbornBabyModel(ModelPart root) {
-        super(root);
+        this.root = root;
         this.head = root.getChild("head");
         this.rightArm = root.getChild("right_arm");
         this.leftArm = root.getChild("left_arm");
         this.leg = root.getChild("leg");
+    }
+
+    @Override
+    public ModelPart root() {
+        return this.root;
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -74,14 +81,13 @@ public final class UnbornBabyModel extends EntityModel<UnbornBabyRenderState> {
     }
 
     @Override
-    public void setupAnim(UnbornBabyRenderState state) {
-        super.setupAnim(state);
-        this.leg.xRot = Mth.cos(state.walkAnimationPos * 0.6662F) * 1.4F * state.walkAnimationSpeed;
-        this.head.yRot = state.yRot * (float) (Math.PI / 180.0D);
-        this.head.xRot = state.xRot * (float) (Math.PI / 180.0D);
+    public void setupAnim(UnbornBabyEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.leg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+        this.head.yRot = netHeadYaw * (float) (Math.PI / 180.0D);
+        this.head.xRot = headPitch * (float) (Math.PI / 180.0D);
 
-        float attack2 = Mth.sin(state.attackTime * (float) Math.PI);
-        float attack = Mth.sin((1.0F - (1.0F - state.attackTime) * (1.0F - state.attackTime)) * (float) Math.PI);
+        float attack2 = Mth.sin(this.attackTime * (float) Math.PI);
+        float attack = Mth.sin((1.0F - (1.0F - this.attackTime) * (1.0F - this.attackTime)) * (float) Math.PI);
         this.rightArm.zRot = 0.0F;
         this.leftArm.zRot = 0.0F;
         this.rightArm.yRot = -(0.1F - attack2 * 0.6F);
@@ -89,9 +95,9 @@ public final class UnbornBabyModel extends EntityModel<UnbornBabyRenderState> {
         float baseArmAngle = -(float) Math.PI / 2.25F;
         this.rightArm.xRot = baseArmAngle + attack2 * 1.2F - attack * 0.4F + 90.0F;
         this.leftArm.xRot = baseArmAngle + attack2 * 1.2F - attack * 0.4F - 80.0F;
-        this.rightArm.zRot += Mth.cos(state.ageInTicks * 0.09F) * 0.05F + 0.05F;
-        this.leftArm.zRot -= Mth.cos(state.ageInTicks * 0.09F) * 0.05F + 0.05F;
-        this.rightArm.xRot += Mth.sin(state.ageInTicks * 0.067F) * 0.05F;
-        this.leftArm.xRot -= Mth.sin(state.ageInTicks * 0.067F) * 0.05F;
+        this.rightArm.zRot += Mth.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
+        this.leftArm.zRot -= Mth.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
+        this.rightArm.xRot += Mth.sin(ageInTicks * 0.067F) * 0.05F;
+        this.leftArm.xRot -= Mth.sin(ageInTicks * 0.067F) * 0.05F;
     }
 }

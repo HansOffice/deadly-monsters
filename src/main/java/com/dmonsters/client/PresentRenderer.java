@@ -4,11 +4,10 @@ import com.dmonsters.DeadlyMonsters;
 import com.dmonsters.entity.PresentEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
-public final class PresentRenderer extends MobRenderer<PresentEntity, LivingEntityRenderState, PresentModel> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(
+public final class PresentRenderer extends MobRenderer<PresentEntity, PresentModel> {
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
             DeadlyMonsters.MOD_ID, "textures/entity/present.png");
 
     public PresentRenderer(EntityRendererProvider.Context context) {
@@ -16,12 +15,8 @@ public final class PresentRenderer extends MobRenderer<PresentEntity, LivingEnti
     }
 
     @Override
-    public Identifier getTextureLocation(LivingEntityRenderState state) {
+    public ResourceLocation getTextureLocation(PresentEntity entity) {
         return TEXTURE;
     }
 
-    @Override
-    public LivingEntityRenderState createRenderState() {
-        return new LivingEntityRenderState();
     }
-}

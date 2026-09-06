@@ -1,7 +1,8 @@
 package com.dmonsters.client;
 
 import com.dmonsters.DeadlyMonsters;
-import net.minecraft.client.model.EntityModel;
+import com.dmonsters.entity.StrangerEntity;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -9,13 +10,14 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 /** Modern model-layer port of the original Stranger model. */
-public final class StrangerModel extends EntityModel<StrangerRenderState> {
+public final class StrangerModel extends HierarchicalModel<StrangerEntity> {
+    private final ModelPart root;
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "stranger"), "main");
+            ResourceLocation.fromNamespaceAndPath(DeadlyMonsters.MOD_ID, "stranger"), "main");
 
     private final ModelPart leftHead;
     private final ModelPart rightHead;
@@ -25,13 +27,18 @@ public final class StrangerModel extends EntityModel<StrangerRenderState> {
     private final ModelPart rightArm;
 
     public StrangerModel(ModelPart root) {
-        super(root);
+        this.root = root;
         this.leftHead = root.getChild("left_head");
         this.rightHead = root.getChild("right_head");
         this.leftLeg = root.getChild("left_leg");
         this.rightLeg = root.getChild("right_leg");
         this.leftArm = root.getChild("left_arm");
         this.rightArm = root.getChild("right_arm");
+    }
+
+    @Override
+    public ModelPart root() {
+        return this.root;
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -57,10 +64,9 @@ public final class StrangerModel extends EntityModel<StrangerRenderState> {
     }
 
     @Override
-    public void setupAnim(StrangerRenderState state) {
-        super.setupAnim(state);
-        float attack2 = Mth.sin(state.attackTime * (float) Math.PI);
-        float attack = Mth.sin((1.0F - (1.0F - state.attackTime) * (1.0F - state.attackTime)) * (float) Math.PI);
+    public void setupAnim(StrangerEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        float attack2 = Mth.sin(this.attackTime * (float) Math.PI);
+        float attack = Mth.sin((1.0F - (1.0F - this.attackTime) * (1.0F - this.attackTime)) * (float) Math.PI);
         this.rightArm.zRot = 0.0F;
         this.leftArm.zRot = 0.0F;
         this.rightArm.yRot = -(0.1F - attack2 * 0.6F);
@@ -68,13 +74,13 @@ public final class StrangerModel extends EntityModel<StrangerRenderState> {
         float baseArmAngle = -(float) Math.PI / 2.25F;
         this.rightArm.xRot = baseArmAngle + attack2 * 1.2F - attack * 0.4F;
         this.leftArm.xRot = baseArmAngle + attack2 * 1.2F - attack * 0.4F;
-        this.rightArm.zRot += Mth.cos(state.ageInTicks * 0.09F) * 0.05F + 0.05F;
-        this.leftArm.zRot -= Mth.cos(state.ageInTicks * 0.09F) * 0.05F + 0.05F;
-        this.rightArm.xRot += Mth.sin(state.ageInTicks * 0.067F) * 0.05F;
-        this.leftArm.xRot -= Mth.sin(state.ageInTicks * 0.067F) * 0.05F;
-        this.rightLeg.xRot = Mth.cos(state.walkAnimationPos * 0.6662F) * 1.4F * state.walkAnimationSpeed;
-        this.leftLeg.xRot = Mth.cos(state.walkAnimationPos * 0.6662F + (float) Math.PI) * 1.4F * state.walkAnimationSpeed;
-        this.leftHead.yRot = this.rightHead.yRot = state.yRot * (float) (Math.PI / 180.0D);
-        this.leftHead.xRot = this.rightHead.xRot = state.xRot * (float) (Math.PI / 180.0D);
+        this.rightArm.zRot += Mth.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
+        this.leftArm.zRot -= Mth.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
+        this.rightArm.xRot += Mth.sin(ageInTicks * 0.067F) * 0.05F;
+        this.leftArm.xRot -= Mth.sin(ageInTicks * 0.067F) * 0.05F;
+        this.rightLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+        this.leftLeg.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+        this.leftHead.yRot = this.rightHead.yRot = netHeadYaw * (float) (Math.PI / 180.0D);
+        this.leftHead.xRot = this.rightHead.xRot = headPitch * (float) (Math.PI / 180.0D);
     }
 }
