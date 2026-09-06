@@ -1,77 +1,68 @@
-# Deadly Monsters — Fabric 26.2 移植版
+# Deadly Monsters — Fabric 1.21.1 移植版
 
-这是 [ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters) 从 Minecraft Forge 1.12.2 原生移植到 Minecraft 26.2 / Fabric 的版本
+这是 Deadly Monsters 从 Minecraft Forge 1.12.2 原生移植到 Minecraft 1.21.1 / Fabric 的分支
 
-本分支尽量保留原版 `dmonsters` 注册 ID、玩法身份、资源和行为，同时用当前 Minecraft 与 Fabric API 机制替代已经移除的旧 Forge API
+本分支尽量保留原版 `dmonsters` 注册 ID、资源、玩法身份和可见行为，同时使用 Minecraft 1.21.1 与 Fabric API 的原生机制替代旧 Forge API
 
 ## 目标环境
 
-- Minecraft **26.2**
+- Minecraft **1.21.1**
 - Fabric Loader **0.19.5**
-- Fabric API **0.159.0+26.2**
+- Fabric API **0.116.16+1.21.1**
 - Fabric Loom **1.17.20**
 - Gradle **9.5.1**
-- Java **25**
-- 模组 ID `dmonsters`
+- Java **21**
+- Mod ID `dmonsters`
 
 ## 当前状态
 
-Fabric 平台层源码迁移已经完成
+仓库侧 Fabric 1.21.1 回迁已经完成，并已在 GitHub Actions 使用 JDK 21 执行真实 `gradle build` 验证
 
-当前分支已经替换构建系统、模组入口、注册系统、配置、事件、自然生成与客户端注册入口
+构建通过不等于实机验证完成，客户端启动、专用服务器启动、模型观感、自然生成、配置行为和兼容模组联合运行仍按 [`测试清单.md`](测试清单.md) 复验
 
-完整构建与实际游玩验证仍按 [`测试清单.md`](测试清单.md) 执行，在完成手动构建前不把本分支标记为已发布验证
+当前包含
 
-已迁移内容包括
+- 12 种原版怪物及实体类型、属性、行为、模型和渲染器
+- 12 种原版怪物生成器物品
+- 原版方块与特殊行为
+- Rebar、四种 Harpoon、Lucky Egg、Dagon 与怪物掉落功能物品
+- Lucky Egg 与 Dagon 投射物
+- 原版贴图、声音、Logo 与 credits
+- 1.21.1 使用的 blockstate、方块模型与 `models/item` 物品模型
+- 17 个标准合成配方
+- 实体与方块战利品表
+- JSON 配置 `config/dmonsters.json`
+- Fabric API 生物群系修改自然生成
+- Barbed Wire 的 Fabric 1.21.1 CUTOUT 渲染注册
 
-- 12 种原版怪物及对应实体类型、属性、行为和渲染
-- 12 种原版怪物刷怪蛋
-- 原版方块和特殊行为
-- 强化钢筋、四种鱼叉、幸运蛋、达贡与原版怪物掉落功能物品
-- 幸运蛋与达贡投射物
-- 原版贴图与声音
-- 当前格式的方块状态文件、方块模型、物品模型与物品定义
-- 17 个原版合成配方
-- 当前格式的实体与方块战利品表
-- 怪物生命、攻击、速度、自然生成权重和禁用开关配置
-- 突变史蒂夫、腹中胎儿、闹鬼牛、异形水鬼专用配置
-- 通过 Fabric API 生物群系修改机制实现的自然生成
-
-更详细的移植决策见 [`移植说明.md`](移植说明.md)
+详细技术决策见 [`移植说明.md`](移植说明.md)
 
 ## 平台实现
 
-本分支没有引入 Architectury 或其他跨加载器框架
+本分支不引入 Architectury 或其他跨加载器框架
 
-玩法类、实体行为、模型、渲染器、配方、战利品表与大部分资源继续复用 Minecraft 原生实现
+- `ModInitializer` 与 `ClientModInitializer` 分离通用入口和客户端入口
+- 方块、物品、实体、声音与创造模式标签页使用 Minecraft / Fabric 对应注册机制
+- 实体默认属性使用 `FabricDefaultAttributeRegistry`
+- 自然生成使用 Fabric API biome modification
+- 玩家攻击与实体载入行为使用 Fabric 事件
+- 模型层与实体渲染器使用 Fabric 1.21.1 客户端注册 API
+- Barbed Wire 使用 `BlockRenderLayerMap` 注册 CUTOUT
+- 配置使用轻量 JSON，不依赖额外配置模组
 
-平台边界使用 Fabric 原生接口完成
+## 配方查看与信息显示
 
-- `ModInitializer` 与 `ClientModInitializer` 负责服务端通用入口和客户端入口
-- 方块、物品、实体、声音与创造模式标签页使用 Minecraft 原生注册表
-- 实体默认属性使用 Fabric API 属性注册
-- 自然生成使用 Fabric API 生物群系修改接口
-- 实体载入和玩家攻击行为使用 Fabric 事件
-- 模型层使用 Fabric API 注册，实体渲染器使用当前 Minecraft 原生注册入口
-- 配置使用轻量 JSON 文件，不依赖额外配置模组
+Deadly Monsters 没有自定义配方类型、配方菜单、特殊工作台或 BlockEntity 数据面板
 
-## 配方查看与信息显示兼容性
+现有 17 个配方全部使用 Minecraft 标准 crafting 体系，因此 JEI 与 REI 不需要 Deadly Monsters 专用桥接层即可读取标准配方
 
-本模组没有自定义配方类型、配方容器或特殊工作台，现有 17 个合成配方全部使用 Minecraft 原生配方体系
+Jade 的基础方块和实体信息同样可以依赖标准注册信息，本分支不添加空壳 provider 或硬依赖
 
-JEI 与 REI 的 Fabric 26.2 版本可以直接理解这类标准注册与标准配方数据，因此当前判断为结构兼容，不增加 Deadly Monsters 专用桥接层
-
-Jade 的 Fabric 26.2 版本可以通过标准方块和实体注册信息显示基础内容，当前没有需要专用信息提供器才能读取的机器状态、库存、流体或配方进度
-
-结构兼容不等于已经完成联合实机验证，发布前仍需按 [`测试清单.md`](测试清单.md) 分别验证单人世界与专用服务器
-
-完整兼容性说明见 [`兼容性.md`](兼容性.md)
+这些结论属于结构兼容判断，联合实机验证状态见 [`兼容性.md`](兼容性.md) 与 [`测试清单.md`](测试清单.md)
 
 ## 开发运行
 
 本仓库不包含 Gradle Wrapper
-
-Fabric 26.2 开发环境使用 Gradle 9.5.1 与 JDK 25
 
 ```bash
 gradle runClient
@@ -79,35 +70,35 @@ gradle runServer
 gradle build
 ```
 
-GitHub Actions 默认只保留手动构建入口，不会在每次推送时自动触发
+开发和构建统一使用 JDK 21
+
+GitHub Actions 默认只保留手动构建入口，不在每次推送时自动运行
 
 ## 配置
 
 Fabric 首次运行后会生成 `config/dmonsters.json`
 
-配置字段继续保留原版移植版的含义和默认值
+配置在模组初始化时读取，修改后需要完整重启客户端进程或专用服务器进程
 
-Fabric 版在模组初始化时读取配置，修改后需要重启客户端或专用服务器
+`spawnRate` 与 `disabled` 会在生物群系修改注册时读取，因此同样需要完整重启后生效
 
-`spawnRate` 与 `disabled` 会在生物群系生成修改注册时读取，因此同样需要完整重启对应进程后生效
+本分支不为了配置额外依赖 Cloth Config、YACL 或其他配置框架
 
-Fabric 版没有为了配置额外依赖 Cloth Config、YACL 或其他配置框架
+## 1.21.1 回迁原则
 
-## 移植原则
+这是 1.21.1 原生 Fabric 回迁，不是 NeoForge API 模拟层，也不是 26.2 API 兼容垫片
 
-这是原生 Fabric 移植，不是 NeoForge API 模拟层，也不是旧版兼容垫片
-
-少量 1.12.2 实现细节无法或不应该逐字复制
-
-- 不再接入已经过时的 Hostile Worlds Invasions 旧版联动
-- 旧版数字 `dayLengthTicks` 已退役，日光降临与闹鬼牛使用 Minecraft 26.2 当前世界时钟标记
-- 异形水鬼原版深水搜索存在近似每游戏刻大范围扫描问题，移植版保留可见行为并限制刷新频率
-- 旧元数据物品映射到当前独立物品 ID
-- 方块修改类物品使用当前交互权限检查，避免绕过现代保护逻辑
-- 不为了双平台形式统一去大规模重构现有玩法代码
+- 1.21.1 使用旧实体模型与渲染器签名，不保留 26.2 RenderState 中间层
+- 1.21.1 使用 `ResourceLocation`、旧 `MobSpawnType` 与对应实体、方块、物品接口
+- Sunlight Drop 与 Haunted Cow 使用 1.21.1 `getDayTime` / `setDayTime` 世界时间接口
+- Barbed Wire 在客户端显式注册 CUTOUT 渲染层
+- 1.21.1 继续使用 `assets/dmonsters/models/item`，不保留 1.21.4 才引入的 `assets/<namespace>/items` 物品定义目录
+- Fabric 1.21.1 的实体载入事件没有 26.2 磁盘载入标记，属性倍率按实体当前血量状态处理，不为此引入 Mixin
+- Topielec 保留深水拖拽的可见行为，同时限制高成本深水搜索刷新频率
+- 不为了双平台形式统一大规模重构玩法代码
 
 ## 上游与许可
 
-原项目 [ACGaming/deadly-monsters](https://github.com/ACGaming/deadly-monsters)
+移植基线与原始资源来自 Deadly Monsters 1.12.2 项目，上游署名继续保留 `bigbang87` 原作者信息
 
-上游使用 MIT 许可证，本仓库保留原始版权与许可文本 [`LICENSE`](LICENSE)
+仓库保留原始 MIT License 与版权文本 [`LICENSE`](LICENSE)
