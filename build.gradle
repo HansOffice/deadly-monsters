@@ -21,14 +21,12 @@ sourceSets.main.resources {
 repositories {
 }
 
-// Minecraft 26.2 使用 Java 25
-java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+// Minecraft 1.21.1 使用 Java 21
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 neoForge {
     version = project.neo_version
 
-    // 本移植主要通过真实客户端与服务端运行验证
-    // 默认流程不加入 GameTest，因为多数行为依赖视觉、AI、时序、声音、碰撞或玩家交互
     runs {
         client {
             client()
@@ -62,8 +60,6 @@ configurations {
 }
 
 dependencies {
-    // 不继续携带旧版 1.12.2 依赖
-    // 只有 26.2 真实需要专用 API 时才重新引入现代联动
 }
 
 var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
@@ -87,6 +83,7 @@ neoForge.ideSyncTask generateModMetadata
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.release = 21
 }
 
 idea {
